@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vuestic/tailwind": "^0.1.5",
     "vue": "^3.4.21",
     "vuestic-ui": "^1.9.0"
   },

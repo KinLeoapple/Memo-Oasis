@@ -1,1 +1,1 @@
-rootProject.name = "org.kinleoapple.memo"
+rootProject.name = "Memo"

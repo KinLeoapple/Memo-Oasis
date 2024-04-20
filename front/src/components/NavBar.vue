@@ -32,6 +32,7 @@ watch(theme, (val) => {
 
 <template>
   <VaNavbar
+      :shadowed="theme === 'dark'"
       color="backgroundElement"
       class="mb-3 overflow-hidden"
   >
