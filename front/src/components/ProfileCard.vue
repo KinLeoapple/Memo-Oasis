@@ -1,12 +1,23 @@
 <script setup>
 import avatarWhite from "@/assets/img/megalobox-white.png";
 import avatarBlack from "@/assets/img/megalobox.png";
+import {nextTick, ref} from "vue";
 
 const props = defineProps({
   theme: {
     type: String,
     default: () => "dark",
   },
+});
+
+let name = ref("");
+
+nextTick(() => {
+  fetch("http://localhost:8080/user/name")
+      .then(r =>
+          r.json()
+              .then(
+                  j => name.value = j.name));
 });
 </script>
 
@@ -26,7 +37,9 @@ const props = defineProps({
     />
     <div style="font-size: 0.9rem"
          class="ml-3 va-title">
-      <span style="font-size: x-large">K</span>inLeoapple
+      <span style="font-size: x-large">
+        {{ name.charAt(0) }}
+      </span>{{ name.substring(1, name.length) }}
     </div>
   </div>
   <div class="mt-3">

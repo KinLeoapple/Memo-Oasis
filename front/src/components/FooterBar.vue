@@ -1,11 +1,28 @@
 <script setup>
 import logo from '@/assets/img/site-logo/logo.png';
+import {nextTick, ref} from "vue";
 
 const props = defineProps({
   theme: {
     type: String,
     default: () => "dark",
   },
+});
+
+let name = ref("");
+let page = ref("");
+
+nextTick(() => {
+  fetch("http://localhost:8080/designer/name")
+      .then(r =>
+          r.json()
+              .then(
+                  j => name.value = j.name));
+  fetch("http://localhost:8080/designer/page")
+      .then(r =>
+          r.json()
+              .then(
+                  j => page.value = j.page));
 });
 </script>
 
@@ -54,10 +71,10 @@ const props = defineProps({
           class="va-text-bold"
           style="color: #FFFFFF">
           <a
-              href="https://github.com/KinLeoapple"
+              :href="page"
               target="_blank"
               class="link">
-            Kinleoapple
+            {{ name }}
           </a>
         </span>
     </div>

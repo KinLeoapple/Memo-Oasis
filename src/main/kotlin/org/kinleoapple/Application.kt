@@ -1,16 +1,24 @@
 package org.kinleoapple
 
 import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import org.kinleoapple.plugins.*
+import org.kinleoapple.plugins.configureHTTP
+import org.kinleoapple.plugins.configureRouting
+import org.kinleoapple.plugins.configureSerialization
+import org.kinleoapple.plugins.database.configureDatabase
+import org.kinleoapple.plugins.database.relation.createBlog
+import org.kinleoapple.plugins.database.relation.createCategory
+import org.kinleoapple.plugins.database.relation.createDesigner
+import org.kinleoapple.plugins.database.relation.createUser
 
-fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
-        .start(wait = true)
-}
+fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
+    createUser()
+    createCategory()
+    createBlog()
+    createDesigner()
+
+    configureDatabase()
     configureSerialization()
     configureHTTP()
     configureRouting()

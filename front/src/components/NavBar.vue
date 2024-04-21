@@ -5,34 +5,27 @@ import {computed, ref, watch} from "vue";
 import {useColors} from "vuestic-ui";
 
 const {applyPreset, currentPresetName} = useColors();
-applyPreset("dark");
+applyPreset(localStorage.getItem("theme") || "dark");
 
-const props = defineProps({
-  theme: {
-    type: String,
-    default: "dark"
-  }
-});
-
-const theme = ref(currentPresetName.value);
-const emit = defineEmits(["update:theme"]);
+const theme = ref(localStorage.getItem("theme") || "dark");
 const switchTheme = computed({
   get() {
     return currentPresetName.value;
   },
   set(value) {
     applyPreset(value);
+    localStorage.setItem("theme", value);
   }
 });
 
-watch(theme, (val) => {
-  emit('update:theme', val)
+watch(currentPresetName, (val) => {
+  theme.value = val;
 });
 </script>
 
 <template>
   <VaNavbar
-      :shadowed="theme === 'dark'"
+      :shadowed="theme !== 'dark'"
       color="backgroundElement"
       class="mb-3 overflow-hidden"
   >
@@ -72,7 +65,7 @@ watch(theme, (val) => {
           <template #innerLabel>
             <div class="va-text-center">
               <VaIcon
-                  :name="props.theme === 'light' ? 'light_mode' : 'dark_mode'"
+                  :name="theme === 'light' ? 'light_mode' : 'dark_mode'"
               />
             </div>
           </template>

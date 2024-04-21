@@ -1,0 +1,14 @@
+ktor:
+  deployment:
+    port: 8080
+    host: "0.0.0.0"
+  application:
+    modules:
+      - org.kinleoapple.ApplicationKt.module
+
+ktorm:
+  mysql:
+    url: "jdbc:mysql://localhost:3306/memo"
+    driver: "com.mysql.cj.jdbc.Driver"
+    user: "root"
+    password: "123456"
