@@ -13,12 +13,12 @@ let name = ref("");
 let page = ref("");
 
 nextTick(() => {
-  fetch("http://localhost:8080/designer/name")
+  fetch("/designer/name")
       .then(r =>
           r.json()
               .then(
                   j => name.value = j.name));
-  fetch("http://localhost:8080/designer/page")
+  fetch("/designer/page")
       .then(r =>
           r.json()
               .then(

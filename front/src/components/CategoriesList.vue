@@ -1,9 +1,30 @@
 <script setup>
+import {computed, ref, watch} from "vue";
+
 const props = defineProps({
   theme: {
     type: String,
     default: () => "dark",
   },
+  category: {
+    type: String,
+    default: () => null
+  }
+});
+
+const currentCategory = ref(null);
+const changeCategory = (name) => {
+  if (currentCategory.value !== name)
+    currentCategory.value = name;
+}
+
+defineExpose({currentCategory});
+
+watch(() => props.category, (val) => {
+  if (val !== null)
+    currentCategory.value = val;
+  else
+    currentCategory.value = null;
 });
 </script>
 
@@ -18,37 +39,44 @@ const props = defineProps({
         <span style="font-size: x-large">C</span>ategory
       </VaListLabel>
 
-      <VaListItem
-          v-for="(category, index) in categories"
-          :key="index"
-          class="list pointer"
-          :class="{
+      <VaScrollContainer
+          style="max-height: 150px"
+          color="primary"
+          vertical
+      >
+        <VaListItem
+            v-for="(category, index) in categories"
+            :key="index"
+            @click="changeCategory(category.name)"
+            class="list pointer"
+            :class="{
           'list-dark-bg': props.theme === 'dark',
           'list-light-bg': props.theme === 'light',
           'list-light': props.theme === 'light',
         }"
-      >
-        <VaListSeparator spaced/>
-        <VaListItemSection class="ml-3">
-          <VaListItemLabel
-              caption
-              class="va-text-bold list-text"
-              style="font-size: 0.9rem;">
-            {{ category.name }}
-          </VaListItemLabel>
-        </VaListItemSection>
-
-        <VaListItemSection
-            style="display: flex;"
-            class="mr-3 flex-direction-column align-end justify-center"
         >
-          <VaBadge
-              color="info"
-              :text="category.number"
-              style="--va-badge-text-wrapper-border-radius: 40px;"
-          />
-        </VaListItemSection>
-      </VaListItem>
+          <VaListSeparator spaced/>
+          <VaListItemSection class="ml-3">
+            <VaListItemLabel
+                caption
+                class="va-text-bold list-text"
+                style="font-size: 0.9rem;">
+              {{ category.name }}
+            </VaListItemLabel>
+          </VaListItemSection>
+
+          <VaListItemSection
+              style="display: flex;"
+              class="mr-3 flex-direction-column align-end justify-center"
+          >
+            <VaBadge
+                color="info"
+                :text="category.number"
+                style="--va-badge-text-wrapper-border-radius: 40px;"
+            />
+          </VaListItemSection>
+        </VaListItem>
+      </VaScrollContainer>
     </VaList>
   </div>
 </template>

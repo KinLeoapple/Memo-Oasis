@@ -12,3 +12,11 @@ ktorm:
     driver: "com.mysql.cj.jdbc.Driver"
     user: "root"
     password: "123456"
+
+memo:
+  user:
+    name: Kinleoapple
+    password: 2460DOGCAT
+  designer:
+    name: Kinleoapple
+    page: "https://github.com/KinLeoapple"

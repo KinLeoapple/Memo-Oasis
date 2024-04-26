@@ -1,31 +1,16 @@
 <script setup>
 import {Search} from "@vicons/fa";
 import {Icon} from "@vicons/utils";
-import {computed, ref, watch} from "vue";
 import {useColors} from "vuestic-ui";
+import SwitchThemeButton from "@/components/button/SwitchThemeButton.vue";
 
-const {applyPreset, currentPresetName} = useColors();
+const {applyPreset} = useColors();
 applyPreset(localStorage.getItem("theme") || "dark");
-
-const theme = ref(localStorage.getItem("theme") || "dark");
-const switchTheme = computed({
-  get() {
-    return currentPresetName.value;
-  },
-  set(value) {
-    applyPreset(value);
-    localStorage.setItem("theme", value);
-  }
-});
-
-watch(currentPresetName, (val) => {
-  theme.value = val;
-});
 </script>
 
 <template>
   <VaNavbar
-      :shadowed="theme !== 'dark'"
+      style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);"
       color="backgroundElement"
       class="mb-3 overflow-hidden"
   >
@@ -54,22 +39,7 @@ watch(currentPresetName, (val) => {
         </VaButton>
       </VaNavbarItem>
       <VaNavbarItem class="mr-3">
-        <VaSwitch
-            v-model="switchTheme"
-            color="#5123a1"
-            off-color="#ffd300"
-            style="--va-switch-checker-background-color: #252723;"
-            true-value="dark"
-            false-value="light"
-        >
-          <template #innerLabel>
-            <div class="va-text-center">
-              <VaIcon
-                  :name="theme === 'light' ? 'light_mode' : 'dark_mode'"
-              />
-            </div>
-          </template>
-        </VaSwitch>
+        <SwitchThemeButton/>
       </VaNavbarItem>
     </template>
   </VaNavbar>

@@ -13,7 +13,7 @@ const props = defineProps({
 let name = ref("");
 
 nextTick(() => {
-  fetch("http://localhost:8080/user/name")
+  fetch("/user/name")
       .then(r =>
           r.json()
               .then(

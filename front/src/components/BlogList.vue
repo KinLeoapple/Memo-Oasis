@@ -1,9 +1,36 @@
 <script setup>
+
+import DeleteButton from "@/components/button/DeleteButton.vue";
+import {ref, watch} from "vue";
+
 const props = defineProps({
   theme: {
     type: String,
     default: () => "dark",
   },
+  category: {
+    type: String,
+    default: () => null
+  }
+});
+
+const currentCategory = ref(null);
+const changeCategory = (name) => {
+  if (currentCategory.value !== name)
+    currentCategory.value = name;
+}
+
+const cleanCategory = () => {
+  currentCategory.value = null;
+}
+
+defineExpose({currentCategory});
+
+watch(() => props.category, (val) => {
+  if (val !== null)
+    currentCategory.value = val;
+  else
+    currentCategory.value = null;
 });
 </script>
 
@@ -13,6 +40,31 @@ const props = defineProps({
         style="height: 100%; width: 100%; display: flex;"
         class="flex-direction-column md6 lg"
     >
+      <transition name="fadeIn">
+        <blockquote v-if="props.category !== null"
+                    class="va-blockquote va-text-block mb-5">
+          <VaNavbar
+              style="padding: 0; background: transparent"
+          >
+            <template #left>
+              <VaNavbarItem>
+                <p style="display: flex; justify-content: start; align-items: center"
+                   class="va-text-bold">
+                  Category
+                  <div class="dot"/>
+                  <span class="va-text-success">{{ `${props.category}` }}</span>
+                </p>
+              </VaNavbarItem>
+            </template>
+            <template #right>
+              <VaNavbarItem>
+                <DeleteButton @click="cleanCategory"/>
+              </VaNavbarItem>
+            </template>
+          </VaNavbar>
+        </blockquote>
+      </transition>
+
       <VaCard v-for="(record, index) in records"
               :key="index"
               class="mb-5 overflow-hidden pointer blog"
@@ -36,10 +88,15 @@ const props = defineProps({
           >
             <p>{{ record.content }}</p>
           </blockquote>
-          <div class="va-text-secondary va-text-justify blog-details">
-            <p>{{ record.date }}</p>
-            <div class="dot"></div>
-            <span class="category">{{ record.category }}</span>
+          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+            <div class="va-text-secondary va-text-justify blog-details">
+              <p>{{ record.date }}</p>
+              <div class="dot"></div>
+              <span class="category" @click="changeCategory(record.category)">{{ record.category }}</span>
+            </div>
+            <div>
+              <span class="va-link">Read more</span>
+            </div>
           </div>
         </VaCardContent>
       </VaCard>
@@ -128,5 +185,14 @@ export default {
 
 .category:hover {
   color: var(--va-link-color);
+}
+
+.fadeIn-enter-active {
+  transition: all 0.3s linear;
+  opacity: 0;
+}
+
+.fadeIn-enter-to {
+  opacity: 100;
 }
 </style>
