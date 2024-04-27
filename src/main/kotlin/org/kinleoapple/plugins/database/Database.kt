@@ -37,6 +37,8 @@ open class Database(private val config: DatabaseConfig) {
                 config.url,
                 config.username, config.password
             )
+            val statement = conn?.createStatement()
+            statement?.executeUpdate("CREATE SCHEMA IF NOT EXISTS `memo`")
         } catch (e: ClassNotFoundException) {
             e.printStackTrace()
         } catch (e: SQLException) {
