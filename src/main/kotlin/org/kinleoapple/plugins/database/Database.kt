@@ -3,7 +3,6 @@ package org.kinleoapple.plugins.database
 import com.alibaba.druid.pool.DruidDataSourceFactory
 import org.ktorm.database.Database
 import org.ktorm.logging.ConsoleLogger
-import org.ktorm.support.mysql.MySqlDialect
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -23,7 +22,6 @@ open class Database(private val config: DatabaseConfig) {
 
         connection = Database.connect(
             dataSource = dataSource,
-            dialect = MySqlDialect(),
             logger = ConsoleLogger(config.logLevel)
         )
     }
@@ -34,11 +32,8 @@ open class Database(private val config: DatabaseConfig) {
             Class.forName(config.driverClassName)
 
             conn = DriverManager.getConnection(
-                config.url,
-                config.username, config.password
+                config.url
             )
-            val statement = conn?.createStatement()
-            statement?.executeUpdate("CREATE SCHEMA IF NOT EXISTS `memo`")
         } catch (e: ClassNotFoundException) {
             e.printStackTrace()
         } catch (e: SQLException) {

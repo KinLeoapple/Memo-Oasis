@@ -7,11 +7,9 @@ ktor:
       - org.kinleoapple.ApplicationKt.module
 
 ktorm:
-  mysql:
-    url: "jdbc:mysql://localhost:3306/memo"
-    driver: "com.mysql.cj.jdbc.Driver"
-    user: "root"
-    password: "123456"
+  sqlite:
+    url: "jdbc:sqlite:./memo.db"
+    driver: "org.sqlite.JDBC"
 
 memo:
   user:

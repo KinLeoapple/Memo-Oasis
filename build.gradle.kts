@@ -19,6 +19,8 @@ application {
 
 repositories {
     mavenCentral()
+    maven("https://maven.aliyun.com/repository/public")
+    maven("https://maven.aliyun.com/repository/google")
 }
 
 dependencies {
@@ -29,8 +31,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("com.alibaba:druid:1.2.18")
-    implementation("org.ktorm:ktorm-support-mysql:3.6.0")
-    implementation("com.mysql:mysql-connector-j:8.3.0")
+    implementation("org.ktorm:ktorm-support-sqlite:3.6.0")
+    implementation("org.xerial:sqlite-jdbc:3.45.3.0")
     implementation("io.ktor:ktor-server-config-yaml")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

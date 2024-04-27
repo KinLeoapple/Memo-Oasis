@@ -15,7 +15,7 @@ data object Category : Table<Nothing>(TABLE_NAME) {
 }
 
 private val sql: String = """
-    CREATE TABLE IF NOT EXISTS `memo`.`${TABLE_NAME}` (
+    CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (
         `cat_id` INT NOT NULL,
         `cat_name` VARCHAR(30) NOT NULL,
     PRIMARY KEY (`cat_id`));

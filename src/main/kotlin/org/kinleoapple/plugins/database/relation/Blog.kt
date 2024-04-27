@@ -20,7 +20,7 @@ data object Blog: Table<Nothing>(TABLE_NAME) {
 }
 
 private val sql: String = """
-    CREATE TABLE IF NOT EXISTS `memo`.`${TABLE_NAME}` (
+    CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (
           `blog_id` INT NOT NULL,
           `cat_id` INT NOT NULL,
           `blog_pub_dt` DATETIME NOT NULL,
@@ -28,12 +28,7 @@ private val sql: String = """
           `blog_title` VARCHAR(100) NOT NULL,
           `blog_des` VARCHAR(1000) NOT NULL,
           PRIMARY KEY (`blog_id`),
-          INDEX `cat_id_idx` (`cat_id` ASC) VISIBLE,
-          CONSTRAINT `cat_id`
-            FOREIGN KEY (`cat_id`)
-            REFERENCES `memo`.`category` (`cat_id`)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION);
+          FOREIGN KEY (`cat_id`) REFERENCES `category` (`cat_id`));
 """.trimIndent()
 
 fun Application.createBlog() {

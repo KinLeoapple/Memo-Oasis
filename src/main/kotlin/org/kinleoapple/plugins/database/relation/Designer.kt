@@ -19,7 +19,7 @@ data object Designer: Table<Nothing>(TABLE_NAME) {
 }
 
 private val sql: String = """
-    CREATE TABLE IF NOT EXISTS `memo`.`${TABLE_NAME}` (
+    CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (
       `desi_id` INT NOT NULL DEFAULT 0,
       `desi_name` VARCHAR(30) NOT NULL,
       `desi_page` VARCHAR(100) NOT NULL,
