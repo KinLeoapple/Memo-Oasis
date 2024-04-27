@@ -1,28 +1,17 @@
 <script setup>
 import logo from '@/assets/img/site-logo/logo.png';
-import {nextTick, ref} from "vue";
 
 const props = defineProps({
   theme: {
     type: String,
     default: () => "dark",
   },
-});
-
-let name = ref("");
-let page = ref("");
-
-nextTick(() => {
-  fetch("/designer/name")
-      .then(r =>
-          r.json()
-              .then(
-                  j => name.value = j.name));
-  fetch("/designer/page")
-      .then(r =>
-          r.json()
-              .then(
-                  j => page.value = j.page));
+  name: {
+    type: String,
+  },
+  page: {
+    type: String,
+  }
 });
 </script>
 
@@ -62,7 +51,7 @@ nextTick(() => {
         color="success"
     />
 
-    <div class="mr-3 mb-5 item">
+    <div class="mr-3 mb-5 item" v-if="props.name !== null">
       <p class="va-text-bold va-text-secondary">
         Designed by
       </p>
@@ -71,10 +60,10 @@ nextTick(() => {
           class="va-text-bold"
           style="color: #FFFFFF">
           <a
-              :href="page"
+              :href="props.page"
               target="_blank"
               class="link">
-            {{ name }}
+            {{ props.name }}
           </a>
         </span>
     </div>

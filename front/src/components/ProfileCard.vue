@@ -8,16 +8,9 @@ const props = defineProps({
     type: String,
     default: () => "dark",
   },
-});
-
-let name = ref("");
-
-nextTick(() => {
-  fetch("/user/name")
-      .then(r =>
-          r.json()
-              .then(
-                  j => name.value = j.name));
+  name: {
+    type: String,
+  }
 });
 </script>
 
@@ -35,12 +28,14 @@ nextTick(() => {
               size="large"
               :src="avatarBlack"
     />
-    <div style="font-size: 0.9rem"
+    <div v-if="props.name !== null"
+        style="font-size: 0.9rem"
          class="ml-3 va-title">
       <span style="font-size: x-large">
-        {{ name.charAt(0) }}
-      </span>{{ name.substring(1, name.length) }}
+        {{ props.name.charAt(0) }}
+      </span>{{ props.name.substring(1, props.name.length) }}
     </div>
+    <VaSkeleton v-else variant="text" animation="wave" style="font-size: 0.9rem" class="ml-3 va-title"/>
   </div>
   <div class="mt-3">
     <VaBadge
