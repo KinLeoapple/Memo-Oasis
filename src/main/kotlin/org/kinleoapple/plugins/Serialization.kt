@@ -11,6 +11,7 @@ import org.kinleoapple.plugins.database.dao.getBasicInfo
 
 fun Application.configureSerialization() {
     val database = Database(configureDatabase())
+    val content = environment.config.propertyOrNull("markdown.content")?.getString()
 
     install(ContentNegotiation) {
         gson {
@@ -19,6 +20,11 @@ fun Application.configureSerialization() {
     routing {
         get("/basic_info") {
             call.respond(getBasicInfo(database))
+        }
+
+        get("/blog/content/{id}") {
+            println(call.parameters["id"])
+            call.respond(mapOf("content" to content))
         }
     }
 }

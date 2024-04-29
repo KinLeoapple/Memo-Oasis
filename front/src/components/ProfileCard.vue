@@ -10,6 +10,12 @@ const props = defineProps({
   },
   name: {
     type: String,
+  },
+  quote: {
+    type: String,
+  },
+  quoteName: {
+    type: String,
   }
 });
 </script>
@@ -48,17 +54,13 @@ const props = defineProps({
         color="primary"
     />
   </div>
-  <div class="mt-3">
+  <div class="mt-3" v-if="quote !== null">
     <blockquote class="va-blockquote va-text-block">
       <p class="va-text-bold">
-        A man can be
-        <span class="va-text-success">
-                destroyed
-              </span>
-        but not defeated.
+       {{ props.quote }}
       </p>
-      <p>
-        <i>- Ernest Hemingway</i>
+      <p v-if="quoteName !== null">
+        <i>- {{ props.quoteName }}</i>
       </p>
     </blockquote>
   </div>

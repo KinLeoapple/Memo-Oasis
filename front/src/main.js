@@ -6,6 +6,6 @@ import './assets/css/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 
-createApp(App)
+const app = createApp(App)
     .use(createVuestic({ config }))
     .mount('#app')

@@ -3,7 +3,6 @@ package org.kinleoapple.plugins.database.relation
 import io.ktor.server.application.*
 import org.kinleoapple.plugins.database.Database
 import org.kinleoapple.plugins.database.configureDatabase
-import org.kinleoapple.util.md5
 import org.ktorm.dsl.deleteAll
 import org.ktorm.dsl.insert
 import org.ktorm.schema.Table

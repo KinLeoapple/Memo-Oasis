@@ -9,7 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@highlightjs/vue-plugin": "^2.1.0",
     "@vuestic/tailwind": "^0.1.5",
+    "github-markdown-css": "^5.5.1",
+    "highlight.js": "^11.9.0",
+    "marked": "^12.0.2",
     "vue": "^3.4.21",
     "vuestic-ui": "^1.9.0"
   },

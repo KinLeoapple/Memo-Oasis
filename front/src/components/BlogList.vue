@@ -1,5 +1,4 @@
 <script setup>
-
 import DeleteButton from "@/components/button/DeleteButton.vue";
 import {ref, watch} from "vue";
 
@@ -11,7 +10,7 @@ const props = defineProps({
   category: {
     type: String,
     default: () => null
-  }
+  },
 });
 
 const currentCategory = ref(null);
@@ -24,7 +23,13 @@ const cleanCategory = () => {
   currentCategory.value = null;
 }
 
-defineExpose({currentCategory});
+const currentBlog = ref(null);
+const changeBlog = (id) => {
+  if (currentBlog.value !== id)
+    currentBlog.value = id;
+}
+
+defineExpose({currentCategory, currentBlog});
 
 watch(() => props.category, (val) => {
   if (val !== null)
@@ -35,24 +40,25 @@ watch(() => props.category, (val) => {
 </script>
 
 <template>
-  <div class="row">
+  <div class="row" style="min-height: 100%" v-show="currentBlog === null">
     <div
-        style="height: 100%; width: 100%; display: flex;"
+        style="min-height: 100%; width: 100%; display: flex;"
         class="flex-direction-column md6 lg"
     >
       <transition name="fadeIn">
         <blockquote v-if="props.category !== null"
-                    class="va-blockquote va-text-block mb-5">
+                    class="va-text-block mb-5"
+                    style="border-radius: var(--va-card-border-radius)">
           <VaNavbar
               style="padding: 0; background: transparent"
           >
             <template #left>
               <VaNavbarItem>
-                <p style="display: flex; justify-content: start; align-items: center"
-                   class="va-text-bold">
-                  Category
-                  <div class="dot"/>
-                  <span class="va-text-success">{{ `${props.category}` }}</span>
+                <p style=""
+                   class="va-text-bold va-h6">
+                  <span style="font-size: 1.8rem">C</span>ategory
+                  <VaDivider/>
+                  <span class="va-text-success" style="font-size: 1.15rem">{{ `${props.category}` }}</span>
                 </p>
               </VaNavbarItem>
             </template>
@@ -70,6 +76,7 @@ watch(() => props.category, (val) => {
               class="mb-5 overflow-hidden pointer blog"
               :outlined="theme === 'dark'"
               :bordered="theme !== 'dark'"
+              @click="changeBlog(record.id)"
       >
         <VaImage
             src="https://source.unsplash.com/1920x1080/?nature"
@@ -86,7 +93,7 @@ watch(() => props.category, (val) => {
               class=""
               style="font-size: 1rem"
           >
-            <p>{{ record.content }}</p>
+            <p>{{ record.desc }}</p>
           </blockquote>
           <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
             <div class="va-text-secondary va-text-justify blog-details">
@@ -95,7 +102,8 @@ watch(() => props.category, (val) => {
               <span class="category" @click="changeCategory(record.category)">{{ record.category }}</span>
             </div>
             <div>
-              <span class="va-link">Read more</span>
+              <span @click="changeBlog(record.id)"
+                    class="va-link">Read more</span>
             </div>
           </div>
         </VaCardContent>
@@ -103,7 +111,7 @@ watch(() => props.category, (val) => {
     </div>
   </div>
 
-  <div>
+  <div v-show="currentBlog === null">
     <VaPagination
         v-model="value"
         :visible-pages="7"
@@ -122,34 +130,39 @@ export default {
     return {
       records: [
         {
+          id: 1,
           title: "title",
-          content: "Of all of the celestial bodies that capture our attention and fascination as\n" +
+          desc: "Of all of the celestial bodies that capture our attention and fascination as\n" +
               "    astronomers, none has a greater influence on life on planet Earth than it’s\n" +
               "    own satellite, the moon. When you think about it.",
           date: "03/12/2024",
           category: "Life"
         },
         {
+          id: 2,
           title: "title",
-          content: "A man can be destroyed but not defeated.",
+          desc: "A man can be destroyed but not defeated.",
           date: "03/12/2024",
           category: "Life"
         },
         {
+          id: 3,
           title: "title",
-          content: "A man can be destroyed but not defeated.",
+          desc: "A man can be destroyed but not defeated.",
           date: "03/12/2024",
           category: "Life"
         },
         {
+          id: 4,
           title: "title",
-          content: "A man can be destroyed but not defeated.",
+          desc: "A man can be destroyed but not defeated.",
           date: "03/12/2024",
           category: "Life"
         },
         {
+          id: 5,
           title: "title",
-          content: "A man can be destroyed but not defeated.",
+          desc: "A man can be destroyed but not defeated.",
           date: "03/12/2024",
           category: "Life"
         }

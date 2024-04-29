@@ -5,3 +5,12 @@ export function basic_info(prefix = "") {
         );
     });
 }
+
+export function get_blog_content(id, prefix = "") {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog/content/${id}`).then(r => {
+                resolve(r.json())
+            }
+        );
+    });
+}
