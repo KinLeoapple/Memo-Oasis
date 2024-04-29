@@ -10,7 +10,7 @@
     </svg>
 
     <div class="text va-text-bold">
-      Back
+      More
     </div>
 
   </button>
@@ -33,10 +33,6 @@
 .button:hover {
   background-color: hsl(230 12% 15% / .8);
   box-shadow: 0 0 10px #1f4c65;
-}
-
-.button svg {
-  transform: rotate(180deg);
 }
 
 .button svg {

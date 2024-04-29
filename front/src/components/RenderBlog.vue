@@ -64,7 +64,7 @@ defineExpose({currentContent});
   <div style="min-height: 100%; min-width: 100%; position: relative" v-show="currentContent !== null">
     <GoBackButton
         style="position: absolute; z-index: 9999"
-        class="mt-1 ml-1"
+        class="mt-2 ml-2"
         @click="cleanContent"
     />
     <VaCard

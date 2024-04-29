@@ -15,7 +15,7 @@ import {client_height} from "@/assets/js/client_size.js";
 const {currentPresetName} = useColors();
 
 // Environment Values
-const is_dev = ref(false); // Remember to set to false before build
+const is_dev = ref(true); // Remember to set to false before build
 const prefix = ref(is_dev.value ? "http://127.0.0.1:8080" : "");
 
 // Basic Information

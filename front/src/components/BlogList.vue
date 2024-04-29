@@ -1,6 +1,7 @@
 <script setup>
-import DeleteButton from "@/components/button/DeleteButton.vue";
 import {ref, watch} from "vue";
+import GoBackButton from "@/components/button/GoBackButton.vue";
+import GoForwardButton from "@/components/button/GoForwardButton.vue";
 
 const props = defineProps({
   theme: {
@@ -64,7 +65,7 @@ watch(() => props.category, (val) => {
             </template>
             <template #right>
               <VaNavbarItem>
-                <DeleteButton @click="cleanCategory"/>
+                <GoBackButton @click="cleanCategory"/>
               </VaNavbarItem>
             </template>
           </VaNavbar>
@@ -73,10 +74,9 @@ watch(() => props.category, (val) => {
 
       <VaCard v-for="(record, index) in records"
               :key="index"
-              class="mb-5 overflow-hidden pointer blog"
+              class="mb-5 overflow-hidden blog"
               :outlined="theme === 'dark'"
               :bordered="theme !== 'dark'"
-              @click="changeBlog(record.id)"
       >
         <VaImage
             src="https://source.unsplash.com/1920x1080/?nature"
@@ -95,15 +95,14 @@ watch(() => props.category, (val) => {
           >
             <p>{{ record.desc }}</p>
           </blockquote>
-          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: end">
             <div class="va-text-secondary va-text-justify blog-details">
               <p>{{ record.date }}</p>
               <div class="dot"></div>
-              <span class="category" @click="changeCategory(record.category)">{{ record.category }}</span>
+              <span class="category pointer" @click="changeCategory(record.category)">{{ record.category }}</span>
             </div>
             <div>
-              <span @click="changeBlog(record.id)"
-                    class="va-link">Read more</span>
+              <GoForwardButton @click="changeBlog(record.id)"/>
             </div>
           </div>
         </VaCardContent>
