@@ -18,11 +18,49 @@ const props = defineProps({
 });
 
 const currentContent = ref(null);
+const maxTitle = ref(null);
+const blogIndex = ref(null);
 
 const markdownToHtml = computed(() => {
   if (currentContent.value !== null) {
+    let anchor = 0;
+    let rendererMD = new marked.Renderer();
+    rendererMD.heading = (text, level, _) => {
+      if (maxTitle.value === null || level < maxTitle.value) {
+        maxTitle.value = level;
+      }
+      anchor += 1;
+
+      if (blogIndex.value === null) {
+        blogIndex.value = [];
+      }
+
+      let isExists = false;
+      for (let i = 0; i < blogIndex.value.length; i++) {
+        if (blogIndex.value[i].id === anchor) {
+          isExists = true;
+          break;
+        }
+      }
+
+      if (!isExists) {
+        blogIndex.value.push(
+            {
+              'id': anchor,
+              'tag': level,
+              'text': text
+            }
+        );
+      }
+      return `<h${level} id="blog-index-${anchor}">${text}</h${level}>`;
+    }
+
+    rendererMD.link = (href, _, text) => {
+      return '<a href="' + href + '" title="' + text + '" target="_blank">' + text + '</a>';
+    }
+
     marked.setOptions({
-      renderer: new marked.Renderer(),
+      renderer: rendererMD,
       pedantic: false,
       gfm: true,
       tables: true,
@@ -32,12 +70,15 @@ const markdownToHtml = computed(() => {
       smartypants: false,
       xhtml: false
     });
+
     return marked(currentContent.value);
   }
 });
 
 const cleanContent = () => {
   currentContent.value = null;
+  maxTitle.value = null;
+  blogIndex.value = null;
 }
 
 const VHighlight = {
@@ -57,7 +98,7 @@ watch(() => props.content, (val) => {
     currentContent.value = null;
 });
 
-defineExpose({currentContent});
+defineExpose({currentContent, blogIndex, maxTitle});
 </script>
 
 <template>

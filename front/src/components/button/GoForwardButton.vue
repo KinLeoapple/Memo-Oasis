@@ -1,9 +1,14 @@
 <script setup>
-
+const props = defineProps({
+  shadowed: {
+    type: Boolean,
+    default: false
+  }
+});
 </script>
 
 <template>
-  <button class="button">
+  <button class="button" :class="{'shadow': shadowed}">
 
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
       <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"></path>
@@ -17,33 +22,6 @@
 </template>
 
 <style scoped>
-.button {
-  backdrop-filter: blur(20px) saturate(180%);
-  background-color: hsl(230 12% 15% / .4);
-  color: #fff;
-  width: 7.5em;
-  height: 2.9em;
-  border: #00000000 0.2em solid;
-  border-radius: 11px;
-  text-align: right;
-  cursor: pointer;
-  transition: all 0.6s ease;
-}
-
-.button:hover {
-  background-color: hsl(230 12% 15% / .8);
-  box-shadow: 0 0 10px #1f4c65;
-}
-
-.button svg {
-  width: 1.6em;
-  margin: -0.2em 0.8em 1em;
-  position: absolute;
-  display: flex;
-  transition: all 0.6s ease;
-}
-
-.text {
-  margin: 0 1.5em
-}
+@import "@/assets/css/go-button.css";
+@import "@/assets/css/go-button-shadow.css";
 </style>

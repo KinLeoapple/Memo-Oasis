@@ -1,0 +1,28 @@
+.button {
+    backdrop-filter: blur(20px) saturate(180%);
+    background-color: hsl(230 12% 15% / .4);
+    color: #fff;
+    width: 7.5em;
+    height: 2.9em;
+    border: #00000000 0.2em solid;
+    border-radius: 11px;
+    text-align: right;
+    cursor: pointer;
+    transition: all 0.6s ease;
+}
+
+.button:hover {
+    background-color: hsl(230 12% 15% / .8);
+}
+
+.button svg {
+    width: 1.6em;
+    margin: -0.2em 0.8em 1em;
+    position: absolute;
+    display: flex;
+    transition: all 0.6s ease;
+}
+
+.text {
+    margin: 0 1.5em
+}

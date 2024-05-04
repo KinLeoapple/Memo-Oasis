@@ -47,10 +47,14 @@ watch(() => props.category, (val) => {
         class="flex-direction-column md6 lg"
     >
       <transition name="fadeIn">
-        <blockquote v-if="props.category !== null"
-                    class="va-text-block mb-5"
-                    style="border-radius: var(--va-card-border-radius)">
+        <VaCard v-if="props.category !== null"
+                class="mb-5"
+                style="border-radius: var(--va-card-border-radius); background-color: var(--va-text-block)"
+                :outlined="theme === 'dark'"
+                :bordered="theme !== 'dark'"
+        >
           <VaNavbar
+              class="pt-3 pl-3 pr-3 pb-3"
               style="padding: 0; background: transparent"
           >
             <template #left>
@@ -65,11 +69,11 @@ watch(() => props.category, (val) => {
             </template>
             <template #right>
               <VaNavbarItem>
-                <GoBackButton @click="cleanCategory"/>
+                <GoBackButton :shadowed="theme === 'dark'" @click="cleanCategory"/>
               </VaNavbarItem>
             </template>
           </VaNavbar>
-        </blockquote>
+        </VaCard>
       </transition>
 
       <VaCard v-for="(record, index) in records"
@@ -90,7 +94,6 @@ watch(() => props.category, (val) => {
             style="display: flex; flex-direction: column; gap: 1rem"
         >
           <blockquote
-              class=""
               style="font-size: 1rem"
           >
             <p>{{ record.desc }}</p>
@@ -102,7 +105,7 @@ watch(() => props.category, (val) => {
               <span class="category pointer" @click="changeCategory(record.category)">{{ record.category }}</span>
             </div>
             <div>
-              <GoForwardButton @click="changeBlog(record.id)"/>
+              <GoForwardButton :shadowed="theme === 'dark'" @click="changeBlog(record.id)"/>
             </div>
           </div>
         </VaCardContent>

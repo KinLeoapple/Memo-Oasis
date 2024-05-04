@@ -6,6 +6,13 @@ import SwitchThemeButton from "@/components/button/SwitchThemeButton.vue";
 
 const {applyPreset} = useColors();
 applyPreset(localStorage.getItem("theme") || "dark");
+
+const props = defineProps({
+  showSearch: {
+    type: Boolean,
+    default: true
+  }
+});
 </script>
 
 <template>
@@ -15,7 +22,7 @@ applyPreset(localStorage.getItem("theme") || "dark");
       class="mb-3 overflow-hidden"
   >
     <template #left>
-      <VaNavbarItem class="ml-3">
+      <VaNavbarItem v-if="props.showSearch" class="ml-3">
         <VaInput
             placeholder="Search"
             preset="bordered"
@@ -33,10 +40,12 @@ applyPreset(localStorage.getItem("theme") || "dark");
           v-for="(nav, index) in navButtons"
           :key="index"
           class="hidden sm:block pointer">
-        <VaButton
-            round preset="secondary">
-          {{ nav.name }}
-        </VaButton>
+          <router-link :to="nav.path" replace>
+            <VaButton
+                round preset="secondary">
+              {{ nav.name }}
+            </VaButton>
+          </router-link>
       </VaNavbarItem>
       <VaNavbarItem class="mr-3">
         <SwitchThemeButton/>
@@ -51,10 +60,12 @@ export default {
     return {
       navButtons: [
         {
-          name: "Home"
+          name: "Home",
+          path: "/"
         },
         {
-          name: "Tags"
+          name: "Admin",
+          path: "/admin"
         }
       ]
     };

@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watch} from "vue";
+import {ref, watch} from "vue";
 
 const props = defineProps({
   theme: {
@@ -105,24 +105,5 @@ export default {
 </script>
 
 <style scoped>
-.list {
-  --list-text: var(--va-on-background-primary);
-  border-radius: 0.25rem;
-}
-
-.list-light:hover {
-  --list-text: #FFFFFF;
-}
-
-.list-dark-bg:hover {
-  background: #3472F0;
-}
-
-.list-light-bg:hover {
-  background: #154EC1;
-}
-
-.list-text {
-  color: var(--list-text) !important;
-}
+@import "@/assets/css/common.css";
 </style>

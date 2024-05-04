@@ -5,3 +5,24 @@
     background: var(--va-secondary);
     margin: 0 6px;
 }
+
+.list {
+    --list-text: var(--va-on-background-primary);
+    border-radius: 0.25rem;
+}
+
+.list-light:hover {
+    --list-text: #FFFFFF;
+}
+
+.list-dark-bg:hover {
+    background: #3472F0;
+}
+
+.list-light-bg:hover {
+    background: #154EC1;
+}
+
+.list-text {
+    color: var(--list-text) !important;
+}

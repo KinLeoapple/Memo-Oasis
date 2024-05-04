@@ -37,7 +37,7 @@ const props = defineProps({
           class="va-text-bold"
           style="color: #FFFFFF">
           <a
-              href="/"
+              href="/public"
               class="link">
             Memo Oasis
           </a>
