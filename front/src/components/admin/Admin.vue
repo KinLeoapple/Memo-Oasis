@@ -8,6 +8,9 @@ import FooterBar from "@/components/common/FooterBar.vue";
 import BasicInfo from "@/components/common/BasicInfo.vue";
 import {client_height} from "@/assets/js/client_size.js";
 import LoginCard from "@/components/admin/LoginCard.vue";
+import {onBeforeRouteLeave} from "vue-router";
+import SideBar from "@/components/admin/SideBar.vue";
+import WriteBlog from "@/components/admin/WriteBlog.vue";
 
 const {currentPresetName} = useColors();
 
@@ -21,6 +24,7 @@ const desi_page = ref(null);
 
 // Values
 const theme = ref(currentPresetName.value);
+const loginCardRef = ref(null);
 const login = ref(false);
 
 watch(currentPresetName, (val) => {
@@ -38,6 +42,9 @@ const height = computed({
   }
 });
 
+// Unwatch methods
+let unwatchLoginCard;
+
 nextTick(() => {
   let basicInfo = basicInfoRef.value;
   watch(() =>
@@ -50,10 +57,24 @@ nextTick(() => {
         desi_page.value = desiPageVal;
       });
 
+  // Watch login state
+  unwatchLoginCard = watch(() => loginCardRef.value.isLogin, (val) => {
+    login.value = val;
+    if (val) {
+      unwatchLoginCard();
+    }
+  }, {immediate: true, deep: true});
+
   height.value = client_height();
   window.onresize = () => {
     height.value = client_height();
   }
+});
+
+// Call unwatch methods before leave the page
+onBeforeRouteLeave(() => {
+  unwatchLoginCard();
+  window.onresize = null;
 });
 </script>
 
@@ -71,20 +92,19 @@ nextTick(() => {
         <NavBar :show-search="false" v-model:theme="theme"/>
       </template>
 
-      <template #left>
-
+      <template #left v-if="login">
+        <SideBar :theme="theme"/>
       </template>
 
-      <template #right>
-
-      </template>
-
-      <template #content v-if="!login">
-        <LoginCard :theme="theme" :name="name"/>
+      <template #content>
+        <LoginCard v-if="!login" :theme="theme" :name="name" ref="loginCardRef"/>
+        <div style="width: 100%; height: 100%" v-else>
+          <WriteBlog :theme="theme"/>
+        </div>
       </template>
     </VaLayout>
   </div>
-  <FooterBar :theme="theme" :name="desi_name" :page="desi_page"/>
+  <FooterBar v-if="!login" :theme="theme" :name="desi_name" :page="desi_page"/>
 </template>
 
 <style scoped>

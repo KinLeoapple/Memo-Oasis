@@ -1,10 +1,13 @@
 package org.kinleoapple.plugins.database.dao
 
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import org.kinleoapple.plugins.database.Database
 import org.kinleoapple.plugins.database.relation.Designer
 import org.kinleoapple.plugins.database.relation.Quote
 import org.kinleoapple.plugins.database.relation.User
 import org.ktorm.dsl.*
+import org.mindrot.jbcrypt.BCrypt
 
 /**
  * Return a map of some basic information, such as user's name.
@@ -52,9 +55,43 @@ fun getBasicInfo(database: Database): Map<String, String?> {
         designerPage = it[Designer.desiPage]
     }
 
-    return mapOf("name" to name,
+    return mapOf(
+        "name" to name,
         "quote" to quote,
         "quote_name" to quoteName,
         "desi_name" to designerName,
-        "desi_page" to designerPage)
+        "desi_page" to designerPage
+    )
+}
+
+/**
+ * Return a map of the login result.
+ *
+ * @param database The database which wish to search.
+ * @param json The json containers the information.
+ * @return A map of the login result.
+ */
+fun getLogin(database: Database, json: String): Map<String, Boolean> {
+    var pass: String? = null;
+
+    data class DataClass(
+        @SerializedName("username")
+        val username: String,
+        @SerializedName("password")
+        val password: String,
+        @SerializedName("salt")
+        val salt: String
+    )
+
+    val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
+
+    val result = database.connection.from(User)
+        .select(User.userPassword)
+        .where(User.userName eq dataClass.username)
+    result.forEach {
+        pass = it[User.userPassword]
+    }
+    val checkpw = BCrypt.checkpw(pass, dataClass.password)
+
+    return mapOf("login" to checkpw)
 }

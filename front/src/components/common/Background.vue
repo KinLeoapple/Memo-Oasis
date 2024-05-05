@@ -35,7 +35,7 @@
   background-size: 100% 0.5%, contain;
   background-blend-mode: hard-light;
   margin-left: -2.5% !important;
-  margin-top: -2.5% !important;
+  margin-top: 2.5% !important;
   /* background-position: 0 0, 1em 1em, 0 0; */
 }
 </style>

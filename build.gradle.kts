@@ -67,6 +67,7 @@ dependencies {
     implementation("org.ktorm:ktorm-support-sqlite:3.6.0")
     implementation("org.xerial:sqlite-jdbc:3.45.3.0")
     implementation("io.ktor:ktor-server-config-yaml")
+    implementation("org.mindrot:jbcrypt:0.4")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

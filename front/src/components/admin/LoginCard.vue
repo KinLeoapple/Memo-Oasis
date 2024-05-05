@@ -4,6 +4,8 @@ import GoBackButton from "@/components/button/GoBackButton.vue";
 import {Icon} from "@vicons/utils";
 import {User} from "@vicons/fa";
 import {Key} from "@vicons/fa";
+import {crypt_login} from "@/assets/js/crypt.js";
+import {computed, nextTick, ref} from "vue";
 
 const props = defineProps({
   theme: {
@@ -14,7 +16,43 @@ const props = defineProps({
     type: String,
     default: ""
   },
+});
+
+const name = ref("");
+const pass = ref("");
+const isLogin = ref(false);
+const isChecking = ref(false);
+
+const checking = computed({
+  get() {return isChecking.value},
+  set(value) {
+    isChecking.value = value;
+  }
 })
+
+const login = async () => {
+  checking.value = true;
+    crypt_login(name.value, pass.value).then(r => {
+      if (r !== null) {
+        isLogin.value = !!r.login;
+        checking.value = isLogin.value;
+      } else {
+        checking.value = false;
+      }
+    });
+}
+
+nextTick(() => {
+  window.onkeydown = async (e) => {
+    if (e.key === "Enter") {
+      if (!checking.value) {
+        await login();
+      }
+    }
+  }
+});
+
+defineExpose({isLogin});
 </script>
 
 <template>
@@ -46,6 +84,9 @@ const props = defineProps({
                 :placeholder="'Name'"
                 label="Name"
                 preset="bordered"
+                :disabled="checking"
+                :readonly="checking"
+                v-model="name"
             >
               <template #prependInner>
                 <Icon color="secondary">
@@ -60,6 +101,9 @@ const props = defineProps({
                 label="Password"
                 type="password"
                 preset="bordered"
+                :disabled="checking"
+                :readonly="checking"
+                v-model="pass"
             >
               <template #prependInner>
                 <Icon color="secondary">
@@ -68,7 +112,13 @@ const props = defineProps({
               </template>
             </VaInput>
 
-            <VaButton style="margin-top: 50px">Next</VaButton>
+            <VaButton
+                :disabled="checking"
+                :loading="checking"
+                style="margin-top: 50px"
+                @click="login">
+              Next
+            </VaButton>
           </div>
         </div>
       </VaCardBlock>

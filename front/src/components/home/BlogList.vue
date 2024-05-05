@@ -44,7 +44,7 @@ watch(() => props.category, (val) => {
   <div class="row" style="min-height: 100%" v-show="currentBlog === null">
     <div
         style="min-height: 100%; width: 100%; display: flex;"
-        class="flex-direction-column md6 lg"
+        class="flex-direction-column md-6 lg"
     >
       <transition name="fadeIn">
         <VaCard v-if="props.category !== null"
