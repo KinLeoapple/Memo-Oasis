@@ -13,9 +13,8 @@
     "@vuestic/tailwind": "^0.1.5",
     "bcryptjs": "^2.4.3",
     "crypto-js": "^4.2.0",
-    "github-markdown-css": "^5.5.1",
-    "highlight.js": "^11.9.0",
     "marked": "^12.0.2",
+    "md-editor-v3": "^4.14.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.2",
     "vuestic-ui": "^1.9.0"

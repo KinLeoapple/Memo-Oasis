@@ -52,7 +52,7 @@ nextTick(() => {
   }
 });
 
-defineExpose({isLogin});
+defineExpose({isLogin, name, pass});
 </script>
 
 <template>
@@ -75,6 +75,7 @@ defineExpose({isLogin});
         <VaImage
             src="https://source.unsplash.com/1920x1080/?nature"
             style="width: 50%; height: 100%"
+            lazy
         />
         <div class="login-card-right">
           <VaCardTitle style="font-size: 1.5rem">Login</VaCardTitle>
@@ -115,7 +116,7 @@ defineExpose({isLogin});
             <VaButton
                 :disabled="checking"
                 :loading="checking"
-                style="margin-top: 50px"
+                style="margin-top: 3rem"
                 @click="login">
               Next
             </VaButton>
@@ -129,10 +130,10 @@ defineExpose({isLogin});
 <style scoped>
 .login-card {
   width: 60%;
-  height: 50%;
+  height: 70%;
   position: absolute;
   margin: auto;
-  top: 0;
+  top: 5rem;
   left: 0;
   right: 0;
   bottom: 0;

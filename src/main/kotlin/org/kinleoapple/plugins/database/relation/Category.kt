@@ -5,18 +5,19 @@ import org.kinleoapple.plugins.database.Database
 import org.kinleoapple.plugins.database.configureDatabase
 import org.ktorm.schema.Table
 import org.ktorm.schema.int
+import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
 private const val TABLE_NAME = "category"
 
 data object Category : Table<Nothing>(TABLE_NAME) {
-    val catId = int("cat_id").primaryKey()
+    val catId = long("cat_id").primaryKey()
     val catName = varchar("cat_name")
 }
 
 private val sql: String = """
     CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (
-        `cat_id` INT NOT NULL,
+        `cat_id` BIGINT NOT NULL,
         `cat_name` VARCHAR(30) NOT NULL,
     PRIMARY KEY (`cat_id`));
 """.trimIndent()

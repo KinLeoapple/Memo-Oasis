@@ -1,4 +1,6 @@
 <script setup>
+import {nextTick, ref, watch} from "vue";
+
 const props = defineProps({
   theme: {
     type: String,
@@ -13,10 +15,36 @@ const props = defineProps({
     default: 1
   }
 });
+
+
+const max = ref(props.maxTag);
+const min = ref(6);
+
+const findHeading = async (render, level) => {
+  const levelHeading = props.blogIndex.filter(el => {
+    return el.tag === level;
+  });
+  if (levelHeading.length === 0) {
+    return;
+  }
+  render.querySelectorAll(`h${level}`).forEach((el, i) => {
+    el.setAttribute("id", `blog-index-${levelHeading[i].id}`);
+  });
+};
+
+nextTick(() => {
+  watch(() => props.blogIndex, (index) => {
+    if (index !== null && index.length > 0) {
+      const render = document.querySelector("#render");
+      for (let i = min.value; i >= max.value; i--)
+        findHeading(render, i);
+    }
+  });
+});
 </script>
 
 <template>
-  <div v-if="blogIndex !== null && blogIndex.length > 0">
+  <div v-if="props.blogIndex !== null && props.blogIndex.length > 0">
     <VaDivider class="mt-4 mb-3"/>
     <VaList>
       <VaListLabel

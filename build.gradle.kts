@@ -68,6 +68,7 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.45.3.0")
     implementation("io.ktor:ktor-server-config-yaml")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("com.github.yitter:yitter-idgenerator:1.0.6")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

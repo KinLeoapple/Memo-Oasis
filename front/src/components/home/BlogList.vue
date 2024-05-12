@@ -1,7 +1,6 @@
 <script setup>
 import {ref, watch} from "vue";
 import GoBackButton from "@/components/button/GoBackButton.vue";
-import GoForwardButton from "@/components/button/GoForwardButton.vue";
 
 const props = defineProps({
   theme: {
@@ -76,40 +75,45 @@ watch(() => props.category, (val) => {
         </VaCard>
       </transition>
 
-      <VaCard v-for="(record, index) in records"
-              :key="index"
-              class="mb-5 overflow-hidden blog"
-              :outlined="theme === 'dark'"
-              :bordered="theme !== 'dark'"
-      >
-        <VaImage
-            src="https://source.unsplash.com/1920x1080/?nature"
-            style="height: 240px;"
-        />
-        <VaCardTitle
-            style="font-size: 1.5rem">
-          {{ record.title }}
-        </VaCardTitle>
-        <VaCardContent
-            style="display: flex; flex-direction: column; gap: 1rem"
+      <div v-for="(record, index) in records" :key="index">
+        <VaCard
+            class="mb-5 overflow-hidden blog"
+            :outlined="theme === 'dark'"
+            :bordered="theme !== 'dark'"
+            @click="changeBlog(record.id)"
         >
-          <blockquote
-              style="font-size: 1rem"
-          >
-            <p>{{ record.desc }}</p>
-          </blockquote>
-          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: end">
-            <div class="va-text-secondary va-text-justify blog-details">
-              <p>{{ record.date }}</p>
-              <div class="dot"></div>
-              <span class="category pointer" @click="changeCategory(record.category)">{{ record.category }}</span>
-            </div>
-            <div>
-              <GoForwardButton :shadowed="theme === 'dark'" @click="changeBlog(record.id)"/>
-            </div>
+          <div class="overflow-hidden blog-img">
+            <VaImage
+                style="height: 100%"
+                fit="cover"
+                lazy
+                src="https://source.unsplash.com/1920x1080/?nature"
+            />
           </div>
-        </VaCardContent>
-      </VaCard>
+          <VaCardTitle
+              style="font-size: 1.5rem">
+            {{ record.title }}
+          </VaCardTitle>
+          <VaCardContent
+              style="display: flex; flex-direction: column; gap: 1rem"
+          >
+            <blockquote
+                style="font-size: 1rem"
+            >
+              <p>{{ record.desc }}</p>
+            </blockquote>
+            <div class="more-info">
+              <div class="va-text-secondary va-text-justify blog-details">
+                <p>{{ record.date }}</p>
+                <div class="dot"></div>
+                <span class="category pointer" @click.stop="changeCategory(record.category)">{{
+                    record.category
+                  }}</span>
+              </div>
+            </div>
+          </VaCardContent>
+        </VaCard>
+      </div>
     </div>
   </div>
 
@@ -188,14 +192,38 @@ export default {
 @import "@/assets/css/common.css";
 
 .blog {
-  background-color: var(--va-text-block) !important;
+  background-color: rgba(131, 131, 145, 0.06) !important;
+  transition: background-color .2s !important;
+  cursor: pointer;
+}
+
+.blog:hover {
+  backdrop-filter: blur(5px) !important;
+  background-color: rgb(131 131 145 / 24%) !important;
+}
+
+.more-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: end;
 }
 
 .blog-details {
   display: flex;
   justify-content: start;
   align-items: center;
-  font-size: 0.9rem;
+  font-size: 0.94rem;
+  border-radius: 999px;
+  background-color: rgb(131 131 145 / 14%);
+  padding: 6px 12px;
+  margin-top: 10px;
+}
+
+.blog-img {
+  border-radius: 10px;
+  height: 240px;
+  margin: 10px;
 }
 
 .category:hover {

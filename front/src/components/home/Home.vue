@@ -72,8 +72,10 @@ nextTick(() => {
 
   // Watch current category
   unwatchCat = watch(() => categoryRef.value.currentCategory, (val) => {
-    if (val !== null)
+    if (val !== null) {
       category.value = val;
+      document.documentElement.scrollTop = 0;
+    }
   }, {immediate: true, deep: true});
   // Watch values in blog
   unwatchBlog = watch(() =>
@@ -83,6 +85,8 @@ nextTick(() => {
       ], ([categoryVal, blogVal]) => {
     category.value = categoryVal;
     blogId.value = blogVal;
+    if (categoryVal !== null)
+      document.documentElement.scrollTop = 0;
     (async () => {
       if (blogVal !== null)
         get_blog_content(0).then(r => {
@@ -136,7 +140,7 @@ onBeforeRouteLeave(() => {
       </template>
 
       <template #left>
-        <div class="mt-5 ml-5" style="max-width: 300px; min-width: 300px" :style="{height: `${height}px`,}">
+        <div class="mt-5 ml-5 mb-5" style="max-width: 300px; min-width: 300px" :style="{height: `${height}px`,}">
           <ProfileCard :theme="theme" :name="name" :quote="quote" :quote-name="quote_name"/>
           <CategoriesList v-show="blogId === null" :theme="theme" :category="category" ref="categoryRef"/>
           <BlogIndex :theme="theme" :blog-index="blogIndex" :max-tag="maxTitle"/>
@@ -163,7 +167,6 @@ onBeforeRouteLeave(() => {
       </template>
     </VaLayout>
   </div>
-  <FooterBar :theme="theme" :name="desi_name" :page="desi_page"/>
 </template>
 
 <script>

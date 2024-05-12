@@ -1,10 +1,8 @@
 <script setup>
 import {marked} from "marked";
-import hljs from "highlight.js";
-import "github-markdown-css"; // markdown style
-import "highlight.js/styles/atom-one-dark.css"; // code highlight style
 import {computed, ref, watch} from "vue";
 import GoBackButton from "@/components/button/GoBackButton.vue";
+import {MdPreview} from "md-editor-v3";
 
 const props = defineProps({
   theme: {
@@ -21,7 +19,7 @@ const currentContent = ref(null);
 const maxTitle = ref(null);
 const blogIndex = ref(null);
 
-const markdownToHtml = computed(() => {
+const markdown = computed(() => {
   if (currentContent.value !== null) {
     let anchor = 0;
     let rendererMD = new marked.Renderer();
@@ -52,11 +50,7 @@ const markdownToHtml = computed(() => {
             }
         );
       }
-      return `<h${level} id="blog-index-${anchor}">${text}</h${level}>`;
-    }
-
-    rendererMD.link = (href, _, text) => {
-      return '<a href="' + href + '" title="' + text + '" target="_blank">' + text + '</a>';
+      return `<h${level}>${text}</h${level}>`;
     }
 
     marked.setOptions({
@@ -71,7 +65,8 @@ const markdownToHtml = computed(() => {
       xhtml: false
     });
 
-    return marked(currentContent.value);
+    marked(currentContent.value);
+    return currentContent.value;
   }
 });
 
@@ -79,15 +74,6 @@ const cleanContent = () => {
   currentContent.value = null;
   maxTitle.value = null;
   blogIndex.value = null;
-}
-
-const VHighlight = {
-  mounted: (el) => {
-    let codes = el.querySelectorAll("pre code");
-    codes.forEach((code) => {
-      hljs.highlightElement(code);
-    });
-  }
 }
 
 watch(() => props.content, (val) => {
@@ -118,9 +104,15 @@ defineExpose({currentContent, blogIndex, maxTitle});
         <VaImage
             src="https://source.unsplash.com/1920x1080/?nature"
             style="height: 240px"
+            lazy
         />
       </div>
-      <VaCardContent class="markdown-body" v-highlight v-html="markdownToHtml"/>
+      <VaCardContent>
+        <MdPreview id="render" :theme="theme === 'dark' ? 'dark' : 'light'" style="background-color: transparent"
+                   v-if="currentContent !== null"
+                   :modelValue="markdown"
+                   :preview-theme="'github'"/>
+      </VaCardContent>
     </VaCard>
   </div>
 </template>
@@ -128,10 +120,5 @@ defineExpose({currentContent, blogIndex, maxTitle});
 <style scoped>
 .blog-render {
   background-color: var(--va-text-block) !important;
-}
-
-.markdown-body {
-  background-color: transparent !important;
-  color: var(--va-on-background-primary);
 }
 </style>

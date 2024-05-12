@@ -4,7 +4,6 @@ import Background from "@/components/common/Background.vue";
 import NavBar from "@/components/common/NavBar.vue";
 import {computed, nextTick, ref, watch} from "vue";
 import {useColors} from "vuestic-ui";
-import FooterBar from "@/components/common/FooterBar.vue";
 import BasicInfo from "@/components/common/BasicInfo.vue";
 import {client_height} from "@/assets/js/client_size.js";
 import LoginCard from "@/components/admin/LoginCard.vue";
@@ -26,6 +25,8 @@ const desi_page = ref(null);
 const theme = ref(currentPresetName.value);
 const loginCardRef = ref(null);
 const login = ref(false);
+const username = ref(null);
+const password = ref(null);
 
 watch(currentPresetName, (val) => {
   theme.value = val;
@@ -58,9 +59,15 @@ nextTick(() => {
       });
 
   // Watch login state
-  unwatchLoginCard = watch(() => loginCardRef.value.isLogin, (val) => {
-    login.value = val;
-    if (val) {
+  unwatchLoginCard = watch(() => [
+    loginCardRef.value.isLogin,
+    loginCardRef.value.name,
+    loginCardRef.value.pass,
+  ], ([loginVal, nameVal, passVal]) => {
+    login.value = loginVal;
+    if (loginVal) {
+      username.value = nameVal;
+      password.value = passVal;
       unwatchLoginCard();
     }
   }, {immediate: true, deep: true});
@@ -99,12 +106,11 @@ onBeforeRouteLeave(() => {
       <template #content>
         <LoginCard v-if="!login" :theme="theme" :name="name" ref="loginCardRef"/>
         <div style="width: 100%; height: 100%" v-else>
-          <WriteBlog :theme="theme"/>
+          <WriteBlog :theme="theme" :name="username" :pass="password"/>
         </div>
       </template>
     </VaLayout>
   </div>
-  <FooterBar v-if="!login" :theme="theme" :name="desi_name" :page="desi_page"/>
 </template>
 
 <style scoped>
