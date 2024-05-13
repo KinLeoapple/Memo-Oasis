@@ -5,7 +5,7 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 
 nextTick(() => {
-  router.replace('/');
+    router.replace('/');
 });
 </script>
 

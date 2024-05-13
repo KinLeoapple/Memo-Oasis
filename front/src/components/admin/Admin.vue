@@ -10,6 +10,7 @@ import LoginCard from "@/components/admin/LoginCard.vue";
 import {onBeforeRouteLeave} from "vue-router";
 import SideBar from "@/components/admin/SideBar.vue";
 import WriteBlog from "@/components/admin/WriteBlog.vue";
+import {get_draft_all} from "@/assets/js/api.js";
 
 const {currentPresetName} = useColors();
 
@@ -47,6 +48,10 @@ const height = computed({
 let unwatchLoginCard;
 
 nextTick(() => {
+    get_draft_all().then(r => {
+      console.log(r)
+    });
+
   let basicInfo = basicInfoRef.value;
   watch(() =>
           [basicInfo.name, basicInfo.quote, basicInfo.quote_name, basicInfo.desi_name, basicInfo.desi_page],
@@ -80,8 +85,10 @@ nextTick(() => {
 
 // Call unwatch methods before leave the page
 onBeforeRouteLeave(() => {
-  unwatchLoginCard();
-  window.onresize = null;
+  nextTick(() => {
+    unwatchLoginCard();
+    window.onresize = null;
+  });
 });
 </script>
 

@@ -8,10 +8,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.kinleoapple.plugins.database.Database
 import org.kinleoapple.plugins.database.configureDatabase
-import org.kinleoapple.plugins.database.dao.getBasicInfo
-import org.kinleoapple.plugins.database.dao.getLogin
-import org.kinleoapple.plugins.database.dao.postBlog
-import org.kinleoapple.plugins.database.dao.postDraft
+import org.kinleoapple.plugins.database.dao.*
 
 
 fun Application.configureSerialization() {
@@ -29,6 +26,16 @@ fun Application.configureSerialization() {
 
         get("/blog/content/{id}") {
             call.respond(mapOf("content" to content))
+        }
+
+        get("/blog/draft/{id}") {
+            val id = call.parameters["id"]
+            if (id == "null")
+                call.respond(getDraftAll(database))
+            else
+                if (id != null) {
+                    call.respond(getDraft(database, id.toLong()))
+                }
         }
 
         post("/blog/draft/{id}") {

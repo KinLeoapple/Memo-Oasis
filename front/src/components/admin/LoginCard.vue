@@ -4,8 +4,9 @@ import GoBackButton from "@/components/button/GoBackButton.vue";
 import {Icon} from "@vicons/utils";
 import {User} from "@vicons/fa";
 import {Key} from "@vicons/fa";
-import {crypt_login} from "@/assets/js/crypt.js";
+import {crypt_str} from "@/assets/js/crypt.js";
 import {computed, nextTick, ref} from "vue";
+import {post_login} from "@/assets/js/api.js";
 
 const props = defineProps({
   theme: {
@@ -24,7 +25,9 @@ const isLogin = ref(false);
 const isChecking = ref(false);
 
 const checking = computed({
-  get() {return isChecking.value},
+  get() {
+    return isChecking.value
+  },
   set(value) {
     isChecking.value = value;
   }
@@ -32,7 +35,8 @@ const checking = computed({
 
 const login = async () => {
   checking.value = true;
-    crypt_login(name.value, pass.value).then(r => {
+  crypt_str(pass.value).then(hash => {
+    post_login(name.value, hash).then(r => {
       if (r !== null) {
         isLogin.value = !!r.login;
         checking.value = isLogin.value;
@@ -40,6 +44,7 @@ const login = async () => {
         checking.value = false;
       }
     });
+  });
 }
 
 nextTick(() => {
@@ -142,6 +147,26 @@ defineExpose({isLogin, name, pass});
   align-items: end;
   justify-content: start;
   gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+@media screen and (max-width: 1024px) {
+  .login-card {
+    width: 60%;
+    height: 50%;
+    position: absolute;
+    margin: auto;
+    top: 5rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: start;
+    gap: 1rem;
+    transition: all 0.2s ease;
+  }
 }
 
 .login-card-right {

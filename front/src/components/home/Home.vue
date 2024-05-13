@@ -118,10 +118,12 @@ nextTick(() => {
 
 // Call unwatch methods before leave the page
 onBeforeRouteLeave(() => {
-  unwatchCat();
-  unwatchBlog();
-  unwatchRender();
-  window.onresize = null;
+  nextTick(() => {
+    unwatchCat();
+    unwatchBlog();
+    unwatchRender();
+    window.onresize = null;
+  });
 });
 </script>
 
@@ -140,7 +142,7 @@ onBeforeRouteLeave(() => {
       </template>
 
       <template #left>
-        <div class="mt-5 ml-5 mb-5" style="max-width: 300px; min-width: 300px" :style="{height: `${height}px`,}">
+        <div class="mt-5 ml-5 mb-5 left" :style="{height: `${height}px`,}">
           <ProfileCard :theme="theme" :name="name" :quote="quote" :quote-name="quote_name"/>
           <CategoriesList v-show="blogId === null" :theme="theme" :category="category" ref="categoryRef"/>
           <BlogIndex :theme="theme" :blog-index="blogIndex" :max-tag="maxTitle"/>
@@ -148,7 +150,7 @@ onBeforeRouteLeave(() => {
       </template>
 
       <template #right>
-        <div style="position: relative" class="mt-5 mr-5" :style="{height: `${height}px`,}">
+        <div style="position: relative" class="mt-5 mr-5 right" :style="{height: `${height}px`,}">
           <VaDatePicker
               v-model="date"
               readonly
@@ -184,5 +186,21 @@ export default {
   min-width: 100%;
   min-height: 100%;
   overflow: hidden;
+}
+
+.left {
+  max-width: 300px;
+  min-width: 300px
+}
+
+@media screen and (max-width: 1024px) {
+  .left {
+    max-width: 200px;
+    min-width: 200px
+  }
+
+  .right {
+    display: none;
+  }
 }
 </style>
