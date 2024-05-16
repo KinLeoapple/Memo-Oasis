@@ -2,7 +2,6 @@ package org.kinleoapple.plugins
 
 import io.ktor.server.application.*
 import org.kinleoapple.database.relation.*
-import org.kinleoapple.plugins.database.relation.*
 
 fun Application.configureSQLite() {
     createImage()

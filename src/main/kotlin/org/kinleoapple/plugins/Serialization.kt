@@ -9,7 +9,6 @@ import io.ktor.server.routing.*
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.configureDatabase
 import org.kinleoapple.database.dao.*
-import org.kinleoapple.plugins.database.dao.*
 
 
 fun Application.configureSerialization() {
