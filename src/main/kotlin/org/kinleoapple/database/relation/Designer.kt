@@ -1,8 +1,8 @@
-package org.kinleoapple.plugins.database.relation
+package org.kinleoapple.database.relation
 
 import io.ktor.server.application.*
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.configureDatabase
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.configureDatabase
 import org.ktorm.dsl.deleteAll
 import org.ktorm.dsl.insert
 import org.ktorm.schema.Table
@@ -19,7 +19,7 @@ data object Designer: Table<Nothing>(TABLE_NAME) {
 }
 
 private val sql: String = """
-    CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (
+    CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
       `desi_id` BIGINT NOT NULL DEFAULT 0,
       `desi_name` VARCHAR(30) NOT NULL,
       `desi_page` VARCHAR(100) NOT NULL,
@@ -38,7 +38,7 @@ fun Application.createDesigner() {
     val page = environment.config.propertyOrNull("memo.designer.page")?.getString() ?: ""
     database.connection.deleteAll(Designer)
     database.connection.insert(Designer) {
-        set(it.desiName, name)
-        set(it.desiPage, page)
+        set(Designer.desiName, name)
+        set(Designer.desiPage, page)
     }
 }

@@ -1,7 +1,7 @@
-package org.kinleoapple.plugins.database.dao
+package org.kinleoapple.database.dao
 
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.relation.Draft
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.relation.Draft
 import org.ktorm.dsl.*
 import java.io.File
 

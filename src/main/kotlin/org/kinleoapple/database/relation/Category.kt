@@ -1,8 +1,8 @@
-package org.kinleoapple.plugins.database.relation
+package org.kinleoapple.database.relation
 
 import io.ktor.server.application.*
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.configureDatabase
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.configureDatabase
 import org.ktorm.schema.Table
 import org.ktorm.schema.int
 import org.ktorm.schema.long
@@ -16,7 +16,7 @@ data object Category : Table<Nothing>(TABLE_NAME) {
 }
 
 private val sql: String = """
-    CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (
+    CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
         `cat_id` BIGINT NOT NULL,
         `cat_name` VARCHAR(30) NOT NULL,
     PRIMARY KEY (`cat_id`));

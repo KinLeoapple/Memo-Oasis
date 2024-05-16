@@ -1,9 +1,9 @@
-package org.kinleoapple.plugins.database.dao
+package org.kinleoapple.database.dao
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.relation.User
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.relation.User
 import org.ktorm.dsl.*
 import org.mindrot.jbcrypt.BCrypt
 

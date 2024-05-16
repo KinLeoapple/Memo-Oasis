@@ -1,4 +1,4 @@
-package org.kinleoapple.plugins.database
+package org.kinleoapple.database
 
 import io.ktor.server.application.*
 import org.ktorm.logging.LogLevel

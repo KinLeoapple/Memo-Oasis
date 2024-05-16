@@ -1,4 +1,4 @@
-package org.kinleoapple.plugins.database
+package org.kinleoapple.database
 
 import com.alibaba.druid.pool.DruidDataSourceFactory
 import org.ktorm.database.Database

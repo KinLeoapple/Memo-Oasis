@@ -1,9 +1,9 @@
-package org.kinleoapple.plugins.database.dao
+package org.kinleoapple.database.dao
 
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.relation.Designer
-import org.kinleoapple.plugins.database.relation.Quote
-import org.kinleoapple.plugins.database.relation.User
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.relation.Designer
+import org.kinleoapple.database.relation.Quote
+import org.kinleoapple.database.relation.User
 import org.ktorm.dsl.*
 
 /**

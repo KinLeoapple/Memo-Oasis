@@ -1,8 +1,8 @@
-package org.kinleoapple.plugins.database.relation
+package org.kinleoapple.database.relation
 
 import io.ktor.server.application.*
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.configureDatabase
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.configureDatabase
 import org.ktorm.schema.*
 
 private const val TABLE_NAME = "blog"
@@ -17,7 +17,7 @@ data object Blog: Table<Nothing>(TABLE_NAME) {
 }
 
 private val sql: String = """
-    CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (
+    CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
           `blog_id` BIGINT NOT NULL,
           `cat_id` BIGINT NOT NULL,
           `blog_pub_dt` DATETIME NOT NULL,

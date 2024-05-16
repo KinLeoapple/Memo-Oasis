@@ -6,8 +6,9 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.configureDatabase
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.configureDatabase
+import org.kinleoapple.database.dao.*
 import org.kinleoapple.plugins.database.dao.*
 
 

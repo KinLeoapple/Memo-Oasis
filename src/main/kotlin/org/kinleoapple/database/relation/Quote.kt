@@ -1,8 +1,8 @@
-package org.kinleoapple.plugins.database.relation
+package org.kinleoapple.database.relation
 
 import io.ktor.server.application.*
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.configureDatabase
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.configureDatabase
 import org.ktorm.dsl.deleteAll
 import org.ktorm.dsl.insert
 import org.ktorm.schema.Table
@@ -19,7 +19,7 @@ data object Quote: Table<Nothing>(TABLE_NAME) {
 }
 
 private val sql: String = """
-    CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (
+    CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
       `quote_id` BIGINT NOT NULL DEFAULT 0,
       `quote_text` VARCHAR(500) NOT NULL,
       `quote_name` VARCHAR(100) NOT NULL,
@@ -38,7 +38,7 @@ fun Application.createQuote() {
     val quoteName = environment.config.propertyOrNull("memo.user.quoteName")?.getString()
     database.connection.deleteAll(Quote)
     database.connection.insert(Quote) {
-        set(it.quoteText, quote)
-        set(it.quoteName, quoteName)
+        set(Quote.quoteText, quote)
+        set(Quote.quoteName, quoteName)
     }
 }

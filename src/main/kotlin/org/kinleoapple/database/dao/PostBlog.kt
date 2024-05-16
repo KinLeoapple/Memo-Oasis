@@ -1,10 +1,10 @@
-package org.kinleoapple.plugins.database.dao
+package org.kinleoapple.database.dao
 
 import com.github.yitter.idgen.YitIdHelper
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import org.kinleoapple.plugins.database.Database
-import org.kinleoapple.plugins.database.relation.Blog
+import org.kinleoapple.database.Database
+import org.kinleoapple.database.relation.Blog
 import org.kinleoapple.security.verifyUser
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
