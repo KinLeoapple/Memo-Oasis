@@ -1,2 +1,2 @@
-*.js linguist-language=kotlin
-*。vue linguist-language=kotlin
+*.js linguist-language=Kotlin
+*.vue linguist-language=Kotlin
