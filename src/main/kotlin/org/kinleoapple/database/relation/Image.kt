@@ -1,9 +1,5 @@
 package org.kinleoapple.database.relation
 
-import io.ktor.server.application.*
-import org.kinleoapple.database.Database
-import org.kinleoapple.database.configureDatabase
-import org.kinleoapple.database.relation.Blog.primaryKey
 import org.ktorm.schema.Table
 import org.ktorm.schema.datetime
 import org.ktorm.schema.long
@@ -25,11 +21,6 @@ private val sql: String = """
     PRIMARY KEY (`img_id`));
 """.trimIndent()
 
-fun Application.createImage() {
-    val database = Database(configureDatabase())
-    val conn = database.nativeConnect()
-    val statement = conn?.createStatement()
-    sql.split(";\n").forEach {
-        statement?.executeUpdate(it)
-    }
+fun createImage(): String {
+   return sql
 }

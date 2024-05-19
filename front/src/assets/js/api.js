@@ -1,8 +1,13 @@
 // Environment Values
 import {crypt_str} from "@/assets/js/crypt.js";
 
-const is_dev = true; // Remember to set to false before build
-const prefix = is_dev ? "http://127.0.0.1:8080" : "";
+let protocol = window.location.protocol;
+let hostname = window.location.hostname;
+let port = window.location.port;
+if (port === null || port === undefined || port === "")
+    port = null;
+
+const prefix = `${protocol}//${hostname}${port != null ? `:${8080}` : ""}`;
 
 export function basic_info() {
     return new Promise(resolve => {
@@ -93,5 +98,17 @@ export function post_blog(username, password, title, blog, id, catId, blogDes) {
                 resolve(r.json())
             }).catch(_ => resolve(new Promise(() => resolve(null))));
         });
+    });
+}
+
+export function post_img(fromData, id = null) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/img/${id}`, {
+            method: "POST",
+            mode: "cors",
+            body: fromData
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
     });
 }

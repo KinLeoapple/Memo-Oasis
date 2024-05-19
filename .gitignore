@@ -36,3 +36,5 @@ out/
 .vscode/
 /memo.db
 /draft/
+/blog/
+/img/

@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import md5 from 'crypto-js/md5.js'
+import { md5 } from 'js-md5';
 
 const max = 10;
 const min = 0;

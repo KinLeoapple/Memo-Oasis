@@ -32,6 +32,15 @@ const findHeading = async (render, level) => {
   });
 };
 
+const smoothScroll = (destination) => {
+  let target = document.getElementById(destination);
+  if (window.scrollTo) {
+    window.scrollTo({"behavior": "smooth", "top": target.offsetTop});
+  } else if (window.scroll) {
+    window.scroll({"behavior": "smooth", "top": target.offsetTop});
+  }
+}
+
 nextTick(() => {
   watch(() => props.blogIndex, (index) => {
     if (index !== null && index.length > 0) {
@@ -56,15 +65,15 @@ nextTick(() => {
 
       <VaScrollContainer
           style="max-height: 150px"
-          color="primary"
+          color="success"
           vertical
       >
         <VaListItem
             v-for="(item, index) in blogIndex"
             :key="index"
-            :href="`#blog-index-${item.id}`"
             :style="{marginLeft: `${((item.tag - maxTag) * 10)}px`}"
             class="list pointer"
+            @click="smoothScroll(`blog-index-${item.id}`)"
             :class="{
           'list-dark-bg': props.theme === 'dark',
           'list-light-bg': props.theme === 'light',

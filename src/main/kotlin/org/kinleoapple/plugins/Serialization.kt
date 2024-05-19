@@ -50,6 +50,21 @@ fun Application.configureSerialization() {
             call.respond(postBlog(database, json, id))
         }
 
+        get("/img/{id}") {
+            val id = call.parameters["id"]
+            if (id != "null") {
+                if (id != null) {
+                    call.respondBytes(getImg(database, id.toLong()))
+                }
+            }
+        }
+
+        post("/img/{id}") {
+            val id = call.parameters["id"]?.toLongOrNull()
+            val form = call.receiveMultipart()
+            call.respond(postImg(database, form, id))
+        }
+
         post("/login") {
             val json = call.receiveText()
             call.respond(getLogin(database, json))

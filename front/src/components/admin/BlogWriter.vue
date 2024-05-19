@@ -1,10 +1,9 @@
 <script setup>
-
 import {MdEditor} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 import "@/assets/css/editor.css";
 import {computed, nextTick, ref, watch} from "vue";
-import {post_blog, post_draft} from "@/assets/js/api.js";
+import {post_blog, post_draft, post_img} from "@/assets/js/api.js";
 
 const props = defineProps({
   theme: {
@@ -38,16 +37,16 @@ const textVal = computed({
 });
 
 const saveDraft = () => {
-    post_draft(props.name, props.pass, props.title, text.value, id.value).then(r => {
-      if (r !== null) {
-        if (r.saved !== null) {
-          if (id.value === null)
-            id.value = r.saved;
-          changeSaved.value = true;
-          changedText.value = text.value;
-        }
+  post_draft(props.name, props.pass, props.title, text.value, id.value).then(r => {
+    if (r !== null) {
+      if (r.saved !== null) {
+        if (id.value === null)
+          id.value = r.saved;
+        changeSaved.value = true;
+        changedText.value = text.value;
       }
-    });
+    }
+  });
 }
 
 const change = () => {
@@ -65,6 +64,36 @@ const save = (val) => {
         saved.value = true;
       }
     }
+  });
+};
+
+
+const uploadImg = async (files, callback) => {
+  const res = await Promise.all(
+      files.map((file) => {
+        return new Promise(resolve => {
+          const form = new FormData();
+          form.append("file", file);
+          post_img(form).then(r => {
+            if (r.saved !== null) {
+              resolve(r.saved);
+            }
+          });
+        });
+      })
+  );
+
+  let protocol = window.location.protocol;
+  let hostname = window.location.hostname;
+  let port = window.location.port;
+  if (port === null || port === undefined || port === "")
+    port = null;
+
+  callback(res.map((id) =>
+      `${protocol}//${hostname}${port != null ? `:${8080}` : ""}/img/${id}`
+  ));
+  document.querySelectorAll(".md-editor-modal-close").forEach(el => {
+    el.click();
   });
 };
 
@@ -102,6 +131,7 @@ defineExpose({changeSaved, saved});
         :scroll-auto="true"
         :on-change="change"
         :on-save="save"
+        :on-upload-img="uploadImg"
         style="background-color: transparent; border: none; height: 100%"/>
   </div>
 </template>

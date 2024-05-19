@@ -12,16 +12,6 @@ ktorm:
     driver: "org.sqlite.JDBC"
 
 # 这是一个过度方案，以后可能会考虑其他方式来配置用户信息
-memo:
-  user:
-    name: Kinleoapple
-    quote: A man can be destroyed but not defeated.
-    quoteName: Ernest Hemingway
-    password: 2460DOGCAT
-  designer:
-    name: Kinleoapple
-    page: "https://github.com/KinLeoapple"
-
 markdown:
   title: This is a test markdown
   desc: "A long time ago in a galaxy far,far away.

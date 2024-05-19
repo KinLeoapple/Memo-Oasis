@@ -7,7 +7,6 @@ import NavBar from "@/components/common/NavBar.vue";
 import BlogList from "@/components/home/BlogList.vue";
 
 import {useColors} from "vuestic-ui";
-import FooterBar from "@/components/common/FooterBar.vue";
 import {get_blog_content} from "@/assets/js/api.js";
 import RenderBlog from "@/components/home/RenderBlog.vue";
 import {client_height} from "@/assets/js/client_size.js";

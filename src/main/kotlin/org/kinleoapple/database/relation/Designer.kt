@@ -1,12 +1,6 @@
 package org.kinleoapple.database.relation
 
-import io.ktor.server.application.*
-import org.kinleoapple.database.Database
-import org.kinleoapple.database.configureDatabase
-import org.ktorm.dsl.deleteAll
-import org.ktorm.dsl.insert
 import org.ktorm.schema.Table
-import org.ktorm.schema.int
 import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
@@ -26,19 +20,6 @@ private val sql: String = """
     PRIMARY KEY (`desi_id`));
 """.trimIndent()
 
-fun Application.createDesigner() {
-    val database = Database(configureDatabase())
-    val conn = database.nativeConnect()
-    val statement = conn?.createStatement()
-    sql.split(";\n").forEach {
-        statement?.executeUpdate(it)
-    }
-
-    val name = environment.config.propertyOrNull("memo.designer.name")?.getString() ?: "Memo"
-    val page = environment.config.propertyOrNull("memo.designer.page")?.getString() ?: ""
-    database.connection.deleteAll(Designer)
-    database.connection.insert(Designer) {
-        set(Designer.desiName, name)
-        set(Designer.desiPage, page)
-    }
+fun createDesigner(): String {
+    return sql
 }
