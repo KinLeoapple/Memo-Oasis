@@ -26,7 +26,7 @@ fun getLogin(database: Database, json: String): Map<String, Boolean> {
 
     val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
 
-    val result = database.connection.from(User)
+    val result = database.getConnection().from(User)
         .select(User.userPassword)
         .where(User.userName eq dataClass.username)
     result.forEach {

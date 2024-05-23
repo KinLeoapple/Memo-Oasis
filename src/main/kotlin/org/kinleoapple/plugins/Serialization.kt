@@ -13,6 +13,7 @@ import org.kinleoapple.database.dao.*
 
 fun Application.configureSerialization() {
     val database = Database(configureDatabase())
+    database.invoke()
     val content = environment.config.propertyOrNull("markdown.content")?.getString()
 
     install(ContentNegotiation) {

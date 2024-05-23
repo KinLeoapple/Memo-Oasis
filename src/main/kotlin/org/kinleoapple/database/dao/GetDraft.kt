@@ -18,7 +18,7 @@ fun getDraft(database: Database, id: Long): Map<String, String?> {
     var draftContent: String? = null;
     var draftId: Long? = 0;
 
-    val result = database.connection.from(Draft)
+    val result = database.getConnection().from(Draft)
         .select(Draft.draftPath, Draft.draftTitle, Draft.draftPath)
         .where(Draft.draftId eq id)
 

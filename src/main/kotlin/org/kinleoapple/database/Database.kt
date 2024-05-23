@@ -10,10 +10,10 @@ import java.util.*
 import javax.sql.DataSource
 
 open class Database(private val config: DatabaseConfig) {
-    var connection: Database
-    private var dataSource: DataSource
+    private lateinit var connection: Database
+    private lateinit var dataSource: DataSource
 
-    init {
+    fun invoke() {
         val prop = Properties()
         config.javaClass.declaredFields.forEach {
             prop[it.name] = "${it.apply { isAccessible = true }.get(config)}"
@@ -24,6 +24,10 @@ open class Database(private val config: DatabaseConfig) {
             dataSource = dataSource,
             logger = ConsoleLogger(config.logLevel)
         )
+    }
+
+    fun getConnection(): Database {
+        return connection;
     }
 
     fun nativeConnect() : Connection? {

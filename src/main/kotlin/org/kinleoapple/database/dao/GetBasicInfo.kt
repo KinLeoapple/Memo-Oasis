@@ -20,7 +20,7 @@ fun getBasicInfo(database: Database): Map<String, String?> {
     var designerName: String? = null
     var designerPage: String? = null;
 
-    var result = database.connection.from(User)
+    var result = database.getConnection().from(User)
         .select(User.userName, User.quoteId)
         .where(User.userId eq 0)
     result.forEach {
@@ -29,7 +29,7 @@ fun getBasicInfo(database: Database): Map<String, String?> {
     }
 
     if (quoteId != null) {
-        result = database.connection.from(Quote)
+        result = database.getConnection().from(Quote)
             .select(Quote.quoteText, Quote.quoteName)
             .where(Quote.quoteId eq quoteId!!)
         result.forEach {
@@ -38,14 +38,14 @@ fun getBasicInfo(database: Database): Map<String, String?> {
         }
     }
 
-    result = database.connection.from(Designer)
+    result = database.getConnection().from(Designer)
         .select(Designer.desiName)
         .where(Designer.desiId eq 0)
     result.forEach {
         designerName = it[Designer.desiName]
     }
 
-    result = database.connection.from(Designer)
+    result = database.getConnection().from(Designer)
         .select(Designer.desiPage)
         .where(Designer.desiId eq 0)
     result.forEach {

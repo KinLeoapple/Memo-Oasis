@@ -31,7 +31,7 @@ fun deleteDraft(database: Database, json: String): Map<String, Boolean> {
     // if login, delete draft and delete the information to database.
     if (verifyUser(database, dataClass.name, dataClass.hash)) {
         // delete the information in database anyway.
-        database.connection.delete(Draft) {
+        database.getConnection().delete(Draft) {
             it.draftId eq dataClass.draftId.toLong()
         }
         // try to delete file

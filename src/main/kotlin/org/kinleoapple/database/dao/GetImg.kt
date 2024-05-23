@@ -16,7 +16,7 @@ fun getImg(database: Database, id: Long): ByteArray {
     val imgContent: ByteArray
     var imgPath: String? = null;
 
-    val result = database.connection.from(Image)
+    val result = database.getConnection().from(Image)
         .select(Image.imgPath)
         .where(Image.imgId eq id)
 

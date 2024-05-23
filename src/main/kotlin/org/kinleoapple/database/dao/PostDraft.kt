@@ -48,14 +48,14 @@ fun postDraft(database: Database, json: String, id: Long?): Map<String, String?>
 
             // store to database
             try {
-                database.connection.insert(Draft) {
+                database.getConnection().insert(Draft) {
                     set(it.draftId, newId)
                     set(it.draftUpdateDt, LocalDateTime.now())
                     set(it.draftPath, saveTo.path)
                     set(it.draftTitle, dataClass.title)
                 }
             } catch (e: Exception) {
-                database.connection.update(Draft) {
+                database.getConnection().update(Draft) {
                     set(it.draftUpdateDt, LocalDateTime.now())
                     set(it.draftPath, saveTo.path)
                     set(it.draftTitle, dataClass.title)

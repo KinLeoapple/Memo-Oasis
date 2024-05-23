@@ -16,7 +16,7 @@ import java.io.File
 fun getDraftAll(database: Database): Map<String, Map<String, String?>> {
     val map: MutableMap<String, Map<String, String?>> = HashMap()
 
-    val result = database.connection.from(Draft)
+    val result = database.getConnection().from(Draft)
         .select(Draft.draftId, Draft.draftTitle, Draft.draftPath, Draft.draftPath)
 
     result.forEach {

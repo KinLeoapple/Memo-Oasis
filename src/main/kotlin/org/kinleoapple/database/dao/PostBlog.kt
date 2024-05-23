@@ -52,7 +52,7 @@ fun postBlog(database: Database, json: String, id: Long?): Map<String, String?> 
 
             // store to database
             try {
-                database.connection.insert(Blog) {
+                database.getConnection().insert(Blog) {
                     set(it.blogId, newId)
                     set(it.catId, dataClass.catId.toLong())
                     set(it.blogPubDt, LocalDateTime.now())
@@ -61,7 +61,7 @@ fun postBlog(database: Database, json: String, id: Long?): Map<String, String?> 
                     set(it.blogDes, dataClass.blogDes)
                 }
             } catch (e: Exception) {
-                database.connection.update(Blog) {
+                database.getConnection().update(Blog) {
                     set(it.catId, dataClass.catId.toLong())
                     set(it.blogPubDt, LocalDateTime.now())
                     set(it.blogPath, saveTo.path)

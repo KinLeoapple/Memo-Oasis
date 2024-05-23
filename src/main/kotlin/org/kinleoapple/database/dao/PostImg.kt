@@ -34,13 +34,13 @@ suspend fun postImg(database: Database, form: MultiPartData, id: Long?): Map<Str
 
             // store to database
             try {
-                database.connection.insert(Image) {
+                database.getConnection().insert(Image) {
                     set(it.imgId, newId)
                     set(it.imgPath, saveTo.path)
                     set(it.imgPubDt, LocalDateTime.now())
                 }
             } catch (e: Exception) {
-                database.connection.update(Image) {
+                database.getConnection().update(Image) {
                     set(it.imgPath, saveTo.path)
                     set(it.imgPubDt, LocalDateTime.now())
                     where {
