@@ -4,6 +4,7 @@ import com.github.yitter.idgen.YitIdHelper
 import io.ktor.http.content.*
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Image
+import org.kinleoapple.security.verifyUser
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
 import org.ktorm.dsl.update
@@ -19,37 +20,51 @@ import java.time.LocalDateTime
  * @return A map of the post image result.
  */
 suspend fun postImg(database: Database, form: MultiPartData, id: Long?): Map<String, String?> {
+    var name: String? = null
+    var hash: String? = null
     var newId: Long? = null
+    var fileBytes: ByteArray? = null
+    var saveTo: File? = null
+
     form.forEachPart { part ->
-        if (part is PartData.FileItem && part.name == "file") {
+        if (part is PartData.FormItem && part.name == "name") {
+            name = part.value
+        } else if (part is PartData.FormItem && part.name == "hash") {
+            hash = part.value
+        } else if (part is PartData.FileItem && part.name == "file") {
             newId = id ?: YitIdHelper.nextId()
-            val fileBytes = part.streamProvider().readBytes()
+            fileBytes = part.streamProvider().readBytes()
 
-            val saveTo = File("./img/${newId}.${part.contentType.toString().replace("image/", "")}")
-            saveTo.parentFile.mkdirs()
-            if (!saveTo.exists()) {
-                saveTo.createNewFile()
+            saveTo = File("./img/${newId}.${part.contentType.toString().replace("image/", "")}")
+            saveTo!!.parentFile.mkdirs()
+            if (!saveTo!!.exists()) {
+                saveTo!!.createNewFile()
             }
-            saveTo.writeBytes(fileBytes)
-
+        } else
+            return@forEachPart
+    }
+    if (saveTo != null && fileBytes != null && name != null && hash != null) {
+        if (verifyUser(database, name!!, hash!!)) {
+            saveTo!!.writeBytes(fileBytes!!)
             // store to database
             try {
                 database.getConnection().insert(Image) {
                     set(it.imgId, newId)
-                    set(it.imgPath, saveTo.path)
+                    set(it.imgPath, saveTo!!.path)
                     set(it.imgPubDt, LocalDateTime.now())
                 }
             } catch (e: Exception) {
                 database.getConnection().update(Image) {
-                    set(it.imgPath, saveTo.path)
+                    set(it.imgPath, saveTo!!.path)
                     set(it.imgPubDt, LocalDateTime.now())
                     where {
                         it.imgId eq newId!!
                     }
                 }
             }
+            return mapOf("saved" to (if (newId != null) "$newId" else null))
         } else
-            return@forEachPart
-    }
-    return mapOf("saved" to (if (newId != null) "$newId" else null))
+            return mapOf("saved" to null)
+    } else
+        return mapOf("saved" to null)
 }

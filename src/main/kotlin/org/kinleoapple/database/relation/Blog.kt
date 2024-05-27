@@ -26,6 +26,7 @@ private val sql: String = """
           `blog_des` VARCHAR(1000) NOT NULL,
           PRIMARY KEY (`blog_id`),
           FOREIGN KEY (`cat_id`) REFERENCES `category` (`cat_id`));
+          CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (blog_id);
 """.trimIndent()
 
 fun createBlog(): String {

@@ -9,7 +9,7 @@ data class DatabaseConfig(
     val initialSize: Int = 10,      // 默认连接数
     val maxActive: Int = 25,        // 最大连接数
     val maxWait: Long = 3000,       // 最大等待时间
-    val logLevel: LogLevel = LogLevel.DEBUG // 输出的日志级别
+    val logLevel: LogLevel = LogLevel.ERROR // 输出的日志级别
 )
 
 fun Application.configureDatabase(): DatabaseConfig {

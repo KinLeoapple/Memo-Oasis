@@ -36,11 +36,8 @@ fun deleteDraft(database: Database, json: String): Map<String, Boolean> {
         }
         // try to delete file
         val draftFile = File("./draft/${dataClass.draftId}")
-        if (draftFile.exists()) {
-            draftFile.delete()
-            return mapOf("deleted" to true)
-        }
-        return mapOf("deleted" to false)
+        draftFile.delete()
+        return mapOf("deleted" to true)
     } else {
         return mapOf("deleted" to false)
     }

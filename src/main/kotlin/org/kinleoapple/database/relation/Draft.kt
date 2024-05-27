@@ -21,6 +21,7 @@ private val sql: String = """
           `draft_path` VARCHAR(100) NOT NULL,
           `draft_title` VARCHAR(100) NOT NULL,
           PRIMARY KEY (`draft_id`));
+          CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (draft_id);
 """.trimIndent()
 
 fun createDraft():String {

@@ -19,6 +19,7 @@ private val sql: String = """
         `img_pub_dt` DATETIME NOT NULL,
         `img_path` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`img_id`));
+    CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (img_id);
 """.trimIndent()
 
 fun createImage(): String {

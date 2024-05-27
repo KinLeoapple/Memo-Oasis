@@ -18,6 +18,7 @@ private val sql: String = """
       `desi_name` VARCHAR(30) NOT NULL,
       `desi_page` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`desi_id`));
+    CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (desi_id);
 """.trimIndent()
 
 fun createDesigner(): String {

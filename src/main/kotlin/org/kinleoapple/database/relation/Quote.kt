@@ -18,6 +18,7 @@ private val sql: String = """
       `quote_text` VARCHAR(500) NOT NULL,
       `quote_name` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`quote_id`));
+    CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (quote_id);
 """.trimIndent()
 
 fun createQuote(): String {

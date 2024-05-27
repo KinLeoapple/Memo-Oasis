@@ -21,6 +21,7 @@ private val sql: String = """
         `user_password` VARCHAR(40) NOT NULL,
     PRIMARY KEY (`user_id`)
     FOREIGN KEY (`quote_id`) REFERENCES `quote` (`quote_id`));
+    CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (user_id);
 """.trimIndent()
 
 fun createUser(): String {

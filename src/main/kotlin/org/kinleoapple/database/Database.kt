@@ -13,6 +13,10 @@ open class Database(private val config: DatabaseConfig) {
     private lateinit var connection: Database
     private lateinit var dataSource: DataSource
 
+    fun getConnection(): Database {
+        return connection;
+    }
+
     fun invoke() {
         val prop = Properties()
         config.javaClass.declaredFields.forEach {
@@ -24,10 +28,6 @@ open class Database(private val config: DatabaseConfig) {
             dataSource = dataSource,
             logger = ConsoleLogger(config.logLevel)
         )
-    }
-
-    fun getConnection(): Database {
-        return connection;
     }
 
     fun nativeConnect() : Connection? {
