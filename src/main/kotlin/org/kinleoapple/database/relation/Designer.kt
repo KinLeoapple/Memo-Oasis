@@ -4,7 +4,7 @@ import org.ktorm.schema.Table
 import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
-private const val TABLE_NAME = "designer"
+private val TABLE_NAME by lazy { "designer" }
 
 data object Designer: Table<Nothing>(TABLE_NAME) {
     val desiId = long("desi_id").primaryKey()
@@ -12,7 +12,8 @@ data object Designer: Table<Nothing>(TABLE_NAME) {
     val desiPage = varchar("desi_page")
 }
 
-private val sql: String = """
+private val sql: String by lazy {
+    """
     CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
       `desi_id` BIGINT NOT NULL DEFAULT 0,
       `desi_name` VARCHAR(30) NOT NULL,
@@ -20,6 +21,7 @@ private val sql: String = """
     PRIMARY KEY (`desi_id`));
     CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (desi_id);
 """.trimIndent()
+}
 
 fun createDesigner(): String {
     return sql

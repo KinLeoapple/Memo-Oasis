@@ -4,7 +4,7 @@ import org.ktorm.schema.Table
 import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
-private const val TABLE_NAME = "user"
+private val TABLE_NAME by lazy { "user" }
 
 data object User : Table<Nothing>(TABLE_NAME) {
     val userId = long("user_id").primaryKey()
@@ -13,7 +13,8 @@ data object User : Table<Nothing>(TABLE_NAME) {
     val userPassword = varchar("user_password")
 }
 
-private val sql: String = """
+private val sql: String by lazy {
+    """
     CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
         `user_id` BIGINT NOT NULL DEFAULT 0, 
         `quote_id` BIGINT NOT NULL DEFAULT 0,
@@ -23,7 +24,8 @@ private val sql: String = """
     FOREIGN KEY (`quote_id`) REFERENCES `quote` (`quote_id`));
     CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (user_id);
 """.trimIndent()
+}
 
 fun createUser(): String {
-   return sql
+    return sql
 }

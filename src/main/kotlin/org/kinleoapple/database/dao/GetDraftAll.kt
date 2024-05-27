@@ -36,9 +36,7 @@ fun getDraftAll(database: Database): Map<String, Map<String, String?>> {
             "content" to draftContent,
             "id" to "$draftId",
         )
-
         map["$draftId"] = draft
     }
-
     return map.toMap()
 }

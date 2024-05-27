@@ -5,7 +5,7 @@ import org.ktorm.schema.datetime
 import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
-private const val TABLE_NAME = "draft"
+private val TABLE_NAME by lazy { "draft" }
 
 data object Draft: Table<Nothing>(TABLE_NAME) {
     val draftId = long("draft_id").primaryKey()
@@ -14,7 +14,8 @@ data object Draft: Table<Nothing>(TABLE_NAME) {
     val draftTitle = varchar("draft_title")
 }
 
-private val sql: String = """
+private val sql: String by lazy {
+    """
     CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
           `draft_id` BIGINT NOT NULL,
           `draft_update_dt` DATETIME NOT NULL,
@@ -23,6 +24,7 @@ private val sql: String = """
           PRIMARY KEY (`draft_id`));
           CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (draft_id);
 """.trimIndent()
+}
 
 fun createDraft():String {
     return sql

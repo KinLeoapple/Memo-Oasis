@@ -5,15 +5,16 @@ import org.ktorm.schema.datetime
 import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
-private const val TABLE_NAME = "img"
+private val TABLE_NAME by lazy { "img" }
 
-data object Image: Table<Nothing>(TABLE_NAME) {
+data object Image : Table<Nothing>(TABLE_NAME) {
     val imgId = long("img_id").primaryKey()
     val imgPubDt = datetime("img_pub_dt")
     val imgPath = varchar("img_path")
 }
 
-private val sql: String = """
+private val sql: String by lazy {
+    """
     CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
         `img_id` BIGINT NOT NULL,
         `img_pub_dt` DATETIME NOT NULL,
@@ -21,7 +22,8 @@ private val sql: String = """
     PRIMARY KEY (`img_id`));
     CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (img_id);
 """.trimIndent()
+}
 
 fun createImage(): String {
-   return sql
+    return sql
 }

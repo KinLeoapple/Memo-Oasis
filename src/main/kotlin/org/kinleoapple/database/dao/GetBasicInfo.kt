@@ -28,10 +28,10 @@ fun getBasicInfo(database: Database): Map<String, String?> {
         quoteId = it[User.quoteId]
     }
 
-    if (quoteId != null) {
+    quoteId?.let { it ->
         result = database.getConnection().from(Quote)
             .select(Quote.quoteText, Quote.quoteName)
-            .where(Quote.quoteId eq quoteId!!)
+            .where(Quote.quoteId eq it)
         result.forEach {
             quote = it[Quote.quoteText]
             quoteName = it[Quote.quoteName]

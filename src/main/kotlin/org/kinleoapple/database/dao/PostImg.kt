@@ -27,21 +27,26 @@ suspend fun postImg(database: Database, form: MultiPartData, id: Long?): Map<Str
     var saveTo: File? = null
 
     form.forEachPart { part ->
-        if (part is PartData.FormItem && part.name == "name") {
-            name = part.value
-        } else if (part is PartData.FormItem && part.name == "hash") {
-            hash = part.value
-        } else if (part is PartData.FileItem && part.name == "file") {
-            newId = id ?: YitIdHelper.nextId()
-            fileBytes = part.streamProvider().readBytes()
+        when (part) {
+            is PartData.BinaryChannelItem -> return@forEachPart
+            is PartData.BinaryItem -> return@forEachPart
+            is PartData.FileItem -> {
+                newId = id ?: YitIdHelper.nextId()
+                fileBytes = part.streamProvider().readBytes()
 
-            saveTo = File("./img/${newId}.${part.contentType.toString().replace("image/", "")}")
-            saveTo!!.parentFile.mkdirs()
-            if (!saveTo!!.exists()) {
-                saveTo!!.createNewFile()
+                saveTo = File("./img/${newId}.${part.contentType.toString().replace("image/", "")}")
+                saveTo!!.parentFile.mkdirs()
+                if (!saveTo!!.exists()) {
+                    saveTo!!.createNewFile()
+                }
             }
-        } else
-            return@forEachPart
+            is PartData.FormItem -> {
+                when (part.name) {
+                    "name" -> name = part.value
+                    "hash" -> hash = part.value
+                }
+            }
+        }
     }
     if (saveTo != null && fileBytes != null && name != null && hash != null) {
         if (verifyUser(database, name!!, hash!!)) {

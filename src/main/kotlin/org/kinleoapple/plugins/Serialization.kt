@@ -34,8 +34,8 @@ fun Application.configureSerialization() {
             if (id == "null")
                 call.respond(getDraftAll(database))
             else
-                if (id != null) {
-                    call.respond(getDraft(database, id.toLong()))
+                id?.let {
+                    call.respond(getDraft(database, it.toLong()))
                 }
         }
 
@@ -54,8 +54,8 @@ fun Application.configureSerialization() {
         get("/img/{id}") {
             val id = call.parameters["id"]
             if (id != "null") {
-                if (id != null) {
-                    call.respondBytes(getImg(database, id.toLong()))
+                id?.let {
+                    call.respondBytes(getImg(database, it.toLong()))
                 }
             }
         }

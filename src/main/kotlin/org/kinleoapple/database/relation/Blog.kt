@@ -5,9 +5,9 @@ import org.ktorm.schema.datetime
 import org.ktorm.schema.long
 import org.ktorm.schema.varchar
 
-private const val TABLE_NAME = "blog"
+private val TABLE_NAME by lazy { "blog" }
 
-data object Blog: Table<Nothing>(TABLE_NAME) {
+data object Blog : Table<Nothing>(TABLE_NAME) {
     val blogId = long("blog_id").primaryKey()
     val catId = long("cat_id")
     val blogPubDt = datetime("blog_pub_dt")
@@ -16,7 +16,8 @@ data object Blog: Table<Nothing>(TABLE_NAME) {
     val blogDes = varchar("blog_des")
 }
 
-private val sql: String = """
+private val sql: String by lazy {
+    """
     CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
           `blog_id` BIGINT NOT NULL,
           `cat_id` BIGINT NOT NULL,
@@ -28,6 +29,7 @@ private val sql: String = """
           FOREIGN KEY (`cat_id`) REFERENCES `category` (`cat_id`));
           CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (blog_id);
 """.trimIndent()
+}
 
 fun createBlog(): String {
     return sql
