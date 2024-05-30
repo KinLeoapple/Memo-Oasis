@@ -9,7 +9,6 @@ import java.io.File
 fun Application.configureRouting() {
     routing {
         staticResources("/", "/static") {
-            enableAutoHeadResponse()
             preCompressed(CompressedFileType.BROTLI, CompressedFileType.GZIP)
         }
         singlePageApplication{
