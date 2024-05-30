@@ -1,0 +1,60 @@
+.button {
+    backdrop-filter: blur(20px) saturate(180%);
+    background-color: hsl(230 12% 15% / .4);
+    color: #fff;
+    width: 7.5rem;
+    height: 2.9rem;
+    border: #00000000 0.2rem solid;
+    border-radius: 11px;
+    text-align: right;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+}
+
+.button:hover {
+    background-color: hsl(230 12% 15% / .8);
+}
+
+.button svg {
+    width: 1.6em;
+    margin: -0.2rem 0.8rem 1rem;
+    position: absolute;
+    display: flex;
+    transition: box-shadow 0.2s ease;
+}
+
+.text {
+    margin: 0 1.5rem
+}
+
+@media screen and (max-width: 1024px) {
+    .button {
+        backdrop-filter: blur(20px) saturate(180%);
+        background-color: hsl(230 12% 15% / .4);
+        color: #fff;
+        width: 2.9rem;
+        height: 2.9rem;
+        border: #00000000 0.2rem solid;
+        border-radius: 11px;
+        text-align: right;
+        cursor: pointer;
+        transition: all 0.6s ease;
+    }
+
+    .button:hover {
+        background-color: hsl(230 12% 15% / .8);
+    }
+
+    .button svg {
+        width: 1.6em;
+        margin: -0.2rem 0.5rem 1rem;
+        position: absolute;
+        display: flex;
+        transition: all 0.6s ease;
+    }
+
+    .text {
+        margin: 0 1.5rem;
+        opacity: 0;
+    }
+}
