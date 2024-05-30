@@ -1,10 +1,9 @@
-package org.kinleoapple.database.dao
+package org.kinleoapple.database.dao.img
 
 import com.github.yitter.idgen.YitIdHelper
 import io.ktor.http.content.*
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Image
-import org.kinleoapple.security.verifyUser
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
 import org.ktorm.dsl.update
@@ -40,6 +39,7 @@ suspend fun postImg(database: Database, form: MultiPartData, id: Long?): Map<Str
                     saveTo!!.createNewFile()
                 }
             }
+
             is PartData.FormItem -> {
                 when (part.name) {
                     "name" -> name = part.value
@@ -49,27 +49,24 @@ suspend fun postImg(database: Database, form: MultiPartData, id: Long?): Map<Str
         }
     }
     if (saveTo != null && fileBytes != null && name != null && hash != null) {
-        if (verifyUser(database, name!!, hash!!)) {
-            saveTo!!.writeBytes(fileBytes!!)
-            // store to database
-            try {
-                database.getConnection().insert(Image) {
-                    set(it.imgId, newId)
-                    set(it.imgPath, saveTo!!.path)
-                    set(it.imgPubDt, LocalDateTime.now())
-                }
-            } catch (e: Exception) {
-                database.getConnection().update(Image) {
-                    set(it.imgPath, saveTo!!.path)
-                    set(it.imgPubDt, LocalDateTime.now())
-                    where {
-                        it.imgId eq newId!!
-                    }
+        saveTo!!.writeBytes(fileBytes!!)
+        // store to database
+        try {
+            database.getConnection().insert(Image) {
+                set(it.imgId, newId)
+                set(it.imgPath, saveTo!!.path)
+                set(it.imgPubDt, LocalDateTime.now())
+            }
+        } catch (e: Exception) {
+            database.getConnection().update(Image) {
+                set(it.imgPath, saveTo!!.path)
+                set(it.imgPubDt, LocalDateTime.now())
+                where {
+                    it.imgId eq newId!!
                 }
             }
-            return mapOf("saved" to (if (newId != null) "$newId" else null))
-        } else
-            return mapOf("saved" to null)
+        }
+        return mapOf("saved" to (if (newId != null) "$newId" else null))
     } else
         return mapOf("saved" to null)
 }

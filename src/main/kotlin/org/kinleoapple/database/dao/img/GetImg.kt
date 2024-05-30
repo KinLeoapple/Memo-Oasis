@@ -1,4 +1,4 @@
-package org.kinleoapple.database.dao
+package org.kinleoapple.database.dao.img
 
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Image

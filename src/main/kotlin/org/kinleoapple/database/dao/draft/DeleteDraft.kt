@@ -1,10 +1,9 @@
-package org.kinleoapple.database.dao
+package org.kinleoapple.database.dao.draft
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Draft
-import org.kinleoapple.security.verifyUser
 import org.ktorm.dsl.delete
 import org.ktorm.dsl.eq
 import java.io.File
@@ -28,17 +27,12 @@ fun deleteDraft(database: Database, json: String): Map<String, Boolean> {
 
     val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
 
-    // if login, delete draft and delete the information to database.
-    if (verifyUser(database, dataClass.name, dataClass.hash)) {
-        // delete the information in database anyway.
-        database.getConnection().delete(Draft) {
-            it.draftId eq dataClass.draftId.toLong()
-        }
-        // try to delete file
-        val draftFile = File("./draft/${dataClass.draftId}")
-        draftFile.delete()
-        return mapOf("deleted" to true)
-    } else {
-        return mapOf("deleted" to false)
+    // delete the information in database anyway.
+    database.getConnection().delete(Draft) {
+        it.draftId eq dataClass.draftId.toLong()
     }
+    // try to delete file
+    val draftFile = File("./draft/${dataClass.draftId}")
+    draftFile.delete()
+    return mapOf("deleted" to true)
 }

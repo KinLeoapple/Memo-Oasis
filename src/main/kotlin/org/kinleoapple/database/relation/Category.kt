@@ -15,7 +15,7 @@ private val sql: String by lazy {
     """
     CREATE TABLE IF NOT EXISTS `$TABLE_NAME` (
         `cat_id` BIGINT NOT NULL,
-        `cat_name` VARCHAR(30) NOT NULL,
+        `cat_name` VARCHAR(30) UNIQUE NOT NULL,
     PRIMARY KEY (`cat_id`));
     CREATE UNIQUE INDEX IF NOT EXISTS `idx_$TABLE_NAME` ON `$TABLE_NAME` (cat_id);
 """.trimIndent()

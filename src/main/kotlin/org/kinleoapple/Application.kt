@@ -8,6 +8,7 @@ import org.kinleoapple.plugins.*
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
+    configureJWT()
     configureIdGenerator()
     configureSQLite()
     configureSerialization()

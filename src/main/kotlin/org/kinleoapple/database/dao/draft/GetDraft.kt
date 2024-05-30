@@ -1,9 +1,8 @@
-package org.kinleoapple.database.dao
+package org.kinleoapple.database.dao.draft
 
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Draft
 import org.ktorm.dsl.*
-import java.io.File
 
 /**
  * Return a map of the get draft result.
@@ -14,29 +13,19 @@ import java.io.File
  */
 fun getDraft(database: Database, id: Long): Map<String, String?> {
     var draftTitle: String? = null;
-    var draftPath: String? = null;
-    var draftContent: String? = null;
     var draftId: Long? = 0;
 
     val result = database.getConnection().from(Draft)
-        .select(Draft.draftPath, Draft.draftTitle, Draft.draftPath)
+        .select(Draft.draftId, Draft.draftPath, Draft.draftTitle)
         .where(Draft.draftId eq id)
 
     result.forEach {
         draftTitle = it[Draft.draftTitle]
-        draftPath = it[Draft.draftPath]
         draftId = it[Draft.draftId]
     }
 
-    val draftFile = File("$draftPath")
-    draftContent = if (draftFile.exists())
-        draftFile.readText()
-    else
-        ""
-
     return mapOf(
         "title" to draftTitle,
-        "content" to draftContent,
         "id" to "$draftId",
     )
 }
