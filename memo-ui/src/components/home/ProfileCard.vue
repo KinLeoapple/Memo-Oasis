@@ -1,7 +1,6 @@
 <script setup>
-import avatarWhite from "@/assets/img/megalobox-white.png";
-import avatarBlack from "@/assets/img/megalobox.png";
-import {nextTick, ref} from "vue";
+import avatarWhite from "@/assets/img/megalobox-white.webp";
+import avatarBlack from "@/assets/img/megalobox.webp";
 
 const props = defineProps({
   theme: {

@@ -17,6 +17,22 @@ export function basic_info() {
     });
 }
 
+export function get_blog_all() {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog/null`).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
+export function get_blog(id) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog/${id}`).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
 export function get_blog_content(id) {
     return new Promise(resolve => {
         fetch(`${prefix}/blog/content/${id}`).then(r => {

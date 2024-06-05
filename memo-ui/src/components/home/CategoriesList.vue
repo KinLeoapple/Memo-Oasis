@@ -26,8 +26,10 @@ nextTick(() => {
     if (r !== null) {
       for (let i in r) {
         Promise.all([get_category(r[i].id), get_category_number(r[i].id)]).then(arr => {
-          arr[0].number = arr[1].count;
-          categories.value.push(arr[0]);
+          if (arr[1].count > 0) {
+            arr[0].number = arr[1].count;
+            categories.value.push(arr[0]);
+          }
         });
       }
     }

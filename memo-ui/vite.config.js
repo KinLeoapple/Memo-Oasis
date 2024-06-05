@@ -3,7 +3,7 @@ import {fileURLToPath, URL} from 'node:url'
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-import viteImagemin from 'vite-plugin-imagemin'
+import imagemin from 'unplugin-imagemin/vite'
 import viteCompression from 'vite-plugin-compression'
 import {visualizer} from 'rollup-plugin-visualizer'
 
@@ -20,33 +20,28 @@ export default defineConfig({
             ext: '.gz',
             deleteOriginFile: false // 源文件压缩后是否删除
         }),
-        viteImagemin({
-            gifsicle: {
-                optimizationLevel: 7,
-                interlaced: false
+        imagemin({
+            mode: 'squoosh',
+            compress: {
+                jpeg: {
+                    // 0 ~ 100
+                    quality: 25,
+                },
+                png: {
+                    // 0 ~ 100
+                    quality: 25,
+                },
+                webp: {
+                    // 0 ~ 100
+                    quality: 25,
+                },
             },
-            optipng: {
-                optimizationLevel: 7
-            },
-            mozjpeg: {
-                quality: 20
-            },
-            pngquant: {
-                quality: [0.8, 0.9],
-                speed: 4
-            },
-            svgo: {
-                plugins: [
-                    {
-                        name: 'removeViewBox'
-                    },
-                    {
-                        name: 'removeEmptyAttrs',
-                        active: false
-                    }
-                ]
-            }
-        })
+            conversion: [
+                { from: "png", to: "webp" },
+                { from: "jpeg", to: "png" },
+            ],
+            cache: false,
+        }),
     ],
     resolve: {
         alias: {

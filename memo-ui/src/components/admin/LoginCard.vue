@@ -1,5 +1,5 @@
 <script setup>
-import background from "@/assets/img/login-background.png";
+import background from "@/assets/img/login-background.webp";
 import GoBackButton from "@/components/button/GoBackButton.vue";
 import {Icon} from "@vicons/utils";
 import {User} from "@vicons/fa";

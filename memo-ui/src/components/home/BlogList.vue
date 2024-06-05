@@ -1,7 +1,8 @@
 <script setup>
-import img from "@/assets/img/img.png";
-import {ref, watch} from "vue";
+import img from "@/assets/img/img.webp";
+import {nextTick, ref, watch} from "vue";
 import GoBackButton from "@/components/button/GoBackButton.vue";
+import {get_blog, get_blog_all, get_draft_all} from "@/assets/js/api.js";
 
 const props = defineProps({
   theme: {
@@ -14,6 +15,9 @@ const props = defineProps({
   },
 });
 
+const records = ref([]);
+const currentPage = ref(0);
+const pageSize = ref(10);
 const currentCategory = ref(null);
 const changeCategory = (name) => {
   if (currentCategory.value !== name)
@@ -37,6 +41,18 @@ watch(() => props.category, (val) => {
     currentCategory.value = val;
   else
     currentCategory.value = null;
+});
+
+nextTick(() => {
+  get_blog_all().then(r => {
+    if (r !== null) {
+      for (let i in r) {
+        get_blog(r[i].id).then(b => {
+          records.value.push(b);
+        });
+      }
+    }
+  });
 });
 </script>
 
@@ -123,10 +139,10 @@ watch(() => props.category, (val) => {
 
   <div v-show="currentBlog === null">
     <VaPagination
-        v-model="value"
+        v-model="currentPage"
         :visible-pages="7"
         :total="100"
-        :page-size="5"
+        :page-size="pageSize"
         boundary-numbers
         class="pb-5 justify-center sm:justify-start"
     >
@@ -177,8 +193,6 @@ export default {
           category: "Life"
         }
       ],
-      value: 3,
-      pageSize: 10,
     };
   },
   methods: {

@@ -1,5 +1,5 @@
 <script setup>
-import img from "@/assets/img/img.png";
+import img from "@/assets/img/img.webp";
 import {marked} from "marked";
 import {computed, ref, watch} from "vue";
 import GoBackButton from "@/components/button/GoBackButton.vue";

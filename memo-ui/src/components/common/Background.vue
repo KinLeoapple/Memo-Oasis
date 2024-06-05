@@ -42,14 +42,14 @@ const props = defineProps({
 }
 
 .img {
-  background-image: url("@/assets/img/background.png");
+  background-image: url("@/assets/img/background.webp");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 
 .img-light {
-  background-image: url("@/assets/img/background-white.png");
+  background-image: url("@/assets/img/background-white.webp");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
