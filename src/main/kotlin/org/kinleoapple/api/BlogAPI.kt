@@ -9,6 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.dao.blog.getBlog
+import org.kinleoapple.database.dao.blog.getBlogAll
 import org.kinleoapple.database.dao.blog.postBlog
 import org.kinleoapple.database.dao.draft.getDraftAll
 import org.kinleoapple.security.verifyToken
@@ -32,7 +33,7 @@ fun Application.blogAPI(database: Database) {
         get("/blog/{id}") {
             val id = call.parameters["id"]
             if (id == "null")
-                call.respond(getDraftAll(database))
+                call.respond(getBlogAll(database))
             else
                 id?.let {
                     call.respond(getBlog(database, it.toLong()))
