@@ -17,10 +17,6 @@ import java.io.File
  */
 fun deleteDraft(database: Database, json: String): Map<String, Boolean> {
     data class DataClass(
-        @SerializedName("name")
-        val name: String,
-        @SerializedName("hash")
-        val hash: String,
         @SerializedName("draft_id")
         val draftId: String,
     )

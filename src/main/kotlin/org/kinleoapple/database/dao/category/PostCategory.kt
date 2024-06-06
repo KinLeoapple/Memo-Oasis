@@ -20,10 +20,6 @@ import org.ktorm.dsl.update
 fun postCategory(database: Database, json: String, id: Long?): Map<String, String?> {
     try {
         data class DataClass(
-            @SerializedName("name")
-            val name: String,
-            @SerializedName("hash")
-            val hash: String,
             @SerializedName("catName")
             val catName: String,
         )

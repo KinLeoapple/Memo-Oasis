@@ -10,8 +10,8 @@ import io.ktor.server.routing.*
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.dao.blog.getBlog
 import org.kinleoapple.database.dao.blog.getBlogAll
+import org.kinleoapple.database.dao.blog.getBlogContent
 import org.kinleoapple.database.dao.blog.postBlog
-import org.kinleoapple.database.dao.draft.getDraftAll
 import org.kinleoapple.security.verifyToken
 
 fun Application.blogAPI(database: Database) {
@@ -41,7 +41,13 @@ fun Application.blogAPI(database: Database) {
         }
 
         get("/blog/content/{id}") {
-            call.respond(mapOf("content" to content))
+            val id = call.parameters["id"]
+            if (id == "null")
+                call.respond(getBlogContent(database, 0))
+            else
+                id?.let {
+                    call.respond(getBlogContent(database, it.toLong()))
+                }
         }
     }
 }

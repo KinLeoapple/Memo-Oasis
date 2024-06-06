@@ -6,6 +6,13 @@ import org.kinleoapple.database.relation.Blog
 import org.ktorm.dsl.*
 import java.time.ZoneOffset
 
+/**
+ * Return a map of the blog information.
+ *
+ * @param database The database which wish to search.
+ * @param id The id of the blog.
+ * @return A map of the blog information.
+ */
 fun getBlog(database: Database, id: Long): Map<String, String?> {
     var title: String? = null
     var desc: String? = null
@@ -29,6 +36,7 @@ fun getBlog(database: Database, id: Long): Map<String, String?> {
     }
 
     return mapOf(
+        "id" to id.toString(),
         "title" to title,
         "desc" to desc,
         "date" to date,

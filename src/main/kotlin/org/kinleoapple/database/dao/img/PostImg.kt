@@ -19,8 +19,6 @@ import java.time.LocalDateTime
  * @return A map of the post image result.
  */
 suspend fun postImg(database: Database, form: MultiPartData, id: Long?): Map<String, String?> {
-    var name: String? = null
-    var hash: String? = null
     var newId: Long? = null
     var fileBytes: ByteArray? = null
     var saveTo: File? = null
@@ -29,6 +27,7 @@ suspend fun postImg(database: Database, form: MultiPartData, id: Long?): Map<Str
         when (part) {
             is PartData.BinaryChannelItem -> return@forEachPart
             is PartData.BinaryItem -> return@forEachPart
+            is PartData.FormItem -> return@forEachPart
             is PartData.FileItem -> {
                 newId = id ?: YitIdHelper.nextId()
                 fileBytes = part.streamProvider().readBytes()
@@ -39,16 +38,9 @@ suspend fun postImg(database: Database, form: MultiPartData, id: Long?): Map<Str
                     saveTo!!.createNewFile()
                 }
             }
-
-            is PartData.FormItem -> {
-                when (part.name) {
-                    "name" -> name = part.value
-                    "hash" -> hash = part.value
-                }
-            }
         }
     }
-    if (saveTo != null && fileBytes != null && name != null && hash != null) {
+    if (saveTo != null && fileBytes != null) {
         saveTo!!.writeBytes(fileBytes!!)
         // store to database
         try {

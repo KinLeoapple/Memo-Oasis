@@ -13,7 +13,7 @@ import java.io.File
 import java.time.LocalDateTime
 
 /**
- * Return a map of the post draft result which contains blog id.
+ * Return a map of the post blog result which contains blog id.
  *
  * @param database The database which wish to search.
  * @param json The json containers the information.
@@ -23,10 +23,6 @@ import java.time.LocalDateTime
 fun postBlog(database: Database, json: String, id: Long?): Map<String, String?> {
     try {
         data class DataClass(
-            @SerializedName("name")
-            val name: String,
-            @SerializedName("hash")
-            val hash: String,
             @SerializedName("title")
             val title: String,
             @SerializedName("blog")
@@ -40,55 +36,49 @@ fun postBlog(database: Database, json: String, id: Long?): Map<String, String?> 
         val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
 
         if (dataClass.blog != "null" && dataClass.blog.trimIndent().isNotEmpty()) {
-            // if login, save to file and store the information to database.
-//            if (verifyUser(database, dataClass.name, dataClass.hash)) {
-                val newId = id ?: YitIdHelper.nextId() // get id or generate id
-                // save to file
-                val saveTo = File("./blog/$newId")
-                saveTo.parentFile.mkdirs()
-                if (!saveTo.exists()) {
-                    saveTo.createNewFile()
-                }
-                saveTo.writeText(dataClass.blog) // write to file
+            val newId = id ?: YitIdHelper.nextId() // get id or generate id
+            // save to file
+            val saveTo = File("./blog/$newId")
+            saveTo.parentFile.mkdirs()
+            if (!saveTo.exists()) {
+                saveTo.createNewFile()
+            }
+            saveTo.writeText(dataClass.blog) // write to file
 
-                // store to database
-                try {
-                    database.getConnection().insert(Blog) {
-                        set(it.blogId, newId)
-                        set(it.catId, dataClass.catId.toLong())
-                        set(it.blogPubDt, LocalDateTime.now())
-                        set(it.blogPath, saveTo.path)
-                        set(it.blogTitle, dataClass.title)
-                        set(it.blogDes, dataClass.blogDes)
-                    }
-                } catch (e: Exception) {
-                    database.getConnection().update(Blog) {
-                        set(it.catId, dataClass.catId.toLong())
-                        set(it.blogPubDt, LocalDateTime.now())
-                        set(it.blogPath, saveTo.path)
-                        set(it.blogTitle, dataClass.title)
-                        set(it.blogDes, dataClass.blogDes)
-                        where {
-                            it.blogId eq newId
-                        }
+            // store to database
+            try {
+                database.getConnection().insert(Blog) {
+                    set(it.blogId, newId)
+                    set(it.catId, dataClass.catId.toLong())
+                    set(it.blogPubDt, LocalDateTime.now())
+                    set(it.blogPath, saveTo.path)
+                    set(it.blogTitle, dataClass.title)
+                    set(it.blogDes, dataClass.blogDes)
+                }
+            } catch (e: Exception) {
+                database.getConnection().update(Blog) {
+                    set(it.catId, dataClass.catId.toLong())
+                    set(it.blogPubDt, LocalDateTime.now())
+                    set(it.blogPath, saveTo.path)
+                    set(it.blogTitle, dataClass.title)
+                    set(it.blogDes, dataClass.blogDes)
+                    where {
+                        it.blogId eq newId
                     }
                 }
+            }
 
-                // try to delete draft of this blog
-                val draftId = """
+            // try to delete draft of this blog
+            val draftId = """
                 {
-                    "username": "${dataClass.name}",
-                    "password": "${dataClass.hash}"
                     "draft_id": $newId
                 }
             """.trimIndent()
-                deleteDraft(database, draftId)
+            deleteDraft(database, draftId)
 
-                return mapOf("saved" to "$newId")
-            } else
-                return mapOf("saved" to null)
-//        } else
-//            return mapOf("saved" to null)
+            return mapOf("saved" to "$newId")
+        } else
+            return mapOf("saved" to null)
     } catch (e: Exception) {
         return mapOf("saved" to null)
     }
