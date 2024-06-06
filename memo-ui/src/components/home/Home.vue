@@ -87,8 +87,8 @@ nextTick(() => {
     if (categoryVal !== null)
       document.documentElement.scrollTop = 0;
     (async () => {
-      if (blogVal !== null)
-        get_blog_content(0).then(r => {
+      if (blogVal !== null && blogVal !== undefined)
+        get_blog_content(blogId.value).then(r => {
           blogContent.value = r.content;
         });
     })();

@@ -10,6 +10,7 @@ import LoginCard from "@/components/admin/LoginCard.vue";
 import {onBeforeRouteLeave} from "vue-router";
 import SideBar from "@/components/admin/SideBar.vue";
 import WriteBlog from "@/components/admin/WriteBlog.vue";
+import DraftList from "@/components/admin/DraftList.vue";
 
 const {currentPresetName} = useColors();
 
@@ -25,6 +26,8 @@ const desi_page = ref(null);
 const theme = ref(currentPresetName.value);
 const loginCardRef = ref(null);
 const login = ref(false);
+const writeBlogRef = ref(null);
+const blogPosted = ref(true);
 
 watch(currentPresetName, (val) => {
   theme.value = val;
@@ -43,6 +46,7 @@ const height = computed({
 
 // Unwatch methods
 let unwatchLoginCard;
+let unwatchWriteBlog;
 
 nextTick(() => {
   let basicInfo = basicInfoRef.value;
@@ -65,6 +69,17 @@ nextTick(() => {
           unwatchLoginCard();
       }, {immediate: true, deep: true});
 
+  // Watch login state
+  unwatchWriteBlog = watch(() => {
+        if (writeBlogRef.value != null)
+          return writeBlogRef.value.afterPost;
+        else
+          return true;
+      },
+      (afterPostVal) => {
+        blogPosted.value = afterPostVal;
+      }, {immediate: true, deep: true});
+
   height.value = client_height();
   window.onresize = () => {
     height.value = client_height();
@@ -75,6 +90,7 @@ nextTick(() => {
 onBeforeRouteLeave(() => {
   nextTick(() => {
     unwatchLoginCard();
+    unwatchWriteBlog();
     window.onresize = null;
   });
 });
@@ -101,7 +117,8 @@ onBeforeRouteLeave(() => {
       <template #content>
         <LoginCard v-if="!login" :theme="theme" :name="name" ref="loginCardRef"/>
         <div style="width: 100%; height: 100%" v-else>
-          <WriteBlog :theme="theme"/>
+          <DraftList/>
+          <WriteBlog v-if="!blogPosted" :theme="theme" ref="writeBlogRef"/>
         </div>
       </template>
     </VaLayout>

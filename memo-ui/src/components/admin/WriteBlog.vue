@@ -24,6 +24,7 @@ const title = ref("Untitled");
 const saved = ref(false);
 const showPostBox = ref(false);
 const post = ref(false);
+const afterPost = ref(false);
 const description = ref("");
 const showNewCategory = ref(false);
 const catName = ref("");
@@ -101,6 +102,7 @@ nextTick(() => {
   getCategory();
 
   let unwatchChangeSaved;
+  let unwatchSaved;
   let unwatchId;
 
   // watch changed save
@@ -114,7 +116,21 @@ nextTick(() => {
         computedSaved.value = val;
     }, {immediate: true, deep: true});
   } catch (_) {
-    unwatchChangeSaved()
+    unwatchChangeSaved();
+  }
+
+  // watch blog post
+  try {
+    unwatchSaved = watch(() => {
+      if (writerRef.value != null)
+        return writerRef.value.saved
+      unwatchSaved();
+    }, (val) => {
+      if (val !== null)
+        afterPost.value = val;
+    }, {immediate: true, deep: true});
+  } catch (_) {
+    unwatchSaved();
   }
 
   // watch id
@@ -131,6 +147,8 @@ nextTick(() => {
     unwatchId();
   }
 });
+
+defineExpose({afterPost});
 </script>
 
 <template>

@@ -3,6 +3,7 @@ import img from "@/assets/img/img.webp";
 import {nextTick, ref, watch} from "vue";
 import GoBackButton from "@/components/button/GoBackButton.vue";
 import {get_blog, get_blog_all, get_draft_all} from "@/assets/js/api.js";
+import {to_date} from "@/assets/js/to_date.js";
 
 const props = defineProps({
   theme: {
@@ -34,8 +35,6 @@ const changeBlog = (id) => {
     currentBlog.value = id;
 }
 
-defineExpose({currentCategory, currentBlog});
-
 watch(() => props.category, (val) => {
   if (val !== null)
     currentCategory.value = val;
@@ -54,10 +53,12 @@ nextTick(() => {
     }
   });
 });
+
+defineExpose({currentCategory, currentBlog});
 </script>
 
 <template>
-  <div class="row" style="min-height: 100%" v-show="currentBlog === null">
+  <div class="row" v-show="currentBlog === null">
     <div
         style="min-height: 100%; width: 100%; display: flex;"
         class="flex-direction-column md-6 lg"
@@ -124,7 +125,7 @@ nextTick(() => {
                 :class="{'blog-details': theme === 'dark',
                 'blog-details-light': theme === 'light'}"
               >
-                <p>{{ record.date }}</p>
+                <p>{{ to_date(record.date) }}</p>
                 <div class="dot" :class="{'dot-light-background': theme === 'light'}"></div>
                 <span class="category pointer" @click.stop="changeCategory(record.category)">{{
                     record.category
@@ -137,11 +138,11 @@ nextTick(() => {
     </div>
   </div>
 
-  <div v-show="currentBlog === null">
+  <div v-show="currentBlog === null && records.length > pageSize">
     <VaPagination
         v-model="currentPage"
         :visible-pages="7"
-        :total="100"
+        :total="records.length"
         :page-size="pageSize"
         boundary-numbers
         class="pb-5 justify-center sm:justify-start"
@@ -149,62 +150,6 @@ nextTick(() => {
     </VaPagination>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      records: [
-        {
-          id: 1,
-          title: "title",
-          desc: "Of all of the celestial bodies that capture our attention and fascination as\n" +
-              "    astronomers, none has a greater influence on life on planet Earth than it’s\n" +
-              "    own satellite, the moon. When you think about it.",
-          date: "03/12/2024",
-          category: "Life"
-        },
-        {
-          id: 2,
-          title: "title",
-          desc: "A man can be destroyed but not defeated.",
-          date: "03/12/2024",
-          category: "Life"
-        },
-        {
-          id: 3,
-          title: "title",
-          desc: "A man can be destroyed but not defeated.",
-          date: "03/12/2024",
-          category: "Life"
-        },
-        {
-          id: 4,
-          title: "title",
-          desc: "A man can be destroyed but not defeated.",
-          date: "03/12/2024",
-          category: "Life"
-        },
-        {
-          id: 5,
-          title: "title",
-          desc: "A man can be destroyed but not defeated.",
-          date: "03/12/2024",
-          category: "Life"
-        }
-      ],
-    };
-  },
-  methods: {
-    async appendRecordsAsync() {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      this.records.push({
-        title: "title"
-      });
-    },
-  },
-};
-</script>
 
 <style scoped>
 @import "@/assets/css/common.css";

@@ -3,7 +3,7 @@ import {MdEditor} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 import "@/assets/css/editor.css";
 import {computed, nextTick, ref, watch} from "vue";
-import {get_draft_all, post_blog, post_draft, post_img} from "@/assets/js/api.js";
+import {post_blog, post_draft, post_img} from "@/assets/js/api.js";
 import {isHTML} from "@/assets/js/is_html.js";
 
 const props = defineProps({
@@ -117,10 +117,6 @@ const sanitize = (html) => {
 }
 
 nextTick(() => {
-  get_draft_all(props.token).then(r => {
-    console.log(r)
-  });
-
   // save every 10 seconds
   setInterval(() => {
     // do it only the text has changed
