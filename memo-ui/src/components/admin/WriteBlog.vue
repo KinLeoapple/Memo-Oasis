@@ -169,14 +169,12 @@ nextTick(() => {
   }
 
   get_draft(props.token, id.value).then(d => {
-    if (d !== null && d.title !== "") {
+    if (d !== null && d.title !== undefined && d.title !== null) {
       title.value = d.title;
     } else {
       get_blog(id.value).then(b => {
-        if (b !== null && b.title !== "") {
+        if (b !== null && b.title !== undefined && b.title !== null) {
           title.value = b.title;
-        } else {
-          title.value = "Untitled";
         }
       });
     }
