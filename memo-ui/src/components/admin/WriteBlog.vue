@@ -1,12 +1,25 @@
 <script setup>
-import BlogWriter from "@/components/admin/BlogWriter.vue";
+import BlogInput from "@/components/admin/BlogInput.vue";
 import {ref, nextTick, watch, computed} from "vue";
-import {get_category, get_category_all, post_category} from "@/assets/js/api.js";
+import {
+  get_blog,
+  get_blog_content,
+  get_category,
+  get_category_all,
+  get_draft,
+  get_draft_content,
+  post_category
+} from "@/assets/js/api.js";
+import CircleBackButton from "@/components/button/CircleBackButton.vue";
 
 const props = defineProps({
   theme: {
     type: String,
     default: () => 'dark'
+  },
+  id: {
+    type: String,
+    default: null
   },
   token: {
     type: String,
@@ -16,7 +29,7 @@ const props = defineProps({
 
 const options = ref([]);
 const optionVal = ref("");
-const id = ref(null);
+const id = ref(props.id);
 const inputRef = ref();
 const showInput = ref(false);
 const writerRef = ref();
@@ -28,6 +41,7 @@ const afterPost = ref(false);
 const description = ref("");
 const showNewCategory = ref(false);
 const catName = ref("");
+const showBackBox = ref(false);
 
 const computedSaved = computed({
   get() {
@@ -71,6 +85,13 @@ const onPostClick = () => {
 
 const targetPost = () => {
   post.value = true;
+}
+
+const onBackClick = () => {
+  showBackBox.value = true;
+}
+const exit = () => {
+  afterPost.value = true;
 }
 
 const postCategory = () => {
@@ -146,6 +167,20 @@ nextTick(() => {
   } catch (_) {
     unwatchId();
   }
+
+  get_draft(props.token, id.value).then(d => {
+    if (d !== null && d.title !== "") {
+      title.value = d.title;
+    } else {
+      get_blog(id.value).then(b => {
+        if (b !== null && b.title !== "") {
+          title.value = b.title;
+        } else {
+          title.value = "Untitled";
+        }
+      });
+    }
+  });
 });
 
 defineExpose({afterPost});
@@ -219,35 +254,51 @@ defineExpose({afterPost});
     </div>
   </VaModal>
 
+  <VaModal
+      v-model="showBackBox"
+      ok-text="Exit"
+      size="small"
+      @ok="exit"
+  >
+    <h6 class="va-h6 va-title">
+      Are You Sure?
+    </h6>
+    <blockquote class="mt-5 va-blockquote">
+      Your changes may not have been saved.
+    </blockquote>
+  </VaModal>
+
   <VaCard
       :outlined="theme === 'dark'"
       :bordered="theme !== 'dark'"
-      class="mt-5 ml-5"
       style="width: calc(100% - 5rem); height: calc(100% - 5rem);">
     <VaCardTitle style="position: relative" class="title overflow-hidden">
       <div class="title-left">
-        <div class="title-text">
-          <p v-show="!showInputVal" class="title-p" @click="titleTextOnClick">{{ title }}</p>
-          <input ref="inputRef"
-                 type="text"
-                 placeholder="Type Title..."
-                 name="text"
-                 class="title-input"
-                 :style="{position: `${showInputVal ? '' : 'absolute'}`,
+        <CircleBackButton @click="onBackClick"/>
+        <div class="title-left-item">
+          <div class="title-text">
+            <p v-show="!showInputVal" class="title-p" @click="titleTextOnClick">{{ title }}</p>
+            <input ref="inputRef"
+                   type="text"
+                   placeholder="Type Title..."
+                   name="text"
+                   class="title-input"
+                   :style="{position: `${showInputVal ? '' : 'absolute'}`,
                margin: `auto`,
                top: `${showInputVal ? '0' : '-9999px'}`}"
-                 :value="title"
-                 @change="inputOnChange"
-                 @blur="inputOnBlur"
-          >
-        </div>
-        <div v-show="computedSaved !== null" class="saved">
-          <VaBadge
-              :color="computedSaved ? 'success' : 'warning'"
-              dot
-              :offset="[-10, 10.5]"
-          />
-          <p v-html="computedSaved ? 'Saved' : 'Unsaved'"/>
+                   :value="title"
+                   @change="inputOnChange"
+                   @blur="inputOnBlur"
+            >
+          </div>
+          <div v-show="computedSaved !== null" class="saved">
+            <VaBadge
+                :color="computedSaved ? 'success' : 'warning'"
+                dot
+                :offset="[-10, 10.5]"
+            />
+            <p v-html="computedSaved ? 'Saved' : 'Unsaved'"/>
+          </div>
         </div>
       </div>
       <div>
@@ -260,15 +311,13 @@ defineExpose({afterPost});
     </VaCardTitle>
     <VaDivider/>
     <VaCardContent style="display:flex; width: 100%; height: calc(100% - 5rem); padding: 0">
-      <BlogWriter ref="writerRef"
-                  :id="id"
-                  :theme="theme"
-                  :name="name"
-                  :pass="pass"
-                  :title="title"
-                  :post="post"
-                  :cat-id="optionVal.id"
-                  :blog-des="description"/>
+      <BlogInput ref="writerRef"
+                 :id="id"
+                 :theme="theme"
+                 :title="title"
+                 :post="post"
+                 :cat-id="optionVal.id"
+                 :blog-des="description"/>
     </VaCardContent>
   </VaCard>
 </template>
@@ -280,15 +329,27 @@ defineExpose({afterPost});
   justify-content: space-between;
   align-items: center;
   gap: .5rem;
+  padding-top: 10px;
   padding-bottom: 0;
 }
 
 .title-left {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: start;
+  gap: .5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.title-left-item {
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: start;
   gap: .5rem;
+  padding-top: 0;
   padding-bottom: 0;
 }
 

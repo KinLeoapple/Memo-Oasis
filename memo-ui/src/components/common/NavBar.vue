@@ -3,6 +3,8 @@ import {Search} from "@vicons/fa";
 import {Icon} from "@vicons/utils";
 import {useColors} from "vuestic-ui";
 import SwitchThemeButton from "@/components/button/SwitchThemeButton.vue";
+import {useRouter} from "vue-router";
+import {ref} from "vue";
 
 const {applyPreset} = useColors();
 applyPreset(localStorage.getItem("theme") || "dark");
@@ -13,6 +15,10 @@ const props = defineProps({
     default: true
   }
 });
+
+const router = useRouter();
+
+const currentPath = ref(router.currentRoute.value.path);
 </script>
 
 <template>
@@ -43,7 +49,7 @@ const props = defineProps({
           class="hidden sm:block pointer">
           <router-link :to="nav.path" replace>
             <VaButton
-                round preset="secondary">
+                round gradient :preset="nav.path === currentPath ? '' : 'secondary'">
               {{ nav.name }}
             </VaButton>
           </router-link>

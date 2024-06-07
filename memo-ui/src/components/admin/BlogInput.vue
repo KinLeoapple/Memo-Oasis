@@ -3,7 +3,7 @@ import {MdEditor} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 import "@/assets/css/editor.css";
 import {computed, nextTick, ref, watch} from "vue";
-import {post_blog, post_draft, post_img} from "@/assets/js/api.js";
+import {get_blog_content, get_draft_content, post_blog, post_draft, post_img} from "@/assets/js/api.js";
 import {isHTML} from "@/assets/js/is_html.js";
 
 const props = defineProps({
@@ -36,7 +36,7 @@ const props = defineProps({
 
 const text = ref("");
 const changedText = ref("");
-const id = ref(null);
+const id = ref(props.id);
 const changeSaved = ref(null);
 const saved = ref(false);
 
@@ -53,7 +53,7 @@ const saveDraft = () => {
   post_draft(props.token, props.title, text.value, id.value).then(r => {
     if (r !== null) {
       if (r.saved !== null && r.saved !== undefined) {
-        if (id.value === null)
+        if (id.value === null || id.value < 0)
           id.value = r.saved;
         changeSaved.value = true;
         changedText.value = text.value;
@@ -72,7 +72,7 @@ const save = () => {
       props.catId, props.blogDes, props.id).then(r => {
     if (r !== null) {
       if (r.saved !== null && r.saved !== undefined) {
-        if (id.value === null)
+        if (id.value === null || id.value < 0)
           id.value = r.saved;
         saved.value = true;
       }
@@ -132,6 +132,21 @@ nextTick(() => {
   watch(() => props.post, (_) => {
     save();
   }, {immediate: true, deep: false});
+
+  get_draft_content(props.token, id.value).then(d => {
+    if (d !== null && d.content !== "") {
+      text.value = d.content;
+    } else {
+      get_blog_content(id.value).then(b => {
+        if (b !== null && b.content !== "") {
+          text.value = b.content;
+        } else {
+          textVal.value = "";
+          id.value = -1;
+        }
+      });
+    }
+  });
 });
 
 defineExpose({changeSaved, saved, id});

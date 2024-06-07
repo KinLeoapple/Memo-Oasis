@@ -87,6 +87,19 @@ export function get_draft_all(token) {
     });
 }
 
+export function get_draft_content(token, id) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog/draft/content/${id}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
 export function post_draft(token, title, draft, id = null) {
     return new Promise(resolve => {
         fetch(`${prefix}/blog/draft/${id}`, {

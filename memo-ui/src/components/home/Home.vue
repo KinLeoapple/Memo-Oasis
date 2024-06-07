@@ -180,26 +180,6 @@ export default {
 };
 </script>
 
-<style>
-.layout {
-  min-width: 100%;
-  min-height: 100%;
-  overflow: hidden;
-}
+<style scoped>
 
-.left {
-  max-width: 300px;
-  min-width: 300px
-}
-
-@media screen and (max-width: 1024px) {
-  .left {
-    max-width: 200px;
-    min-width: 200px
-  }
-
-  .right {
-    display: none;
-  }
-}
 </style>

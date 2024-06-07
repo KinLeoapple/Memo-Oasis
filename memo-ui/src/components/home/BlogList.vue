@@ -16,7 +16,8 @@ const props = defineProps({
   },
 });
 
-const records = ref([]);
+const blogList = ref([]);
+const currentList = ref([]);
 const currentPage = ref(0);
 const pageSize = ref(10);
 const currentCategory = ref(null);
@@ -36,10 +37,16 @@ const changeBlog = (id) => {
 }
 
 watch(() => props.category, (val) => {
-  if (val !== null)
+  if (val !== null) {
     currentCategory.value = val;
-  else
+    currentList.value = blogList.value.filter(item => {
+        return item.category === currentCategory.value;
+    });
+  }
+  else {
     currentCategory.value = null;
+    currentList.value = blogList.value;
+  }
 });
 
 nextTick(() => {
@@ -47,7 +54,8 @@ nextTick(() => {
     if (r !== null) {
       for (let i in r) {
         get_blog(r[i].id).then(b => {
-          records.value.push(b);
+          blogList.value.push(b);
+          currentList.value.push(b);
         });
       }
     }
@@ -85,19 +93,27 @@ defineExpose({currentCategory, currentBlog});
             </template>
             <template #right>
               <VaNavbarItem>
-                <GoBackButton style="background: var(--va-primary)" :shadowed="theme === 'dark'" @click="cleanCategory"/>
+                <GoBackButton style="background: var(--va-primary)" :shadowed="theme === 'dark'"
+                              @click="cleanCategory"/>
               </VaNavbarItem>
             </template>
           </VaNavbar>
         </VaCard>
       </transition>
 
-      <div v-for="(record, index) in records" :key="index">
+      <div v-for="(blog, index) in currentList.sort((a, b) => {
+        return Number(b.date) - Number(a.date);
+      }).filter(item => {
+        if (currentCategory !== null)
+          return item.category === currentCategory
+         else
+           return true
+      })" :key="index">
         <VaCard
             class="mb-5 overflow-hidden blog"
             :outlined="theme === 'dark'"
             :bordered="theme !== 'dark'"
-            @click="changeBlog(record.id)"
+            @click="changeBlog(blog.id)"
         >
           <div class="overflow-hidden blog-img">
             <VaImage
@@ -109,7 +125,7 @@ defineExpose({currentCategory, currentBlog});
           </div>
           <VaCardTitle
               style="font-size: 1.5rem">
-            {{ record.title }}
+            {{ blog.title }}
           </VaCardTitle>
           <VaCardContent
               style="display: flex; flex-direction: column; gap: 1rem"
@@ -117,18 +133,18 @@ defineExpose({currentCategory, currentBlog});
             <blockquote
                 style="font-size: 1rem"
             >
-              <p>{{ record.desc }}</p>
+              <p>{{ blog.desc }}</p>
             </blockquote>
             <div :class="{'more-info': theme === 'dark',
             'more-info-light': theme === 'light'}">
               <div class="va-text-secondary va-text-justify"
-                :class="{'blog-details': theme === 'dark',
+                   :class="{'blog-details': theme === 'dark',
                 'blog-details-light': theme === 'light'}"
               >
-                <p>{{ to_date(record.date) }}</p>
+                <p>{{ to_date(blog.date) }}</p>
                 <div class="dot" :class="{'dot-light-background': theme === 'light'}"></div>
-                <span class="category pointer" @click.stop="changeCategory(record.category)">{{
-                    record.category
+                <span class="category pointer" @click.stop="changeCategory(blog.category)">{{
+                    blog.category
                   }}</span>
               </div>
             </div>
@@ -138,11 +154,11 @@ defineExpose({currentCategory, currentBlog});
     </div>
   </div>
 
-  <div v-show="currentBlog === null && records.length > pageSize">
+  <div v-show="currentBlog === null && currentList.length > pageSize">
     <VaPagination
         v-model="currentPage"
         :visible-pages="7"
-        :total="records.length"
+        :total="currentList.length"
         :page-size="pageSize"
         boundary-numbers
         class="pb-5 justify-center sm:justify-start"

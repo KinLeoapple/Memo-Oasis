@@ -10,7 +10,7 @@ import LoginCard from "@/components/admin/LoginCard.vue";
 import {onBeforeRouteLeave} from "vue-router";
 import SideBar from "@/components/admin/SideBar.vue";
 import WriteBlog from "@/components/admin/WriteBlog.vue";
-import DraftList from "@/components/admin/DraftList.vue";
+import BlogOrDraftList from "@/components/admin/BlogOrDraftList.vue";
 
 const {currentPresetName} = useColors();
 
@@ -23,11 +23,14 @@ const desi_name = ref(null);
 const desi_page = ref(null);
 
 // Values
+const fixedHeight = ref(true);
 const theme = ref(currentPresetName.value);
 const loginCardRef = ref(null);
 const login = ref(false);
+const blogOrDraftListRef = ref(null);
+const blogId = ref(null);
 const writeBlogRef = ref(null);
-const blogPosted = ref(true);
+const blogPosted = ref(null);
 
 watch(currentPresetName, (val) => {
   theme.value = val;
@@ -47,6 +50,7 @@ const height = computed({
 // Unwatch methods
 let unwatchLoginCard;
 let unwatchWriteBlog;
+let unwatchBlogOrDraftList;
 
 nextTick(() => {
   let basicInfo = basicInfoRef.value;
@@ -65,19 +69,39 @@ nextTick(() => {
           loginCardRef.value.isLogin,
       (loginVal) => {
         login.value = loginVal;
-        if (loginVal)
+        if (loginVal) {
+          fixedHeight.value = false;
           unwatchLoginCard();
+        }
       }, {immediate: true, deep: true});
 
-  // Watch login state
+  // Watch write blog state
   unwatchWriteBlog = watch(() => {
-        if (writeBlogRef.value != null)
+        if (writeBlogRef.value != null) {
+          fixedHeight.value = true;
           return writeBlogRef.value.afterPost;
-        else
+        } else {
           return true;
+        }
       },
       (afterPostVal) => {
         blogPosted.value = afterPostVal;
+        if (afterPostVal)
+          blogId.value = null;
+      }, {immediate: true, deep: true});
+
+  // Watch list state
+  unwatchBlogOrDraftList = watch(() => {
+        if (blogOrDraftListRef.value != null) {
+          fixedHeight.value = false;
+          return blogOrDraftListRef.value.currentId;
+        }
+      },
+      (currentIdVal) => {
+        if (currentIdVal !== undefined) {
+          blogId.value = currentIdVal;
+          blogPosted.value = false;
+        }
       }, {immediate: true, deep: true});
 
   height.value = client_height();
@@ -91,6 +115,7 @@ onBeforeRouteLeave(() => {
   nextTick(() => {
     unwatchLoginCard();
     unwatchWriteBlog();
+    unwatchBlogOrDraftList();
     window.onresize = null;
   });
 });
@@ -99,7 +124,7 @@ onBeforeRouteLeave(() => {
 <template>
   <BasicInfo ref="basicInfoRef"/>
   <Background :theme="theme"/>
-  <div :style="{height: `${height}px`}">
+  <div :style="{height: fixedHeight ? `${height}px` : 'auto'}">
     <VaLayout
         class="layout"
         :top="{fixed: true, order: 2}"
@@ -115,10 +140,10 @@ onBeforeRouteLeave(() => {
       </template>
 
       <template #content>
-        <LoginCard v-if="!login" :theme="theme" :name="name" ref="loginCardRef"/>
-        <div style="width: 100%; height: 100%" v-else>
-          <DraftList/>
-          <WriteBlog v-if="!blogPosted" :theme="theme" ref="writeBlogRef"/>
+        <LoginCard v-if="!login" :theme="theme" :name="name" :height="height" ref="loginCardRef"/>
+        <div class="mt-5 ml-5" style="width: 100%; height: 100%" v-else>
+          <BlogOrDraftList v-if="blogId === null" :theme="theme" ref="blogOrDraftListRef"/>
+          <WriteBlog v-if="!blogPosted && blogId !== null" :id="blogId" :theme="theme" ref="writeBlogRef"/>
         </div>
       </template>
     </VaLayout>

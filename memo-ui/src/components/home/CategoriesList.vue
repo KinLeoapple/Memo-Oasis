@@ -63,7 +63,10 @@ watch(() => props.category, (val) => {
           vertical
       >
         <VaListItem
-            v-for="(category, index) in categories"
+            v-for="(category, index) in categories.sort((a, b) => {
+              return a.catName.toLowerCase()
+              .localeCompare(b.catName.toLowerCase());
+            })"
             :key="index"
             @click="changeCategory(category.catName)"
             class="list pointer"

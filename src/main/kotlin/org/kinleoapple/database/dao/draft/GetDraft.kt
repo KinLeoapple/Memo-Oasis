@@ -3,6 +3,7 @@ package org.kinleoapple.database.dao.draft
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Draft
 import org.ktorm.dsl.*
+import java.time.ZoneOffset
 
 /**
  * Return a map of the get draft result.
@@ -12,20 +13,21 @@ import org.ktorm.dsl.*
  * @return A map of the get draft result.
  */
 fun getDraft(database: Database, id: Long): Map<String, String?> {
-    var draftTitle: String? = null;
-    var draftId: Long? = 0;
+    var title: String? = null
+    var date: String? = null
 
     val result = database.getConnection().from(Draft)
-        .select(Draft.draftId, Draft.draftPath, Draft.draftTitle)
+        .select(Draft.draftUpdateDt, Draft.draftTitle)
         .where(Draft.draftId eq id)
 
     result.forEach {
-        draftTitle = it[Draft.draftTitle]
-        draftId = it[Draft.draftId]
+        title = it[Draft.draftTitle]
+        date = it[Draft.draftUpdateDt]?.toInstant(ZoneOffset.UTC)?.toEpochMilli().toString()
     }
 
     return mapOf(
-        "title" to draftTitle,
-        "id" to "$draftId",
+        "title" to title,
+        "date" to date,
+        "id" to "$id",
     )
 }
