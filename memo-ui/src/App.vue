@@ -11,44 +11,15 @@ nextTick(() => {
 import * as THREE from "three";
 import BIRDS from "vanta/dist/vanta.birds.min";
 import {useColors} from "vuestic-ui";
+import {client_height, client_width} from "@/assets/js/client_size.js";
 
-const {currentPresetName} = useColors();
+const {currentPresetName, applyPreset} = useColors();
 const boxRef = ref();
 let vantaEffect;
 
-watch(currentPresetName, (val) => {
-  if (val === "light") {
+const set_bg = () => {
+  if (vantaEffect)
     vantaEffect.destroy();
-    vantaEffect = BIRDS({
-      el: boxRef.value,
-      THREE: THREE,
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      minHeight: 200.00,
-      minWidth: 200.00,
-      scale: 1.00,
-      scaleMobile: 1.00,
-      backgroundColor: 0xc0c0ff
-    });
-  } else {
-    vantaEffect.destroy();
-    vantaEffect = BIRDS({
-      el: boxRef.value,
-      THREE: THREE,
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      minHeight: 200.00,
-      minWidth: 200.00,
-      scale: 1.00,
-      scaleMobile: 1.00,
-      backgroundColor: 0x80824
-    });
-  }
-});
-
-onMounted(() => {
   vantaEffect = BIRDS({
     el: boxRef.value,
     THREE: THREE,
@@ -56,22 +27,45 @@ onMounted(() => {
     touchControls: true,
     gyroControls: false,
     minHeight: 200.00,
+    height: client_height(),
     minWidth: 200.00,
+    width: client_width(),
     scale: 1.00,
     scaleMobile: 1.00,
-    backgroundColor: currentPresetName.value === "dark" ? 0x80824 : 0xc0c0ff
+    backgroundColor: currentPresetName.value === "dark" ? 0x10102e : 0xc0c0ff
   });
+  document.getElementById("app").style.backgroundColor =
+      currentPresetName.value === 'dark' ? '#10102e' : '#bebefd';
+}
+
+watch(currentPresetName, (_) => {
+  set_bg();
+});
+
+onMounted(() => {
+  set_bg();
 });
 
 onUnmounted(() => {
-  if (vantaEffect) {
+  if (vantaEffect)
     vantaEffect.destroy();
-  }
 });
+
+nextTick(() => {
+  window.onresize = () => {
+    vantaEffect.height = client_height() + 100;
+    vantaEffect.width = client_width() + 100;
+  }
+})
 </script>
 
 <template>
-  <div ref="boxRef" style="overflow: hidden">
+  <div ref="boxRef" :style="
+  {
+    background: currentPresetName === 'dark' ? '#10102e' : '#bebefd',
+    height: `${client_height()}px`,
+    width: `${client_width()}px`,
+  }">
     <div>
       <router-view></router-view>
     </div>

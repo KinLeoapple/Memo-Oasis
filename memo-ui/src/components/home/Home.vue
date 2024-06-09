@@ -127,7 +127,7 @@ onBeforeRouteLeave(() => {
 
 <template>
   <BasicInfo ref="basicInfoRef"/>
-  <div>
+  <div :style="{minHeight: `${height}px`}">
     <VaLayout
         class="layout"
         :top="{fixed: true, order: 2}"
@@ -139,7 +139,7 @@ onBeforeRouteLeave(() => {
       </template>
 
       <template #left>
-        <div class="mt-5 ml-5 mb-5 left" :style="{height: `${height}px`,}">
+        <div class="mt-5 ml-5 mb-5 left">
           <ProfileCard :theme="theme" :name="name" :quote="quote" :quote-name="quote_name"/>
           <CategoriesList v-show="blogId === null" :theme="theme" :category="category" ref="categoryRef"/>
           <BlogIndex :theme="theme" :blog-index="blogIndex" :max-tag="maxTitle"/>
@@ -147,7 +147,7 @@ onBeforeRouteLeave(() => {
       </template>
 
       <template #right>
-        <div style="position: relative" class="mt-5 mr-5 right" :style="{height: `${height}px`,}">
+        <div style="position: relative" class="mt-5 mr-5 right">
           <VaDatePicker
               v-model="date"
               readonly
@@ -159,7 +159,7 @@ onBeforeRouteLeave(() => {
       </template>
 
       <template #content>
-        <div class="mt-5 ml-5 mr-5" :style="{minHeight: `${height}px`,}">
+        <div class="mt-5 ml-5 mr-5">
           <BlogList :theme="theme" :category="category" ref="blogListRef"/>
           <RenderBlog :theme="theme" :content="blogContent" ref="blogRenderRef"/>
         </div>
