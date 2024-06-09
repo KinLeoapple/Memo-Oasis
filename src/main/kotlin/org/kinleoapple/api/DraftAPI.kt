@@ -8,10 +8,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.kinleoapple.database.Database
-import org.kinleoapple.database.dao.draft.getDraft
-import org.kinleoapple.database.dao.draft.getDraftAll
-import org.kinleoapple.database.dao.draft.getDraftContent
-import org.kinleoapple.database.dao.draft.postDraft
+import org.kinleoapple.database.dao.blog.deleteBlog
+import org.kinleoapple.database.dao.draft.*
 import org.kinleoapple.security.verifyToken
 
 fun Application.draftAPI(database: Database) {
@@ -51,6 +49,15 @@ fun Application.draftAPI(database: Database) {
                     val id = call.parameters["id"]?.toLongOrNull()
                     val json = call.receiveText()
                     call.respond(postDraft(database, json, id))
+                } else
+                    call.response.status(HttpStatusCode(401, "Invalid Token"))
+            }
+
+            delete("/blog/draft") {
+                val token = call.authentication.principal<JWTPrincipal>()
+                if (token?.let { verifyToken(database, it, call) } == true) {
+                    val json = call.receiveText()
+                    call.respond(deleteDraft(database, json))
                 } else
                     call.response.status(HttpStatusCode(401, "Invalid Token"))
             }

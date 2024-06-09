@@ -8,10 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.kinleoapple.database.Database
-import org.kinleoapple.database.dao.blog.getBlog
-import org.kinleoapple.database.dao.blog.getBlogAll
-import org.kinleoapple.database.dao.blog.getBlogContent
-import org.kinleoapple.database.dao.blog.postBlog
+import org.kinleoapple.database.dao.blog.*
 import org.kinleoapple.security.verifyToken
 
 fun Application.blogAPI(database: Database) {
@@ -25,6 +22,15 @@ fun Application.blogAPI(database: Database) {
                     val id = call.parameters["id"]?.toLongOrNull()
                     val json = call.receiveText()
                     call.respond(postBlog(database, json, id))
+                } else
+                    call.response.status(HttpStatusCode(401, "Invalid Token"))
+            }
+
+            delete("/blog") {
+                val token = call.authentication.principal<JWTPrincipal>()
+                if (token?.let { verifyToken(database, it, call) } == true) {
+                    val json = call.receiveText()
+                    call.respond(deleteBlog(database, json))
                 } else
                     call.response.status(HttpStatusCode(401, "Invalid Token"))
             }

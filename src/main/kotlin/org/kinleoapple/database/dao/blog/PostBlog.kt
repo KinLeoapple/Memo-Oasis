@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.dao.draft.deleteDraft
 import org.kinleoapple.database.relation.Blog
+import org.kinleoapple.database.util.generateId
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
 import org.ktorm.dsl.update
@@ -36,7 +37,7 @@ fun postBlog(database: Database, json: String, id: Long?): Map<String, String?> 
         val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
 
         if (dataClass.blog != "null" && dataClass.blog.trimIndent().isNotEmpty()) {
-            val newId = id ?: YitIdHelper.nextId() // get id or generate id
+            val newId = generateId(id) // get id or generate id
             // save to file
             val saveTo = File("./blog/$newId")
             saveTo.parentFile.mkdirs()
