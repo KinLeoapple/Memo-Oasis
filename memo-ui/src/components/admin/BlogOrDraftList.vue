@@ -1,6 +1,7 @@
 <script setup>
 import {nextTick, ref} from "vue";
 import {
+  delete_blog, delete_draft,
   get_blog,
   get_blog_all,
   get_blog_content,
@@ -10,7 +11,7 @@ import {
 } from "@/assets/js/api.js";
 import {to_date} from "@/assets/js/to_date.js";
 import {Icon} from "@vicons/utils";
-import {Plus} from "@vicons/fa";
+import {Plus, Minus} from "@vicons/fa";
 
 const props = defineProps({
   theme: {
@@ -27,21 +28,39 @@ const currentButton = ref("");
 const buttonGroup = ref(["BLOG", "DRAFT"]);
 const currentList = ref([]);
 const currentId = ref(null);
+const showDeleteBox = ref(false);
+const currentSelectedItem = ref(null);
 
+const checkLink = (id) => {
+  Promise.all([get_draft(props.token, id), get_blog(id)]).then(arr => {
+    let d = arr[0];
+    let b = arr[1];
+
+    get_content(id).then(content => {
+      switch (currentButton.value) {
+        case "BLOG": {
+          b.content = content;
+          b.hasLink = d.title !== undefined;
+          currentList.value.push(b);
+          break;
+        }
+        case "DRAFT": {
+          d.content = content;
+          d.hasLink = b.title !== undefined;
+          currentList.value.push(d);
+          break;
+        }
+      }
+    });
+  });
+}
 
 const update_draft_list = () => {
   currentList.value = [];
   get_draft_all(props.token).then(r => {
     if (r !== null) {
       for (let i in r) {
-        get_draft(props.token, r[i].id).then(d => {
-          if (d !== null) {
-            get_content(r[i].id).then(content => {
-              d.content = content;
-              currentList.value.push(d);
-            });
-          }
-        });
+        checkLink(r[i].id);
       }
     }
   });
@@ -52,12 +71,7 @@ const update_blog_list = () => {
   get_blog_all().then(r => {
     if (r !== null) {
       for (let i in r) {
-        get_blog(r[i].id).then(b => {
-          get_content(r[i].id).then(content => {
-            b.content = content;
-            currentList.value.push(b);
-          });
-        });
+        checkLink(r[i].id);
       }
     }
   });
@@ -89,6 +103,39 @@ const get_content = (id) => {
   });
 }
 
+const targetDelete = (item) => {
+  showDeleteBox.value = true;
+  currentSelectedItem.value = item;
+}
+
+const remove = (id) => {
+  currentSelectedItem.value = null;
+  switch (currentButton.value) {
+    case "BLOG": {
+      Promise.all([delete_draft(props.token, id), delete_blog(props.token, id)]).then(arr => {
+        let r = arr[1];
+
+        if (r !== null) {
+          if (r.deleted === true) {
+            update_blog_list();
+          }
+        }
+      });
+      break;
+    }
+    case "DRAFT": {
+      delete_draft(props.token, id).then(r => {
+        if (r !== null) {
+          if (r.deleted === true) {
+            update_draft_list();
+          }
+        }
+      });
+      break;
+    }
+  }
+}
+
 const switchList = (button) => {
   nextTick(() => {
     currentButton.value = button;
@@ -117,14 +164,30 @@ defineExpose({currentId});
 </script>
 
 <template>
-  <div id="blog-or-draft-list" class="button-group">
-    <VaButton class="button"
-              round v-for="(button, index) in buttonGroup" :key="index"
-              :color="button === currentButton ? 'Primary' : 'BackgroundBorder'"
-              @click="switchList(button)">
-      {{ button }}
-    </VaButton>
+  <VaModal
+      v-model="showDeleteBox"
+      ok-text="Yes"
+      @ok="remove(currentSelectedItem.id)"
+      @cancel="currentSelectedItem.value = null"
+  >
+    <h6 class="va-h6">Are You Sure?</h6>
+    <blockquote class="mt-5 va-blockquote">
+      <p>Your data may leave you for a long time.</p>
+      <p v-if="currentSelectedItem.hasLink && currentButton === 'BLOG'">The draft will also be deleted.</p>
+    </blockquote>
+  </VaModal>
+
+  <div class="navbar">
+    <div id="blog-or-draft-list" class="button-group">
+      <VaButton class="button"
+                round v-for="(button, index) in buttonGroup" :key="index"
+                :color="button === currentButton ? 'Primary' : 'BackgroundBorder'"
+                @click="switchList(button)">
+        {{ button }}
+      </VaButton>
+    </div>
   </div>
+
 
   <div class="container">
     <div v-if="currentButton === 'DRAFT'" class="card-container">
@@ -143,32 +206,63 @@ defineExpose({currentId});
     <div v-if="currentList.length > 0" class="card-container" v-for="(item, index) in currentList.sort((a, b) => {
       return Number(b.date) - Number(a.date);
     })" :key="index" @click="modifyBlogOrDraft(item.id)">
-      <VaCard class="pointer item"
-              :outlined="theme === 'dark'"
-              :bordered="theme !== 'dark'">
-        <VaCardTitle style="font-size: 1.5rem">{{ item.title }}</VaCardTitle>
-        <VaCardContent
-            style="display: flex; flex-direction: column; gap: 1rem">
-          <blockquote
-              style="font-size: 1rem;"
-          >
-            <p class="va-text-truncate">{{ item.content }}</p>
-          </blockquote>
-          <div :class="{'more-info': theme === 'dark',
-            'more-info-light': theme === 'light'}">
-            <div class="va-text-secondary va-text-justify"
-                 :class="{'details': theme === 'dark',
+      <VaValue v-slot="isHover">
+        <VaCard class="pointer item"
+                :outlined="theme === 'dark'"
+                :bordered="theme !== 'dark'"
+                @mouseenter="isHover.value = true"
+                @mouseleave="isHover.value = false">
+          <VaCardTitle class="item_title">
+            <p>{{ item.title }}</p>
+            <VaButton
+                @click.stop="targetDelete(item)"
+                v-show="isHover.value"
+                color="danger"
+                round
+                size="small">
+              <Icon>
+                <Minus/>
+              </Icon>
+            </VaButton>
+          </VaCardTitle>
+          <VaCardContent
+              style="display: flex; flex-direction: column; gap: 1rem">
+            <blockquote
+                style="font-size: 1rem;"
+            >
+              <p class="va-text-truncate">{{ item.content }}</p>
+            </blockquote>
+            <div :class="{'more-info': theme === 'dark',
+            'more-info-light': theme === 'light'}" :style="{
+              justifyContent: item.hasLink ? 'space-between' : 'end',
+            }">
+              <VaBadge
+                  style="padding: 6px 12px;"
+                  v-if="item.hasLink"
+                  :text="'Had ' + (currentButton === 'BLOG' ? 'Draft' : 'Blog')"
+                  color="success"
+                  class="mr-2"
+              />
+              <div class="va-text-secondary va-text-justify"
+                   :class="{'details': theme === 'dark',
                 'details-light': theme === 'light'}">
-              <p>{{ to_date(item.date) }}</p>
+                <p>{{ to_date(item.date) }}</p>
+              </div>
             </div>
-          </div>
-        </VaCardContent>
-      </VaCard>
+          </VaCardContent>
+        </VaCard>
+      </VaValue>
     </div>
   </div>
 </template>
 
 <style scoped>
+.navbar {
+  position: fixed;
+  top: 120px;
+  z-index: 999
+}
+
 .button-group {
   min-width: 100%;
   max-width: 100%;
@@ -189,6 +283,7 @@ defineExpose({currentId});
   flex-wrap: wrap;
   align-items: stretch;
   align-content: flex-start;
+  margin-top: 100px;
   margin-bottom: 30px;
 }
 
@@ -206,6 +301,13 @@ defineExpose({currentId});
   justify-content: center;
   align-items: center;
   gap: 2px;
+}
+
+.item_title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
 }
 
 .item {
@@ -226,14 +328,14 @@ defineExpose({currentId});
 .more-info {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: space-between;
   align-items: end;
 }
 
 .more-info-light {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: space-between;
   align-items: end;
 }
 

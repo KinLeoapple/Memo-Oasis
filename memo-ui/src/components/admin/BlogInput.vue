@@ -2,7 +2,7 @@
 import {MdEditor} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 import "@/assets/css/editor.css";
-import {computed, nextTick, ref, watch} from "vue";
+import {computed, nextTick, onBeforeUnmount, ref, watch} from "vue";
 import {get_blog_content, get_draft_content, post_blog, post_draft, post_img} from "@/assets/js/api.js";
 import {isHTML} from "@/assets/js/is_html.js";
 
@@ -15,7 +15,10 @@ const props = defineProps({
     type: String,
     default: () => localStorage.getItem("token")
   },
-  title: String,
+  title: {
+    type: String,
+    default: ""
+  },
   post: {
     type: Boolean,
     default: false
@@ -116,9 +119,10 @@ const sanitize = (html) => {
   }
 }
 
+let timer = null;
 nextTick(() => {
   // save every 10 seconds
-  setInterval(() => {
+  timer = setInterval(() => {
     // do it only the text has changed
     if (changedText.value !== text.value) {
       saveDraft();
@@ -147,6 +151,13 @@ nextTick(() => {
       });
     }
   });
+});
+
+onBeforeUnmount(() => {
+  try {
+    clearInterval(timer);
+  } catch (_) {
+  }
 });
 
 defineExpose({changeSaved, saved, id});

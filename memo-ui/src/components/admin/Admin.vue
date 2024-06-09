@@ -1,6 +1,5 @@
 <script setup>
 
-import Background from "@/components/common/Background.vue";
 import NavBar from "@/components/common/NavBar.vue";
 import {computed, nextTick, ref, watch} from "vue";
 import {useColors} from "vuestic-ui";
@@ -65,13 +64,18 @@ nextTick(() => {
       });
 
   // Watch login state
-  unwatchLoginCard = watch(() =>
-          loginCardRef.value.isLogin,
+  unwatchLoginCard = watch(() => {
+        if (loginCardRef.value != null) {
+          fixedHeight.value = true;
+          return loginCardRef.value.isLogin
+        } else {
+          return true;
+        }
+      },
       (loginVal) => {
         login.value = loginVal;
         if (loginVal) {
           fixedHeight.value = false;
-          unwatchLoginCard();
         }
       }, {immediate: true, deep: true});
 
@@ -123,7 +127,6 @@ onBeforeRouteLeave(() => {
 
 <template>
   <BasicInfo ref="basicInfoRef"/>
-  <Background :theme="theme"/>
   <div :style="{height: fixedHeight ? `${height}px` : 'auto'}">
     <VaLayout
         class="layout"

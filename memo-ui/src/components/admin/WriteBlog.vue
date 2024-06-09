@@ -3,11 +3,9 @@ import BlogInput from "@/components/admin/BlogInput.vue";
 import {ref, nextTick, watch, computed} from "vue";
 import {
   get_blog,
-  get_blog_content,
   get_category,
   get_category_all,
   get_draft,
-  get_draft_content,
   post_category
 } from "@/assets/js/api.js";
 import CircleBackButton from "@/components/button/CircleBackButton.vue";
@@ -28,7 +26,7 @@ const props = defineProps({
 });
 
 const options = ref([]);
-const optionVal = ref("");
+const optionVal = ref({});
 const id = ref(props.id);
 const inputRef = ref();
 const showInput = ref(false);
@@ -106,13 +104,17 @@ const postCategory = () => {
   });
 }
 
-const getCategory = () => {
+const getCategory = (currentCategory = null) => {
   options.value = [];
   get_category_all().then(r => {
     if (r !== null) {
       for (let i in r) {
         get_category(r[i].id).then(c => {
           options.value.push(c);
+          if (currentCategory !== null) {
+            if (currentCategory === c.catName)
+              optionVal.value = c;
+          }
         });
       }
     }
@@ -120,8 +122,6 @@ const getCategory = () => {
 }
 
 nextTick(() => {
-  getCategory();
-
   let unwatchChangeSaved;
   let unwatchSaved;
   let unwatchId;
@@ -168,15 +168,21 @@ nextTick(() => {
     unwatchId();
   }
 
-  get_draft(props.token, id.value).then(d => {
+  Promise.all([get_draft(props.token, id.value), get_blog(id.value)]).then(arr => {
+    let d = arr[0];
+    let b = arr[1];
+
+    let isDraft = false;
     if (d !== null && d.title !== undefined && d.title !== null) {
       title.value = d.title;
-    } else {
-      get_blog(id.value).then(b => {
-        if (b !== null && b.title !== undefined && b.title !== null) {
-          title.value = b.title;
-        }
-      });
+      isDraft = true;
+    }
+
+    if (b !== null && b.title !== undefined && b.title !== null) {
+      if (!isDraft)
+        title.value = b.title;
+      description.value = b.desc;
+      getCategory(b.category);
     }
   });
 });
@@ -198,10 +204,12 @@ defineExpose({afterPost});
         <VaSelect
             v-model="optionVal"
             placeholder=""
-            :options="options"
-            :textBy="(option) => option.catName"
+            :options="options.sort((a, b) => a.catName.localeCompare(b.catName))"
+            :text-by="option => option.catName"
+            :track-by="option => option.catName"
             no-options-text="No Categories Found"
             label="Category"
+            searchable
             required-mark
         />
         <VaButton

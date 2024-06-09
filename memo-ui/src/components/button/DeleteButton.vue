@@ -42,31 +42,30 @@
       </defs>
     </svg>
   </button>
-
 </template>
 
 <style scoped>
 .button {
-  width: 46px;
-  height: 46px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background-color: var(--va-link-color);
+  background-color: rgb(20, 20, 20);
   border: none;
   font-weight: 600;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.164);
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
   cursor: pointer;
   transition-duration: 0.3s;
   overflow: hidden;
   position: relative;
-  gap: 1px;
+  gap: 2px;
 }
 
 .svgIcon {
-  width: 12px;
+  width: 10px;
   transition-duration: 0.3s;
 }
 
@@ -75,40 +74,17 @@
 }
 
 .button:hover {
-  width: 140px;
-  border-radius: 50px;
   transition-duration: 0.3s;
   background-color: rgb(255, 69, 69);
   align-items: center;
   gap: 0;
 }
 
-.button:hover .bin-bottom {
-  width: 46px;
-  transition-duration: 0.3s;
-  transform: translateY(60%);
-}
 .bin-top {
   transform-origin: bottom right;
 }
 .button:hover .bin-top {
-  width: 46px;
-  transition-duration: 0.3s;
-  transform: translateY(60%) rotate(160deg);
-}
-.button::before {
-  position: absolute;
-  top: -20px;
-  content: "Delete";
-  color: white;
-  transition-duration: 0.3s;
-  font-size: 2px;
-}
-
-.button:hover::before {
-  font-size: 13px;
-  opacity: 1;
-  transform: translateY(35px);
-  transition-duration: 0.3s;
+  transition-duration: 0.5s;
+  transform: rotate(160deg);
 }
 </style>

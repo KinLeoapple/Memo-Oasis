@@ -11,7 +11,6 @@ import {get_blog_content} from "@/assets/js/api.js";
 import RenderBlog from "@/components/home/RenderBlog.vue";
 import {client_height} from "@/assets/js/client_size.js";
 import BlogIndex from "@/components/home/BlogIndex.vue";
-import Background from "@/components/common/Background.vue";
 import BasicInfo from "@/components/common/BasicInfo.vue";
 import {onBeforeRouteLeave} from 'vue-router';
 
@@ -128,7 +127,6 @@ onBeforeRouteLeave(() => {
 
 <template>
   <BasicInfo ref="basicInfoRef"/>
-  <Background :theme="theme"/>
   <div>
     <VaLayout
         class="layout"

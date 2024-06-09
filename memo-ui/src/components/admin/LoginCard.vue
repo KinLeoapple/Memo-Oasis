@@ -71,7 +71,10 @@ defineExpose({isLogin, token});
         :bordered="theme !== 'dark'"
     >
       <VaCardTitle class="va-title" style="text-shadow: 0 0 10px var(--va-text-primary)">
-        <span style="font-size: 3rem; letter-spacing: 6px">Login</span>
+        <span class="va-text-capitalize"
+              style="font-size: 3rem; letter-spacing: 1px">
+          Sign In
+        </span>
       </VaCardTitle>
       <VaCardBlock
           style="width: 100%; height: 100%; display: flex;"

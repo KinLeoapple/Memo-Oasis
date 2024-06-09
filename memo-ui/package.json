@@ -16,6 +16,8 @@
     "marked": "^12.0.2",
     "md-editor-v3": "^4.14.1",
     "rollup-plugin-visualizer": "^5.12.0",
+    "three": "^0.134.0",
+    "vanta": "^0.5.24",
     "vite-plugin-compression": "^0.5.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.2",

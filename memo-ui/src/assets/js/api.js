@@ -118,6 +118,23 @@ export function post_draft(token, title, draft, id = null) {
     });
 }
 
+export function delete_draft(token, id) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog/draft`, {
+            method: "DELETE",
+            mode: "cors",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                draft_id: id,
+            })
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
 export function post_blog(token, title, blog, catId, blogDes, id = null) {
     return new Promise(resolve => {
         fetch(`${prefix}/blog/${id}`, {
@@ -131,6 +148,23 @@ export function post_blog(token, title, blog, catId, blogDes, id = null) {
                 blog: blog,
                 cat_id: catId,
                 blog_des: blogDes
+            })
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
+export function delete_blog(token, id) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog`, {
+            method: "DELETE",
+            mode: "cors",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                blog_id: id,
             })
         }).then(r => {
             resolve(r.json())
