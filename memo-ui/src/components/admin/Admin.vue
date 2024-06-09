@@ -127,7 +127,7 @@ onBeforeRouteLeave(() => {
 
 <template>
   <BasicInfo ref="basicInfoRef"/>
-  <div :style="{height: fixedHeight ? `${height}px` : 'auto'}">
+  <div :style="{height: fixedHeight ? `${height}px` : 'auto', minHeight: `${height}px`}">
     <VaLayout
         class="layout"
         :top="{fixed: true, order: 2}"

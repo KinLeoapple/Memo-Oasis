@@ -71,7 +71,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="boxRef">
+  <div ref="boxRef" style="overflow: hidden">
     <div>
       <router-view></router-view>
     </div>
