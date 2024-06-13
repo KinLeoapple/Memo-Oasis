@@ -17,7 +17,7 @@ import org.mindrot.jbcrypt.BCrypt
  * @param json The json containers the information.
  * @return A map of the login result.
  */
-fun getLogin(database: Database, json: String, call: ApplicationCall): Map<String, String?> {
+fun getLogin(database: Database, json: String, call: ApplicationCall, role: Int = 2): Map<String, String?> {
     data class DataClass(
         @SerializedName("username")
         val username: String,
@@ -41,7 +41,7 @@ fun getLogin(database: Database, json: String, call: ApplicationCall): Map<Strin
         true -> {
             val ua = call.request.headers["User-Agent"]
             ua?.let {
-                val token = Auth.sign(dataClass.username, call.request.origin.remoteHost, it)
+                val token = Auth.sign(dataClass.username, role, call.request.origin.remoteHost, it)
                 return mapOf("login" to token)
             }
             mapOf("login" to null)

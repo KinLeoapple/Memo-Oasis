@@ -20,7 +20,7 @@ fun getBasicInfo(database: Database): Map<String, String?> {
     var designerName: String? = null
     var designerPage: String? = null;
 
-    getUser(database).forEach {
+    getUser(database, 0).forEach {
         when (it.key) {
             "name" -> name = it.value
             "quote" -> quote = it.value

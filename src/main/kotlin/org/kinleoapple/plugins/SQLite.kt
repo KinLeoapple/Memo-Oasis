@@ -11,6 +11,7 @@ fun Application.configureSQLite() {
         listOf(
             createImage(),
             createQuote(),
+            createRole(),
             createUser(),
             createCategory(),
             createDraft(),

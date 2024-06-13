@@ -5,7 +5,13 @@ import org.kinleoapple.database.relation.Quote
 import org.kinleoapple.database.relation.User
 import org.ktorm.dsl.*
 
-fun getUser(database: Database): Map<String, String?> {
+/**
+ * Return a map of the user information.
+ *
+ * @param database The database which wish to search.
+ * @return A map of the user information.
+ */
+fun getUser(database: Database, id: Long): Map<String, String?> {
     var name: String? = null
     var quoteId: Long? = 0
     var quote: String? = null
@@ -13,16 +19,16 @@ fun getUser(database: Database): Map<String, String?> {
 
     var result = database.getConnection().from(User)
         .select(User.userName, User.quoteId)
-        .where(User.userId eq 0)
+        .where(User.userId eq id)
     result.forEach {
         name = it[User.userName]
         quoteId = it[User.quoteId]
     }
 
-    quoteId?.let { it ->
+    quoteId?.let { i ->
         result = database.getConnection().from(Quote)
             .select(Quote.quoteText, Quote.quoteName)
-            .where(Quote.quoteId eq it)
+            .where(Quote.quoteId eq i)
         result.forEach {
             quote = it[Quote.quoteText]
             quoteName = it[Quote.quoteName]

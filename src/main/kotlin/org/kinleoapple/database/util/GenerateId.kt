@@ -10,11 +10,9 @@ fun generateId(id: Long?): Long {
         else
             it
     }
-    val newId = identity ?: YitIdHelper.nextId()
-    return newId
+    return identity ?: YitIdHelper.nextId()
 }
 
 fun generateId(): Long {
-    val newId = YitIdHelper.nextId()
-    return newId
+    return YitIdHelper.nextId()
 }
