@@ -1,10 +1,9 @@
-import {Badge, List, ListItem, ListItemDecorator, Typography} from "@mui/joy";
+import {Badge, List, ListItem, ListItemButton, Typography, useColorScheme} from "@mui/joy";
 import {useEffect, useState} from "react";
 import {get_category, get_category_all, get_category_number} from "@/assets/js/api.js";
 
-export const CategoriesList = ({
-                                   theme = localStorage.getItem("theme-mode") || "dark"
-                               }) => {
+export const CategoriesList = () => {
+    const themeMode = useColorScheme();
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
@@ -40,13 +39,17 @@ export const CategoriesList = ({
                     return a.catName.toLowerCase()
                         .localeCompare(b.catName.toLowerCase());
                 }).map((category) => (
-                    <ListItem key={category} className={`flex flex-row justify-between`} sx={{
+                    <ListItem key={category} className={`cursor-pointer`} sx={{
                         width: '100%'
                     }}>
-                        <p className={`text-base font-bold`}>{category.catName}</p>
-                        <ListItemDecorator>
-                            <Badge variant="solid" size="sm" badgeContent={category.number}/>
-                        </ListItemDecorator>
+                        <ListItemButton className={'flex flex-row justify-between'} sx={{
+                            borderRadius: '6px'
+                        }}>
+                            <p className={`text-base font-bold`}>{category.catName}</p>
+                            <Badge variant="soft" size="sm" badgeContent={category.number} sx={{
+                                '--Badge-ring': '0 0 0 0'
+                            }}/>
+                        </ListItemButton>
                     </ListItem>
                 ))}
             </List>

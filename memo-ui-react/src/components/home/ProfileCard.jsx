@@ -9,6 +9,7 @@ export const ProfileCard = ({
                                 quoteName = ""
                             }) => {
     const themeMode = useColorScheme();
+    const tags = ["gamer", "developer"];
     const [loading, setLoading] = useState(false);
 
     return (
@@ -39,25 +40,20 @@ export const ProfileCard = ({
                         </Typography>}
                 </div>
                 <div className={`w-full flex flex-row justify-start content-center gap-1`}>
-                    <Chip
-                        color="success"
-                        variant="soft"
-                        size="sm"
-                    >
-                        <span className={'font-bold'}>GAMER</span>
-                    </Chip>
-                    <Chip
+                    {tags.map((tag) => (<Chip
+                        key={tag}
                         color="primary"
                         variant="soft"
                         size="sm"
                     >
-                        <span className={'font-bold'}>DEVELOPER</span>
-                    </Chip>
+                        <span className={'font-bold'}>{tag.toUpperCase()}</span>
+                    </Chip>))}
                 </div>
-                {(quote !== null && quote !== "") && <Card sx={{
+                {(quote !== null && quote !== "") && <Card
+                    color="neutral" variant="soft" sx={{
                     boxShadow: 'lg',
                 }}
-                                                           color="neutral" variant="soft">
+                >
                     <Typography level="title-md" color="neutral">
                         <span className={`font-bold block`}>
                             {quote}

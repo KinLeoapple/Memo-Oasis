@@ -4,9 +4,14 @@ import App from './App.jsx'
 import './index.css'
 
 import '@fontsource-variable/nunito';
+import {CssVarsProvider} from "@mui/joy";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <React.StrictMode>
+        <CssVarsProvider
+            modeStorageKey="theme-mode"
+        >
+            <App/>
+        </CssVarsProvider>
+    </React.StrictMode>,
 )

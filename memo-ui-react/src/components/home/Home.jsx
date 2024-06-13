@@ -1,9 +1,9 @@
 import {ProfileCard} from "@/components/home/ProfileCard.jsx";
 import {useEffect, useState} from "react";
 import {basic_info} from "@/assets/js/api.js";
-import {CssVarsProvider, Divider, Grid} from "@mui/joy";
+import {Divider, Grid, Stack} from "@mui/joy";
 import {CategoriesList} from "@/components/home/CategoriesList.jsx";
-import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
+import {NavBar} from "@/components/common/NavBar.jsx";
 
 export const Home = () => {
     // Basic Information
@@ -21,11 +21,9 @@ export const Home = () => {
 
     return (
         <>
-            <CssVarsProvider
-                modeStorageKey="theme-mode"
-            >
-                <Grid container spacing={0} columns={4} sx={{ flexGrow: 1 }}>
-                    <SwitchThemeButton/>
+            <Stack>
+                <NavBar/>
+                <Grid container spacing={0} columns={4} sx={{flexGrow: 1}}>
                     <Grid xs={0.8} className={`flex flex-col gap-5 ml-10`}>
                         <ProfileCard name={name} quote={quote} quoteName={quoteName}/>
                         <Divider/>
@@ -38,7 +36,7 @@ export const Home = () => {
 
                     </Grid>
                 </Grid>
-            </CssVarsProvider>
+            </Stack>
         </>
     )
 }

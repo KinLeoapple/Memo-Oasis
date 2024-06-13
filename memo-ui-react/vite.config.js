@@ -21,7 +21,7 @@ export default defineConfig({
             deleteOriginFile: false // 源文件压缩后是否删除
         }),
         imagemin({
-            mode: 'squoosh',
+            mode: 'sharp',
             compress: {
                 jpeg: {
                     // 0 ~ 100
