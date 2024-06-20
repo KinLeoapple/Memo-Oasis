@@ -1,13 +1,8 @@
 // Environment Values
 import {crypt_str} from "@/assets/js/crypt.js";
+import {api_prefix} from "@/assets/js/api_prefix.js";
 
-let protocol = window.location.protocol;
-let hostname = window.location.hostname;
-let port = window.location.port;
-if (port === null || port === undefined || port === "")
-    port = null;
-
-const prefix = `${protocol}//${hostname}${port != null ? `:${8080}` : ""}`;
+const prefix = api_prefix();
 
 export function basic_info() {
     return new Promise(resolve => {
@@ -16,6 +11,30 @@ export function basic_info() {
         ).catch(_ => resolve(new Promise(() => resolve(null))));
     });
 }
+
+export function post_login(username, password) {
+    return new Promise(resolve => {
+        crypt_str(password).then(hash => {
+            fetch(`${prefix}/login`, {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: hash,
+                })
+            }).then(r => {
+                resolve(r.json())
+            }).catch(_ => resolve(new Promise(() => resolve(null))));
+        });
+    });
+}
+
+/*
+Blog
+ */
 
 export function get_blog_all() {
     return new Promise(resolve => {
@@ -41,25 +60,46 @@ export function get_blog_content(id) {
     });
 }
 
-export function post_login(username, password) {
+export function post_blog(token, title, blog, catId, blogDes, id = null) {
     return new Promise(resolve => {
-        crypt_str(password).then(hash => {
-            fetch(`${prefix}/login`, {
-                method: "POST",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: hash,
-                })
-            }).then(r => {
-                resolve(r.json())
-            }).catch(_ => resolve(new Promise(() => resolve(null))));
-        });
+        fetch(`${prefix}/blog/${id}`, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                title: title,
+                blog: blog,
+                cat_id: catId,
+                blog_des: blogDes
+            })
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
     });
 }
+
+export function delete_blog(token, id) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog`, {
+            method: "DELETE",
+            mode: "cors",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                blog_id: id,
+            })
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
+/*
+ Draft
+ */
 
 export function get_draft(token, id) {
     return new Promise(resolve => {
@@ -135,42 +175,9 @@ export function delete_draft(token, id) {
     });
 }
 
-export function post_blog(token, title, blog, catId, blogDes, id = null) {
-    return new Promise(resolve => {
-        fetch(`${prefix}/blog/${id}`, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                title: title,
-                blog: blog,
-                cat_id: catId,
-                blog_des: blogDes
-            })
-        }).then(r => {
-            resolve(r.json())
-        }).catch(_ => resolve(new Promise(() => resolve(null))));
-    });
-}
-
-export function delete_blog(token, id) {
-    return new Promise(resolve => {
-        fetch(`${prefix}/blog`, {
-            method: "DELETE",
-            mode: "cors",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                blog_id: id,
-            })
-        }).then(r => {
-            resolve(r.json())
-        }).catch(_ => resolve(new Promise(() => resolve(null))));
-    });
-}
+/*
+ Image
+ */
 
 export function post_img(token, file, id = null) {
     return new Promise(resolve => {
@@ -189,6 +196,10 @@ export function post_img(token, file, id = null) {
         }).catch(_ => resolve(new Promise(() => resolve(null))));
     });
 }
+
+/*
+ Category
+ */
 
 export function post_category(token, categoryName, id = null) {
     return new Promise(resolve => {

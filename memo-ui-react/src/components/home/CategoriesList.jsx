@@ -4,7 +4,7 @@ import {get_category, get_category_all, get_category_number} from "@/assets/js/a
 
 export const CategoriesList = () => {
     const themeMode = useColorScheme();
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState({data: [], refresh: true});
 
     useEffect(() => {
         let list = [];
@@ -15,13 +15,13 @@ export const CategoriesList = () => {
                         if (arr[1].count > 0) {
                             arr[0].number = arr[1].count;
                             list.push(arr[0]);
-                            setCategories(list);
+                            setCategories({data: list, refresh: true});
                         }
                     });
                 }
             }
         });
-    });
+    }, [categories.refresh]);
 
     return (
         <>
@@ -35,7 +35,7 @@ export const CategoriesList = () => {
                         fontSize: 'x-large'
                     }}>C</span>ategory
                 </Typography>
-                {categories.length > 0 && categories.sort((a, b) => {
+                {categories.data.length > 0 && categories.data.sort((a, b) => {
                     return a.catName.toLowerCase()
                         .localeCompare(b.catName.toLowerCase());
                 }).map((category) => (

@@ -4,6 +4,7 @@ import {basic_info} from "@/assets/js/api.js";
 import {Divider, Grid, Stack} from "@mui/joy";
 import {CategoriesList} from "@/components/home/CategoriesList.jsx";
 import {NavBar} from "@/components/common/NavBar.jsx";
+import {BlogList} from "@/components/home/BlogList.jsx";
 
 export const Home = () => {
     // Basic Information
@@ -17,7 +18,7 @@ export const Home = () => {
             setQuote(r.quote);
             setQuoteName(r.quote_name);
         });
-    });
+    }, [name, quote, quoteName]);
 
     return (
         <>
@@ -29,8 +30,8 @@ export const Home = () => {
                         <Divider/>
                         <CategoriesList/>
                     </Grid>
-                    <Grid xs={2}>
-
+                    <Grid xs={2} className={`ml-5 mr-5`}>
+                        <BlogList/>
                     </Grid>
                     <Grid xs={0.8}>
 
