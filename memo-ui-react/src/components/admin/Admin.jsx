@@ -1,12 +1,9 @@
-import {NavBar} from "@/components/common/NavBar.jsx";
-import {Stack} from "@mui/joy";
+import {Layout} from "@/components/layout/Layout.jsx";
 
 export const Admin = () => {
     return (
         <>
-            <Stack>
-                <NavBar searchBar={false}/>
-            </Stack>
+            <Layout/>
         </>
     )
 }

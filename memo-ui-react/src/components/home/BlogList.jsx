@@ -4,13 +4,16 @@ import {AspectRatio, Card, CardContent, Divider, Typography} from "@mui/joy";
 import {to_date} from "@/assets/js/to_date.js";
 import CalculateMonth from '@mui/icons-material/CalendarMonth';
 import CategoryIcon from '@mui/icons-material/Category';
-
-const MAX_PER_PAGE = 5;
+import {useDispatch, useSelector} from "react-redux";
+import {selectBlogPage} from "@/assets/js/data/reducer/blog_page_slice.js";
+import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
+import {setNumberValue} from "@/assets/js/data/reducer/blog_number_slice.js";
 
 export const BlogList = () => {
     const [ids, setIds] = useState({data: [], refresh: false});
     const [blogs, setBlogs] = useState({data: [], refresh: false});
-    const [page, setPage] = useState(1);
+    const page = useSelector(selectBlogPage);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         get_blog_all().then(r => {
@@ -25,6 +28,10 @@ export const BlogList = () => {
             }
         });
     }, [ids.refresh]);
+    
+    useEffect(() => {
+        dispatch(setNumberValue(parseInt(ids.data.length / MAX_PER_PAGE) || 0));
+    }, [dispatch, ids]);
 
     useEffect(() => {
         let requests = [];
@@ -55,7 +62,7 @@ export const BlogList = () => {
                 blogs.data.sort((a, b) => {
                     return Number(b.date) - Number(a.date);
                 }).map((blog) => (
-                    <Card key={blog} variant="soft" className={`cursor-pointer`} sx={{
+                    <Card key={blog} color="primary" variant="soft" className={`cursor-pointer select-none`} sx={{
                         boxShadow: 'lg',
                     }}>
                         <AspectRatio minHeight="120px" maxHeight="200px">

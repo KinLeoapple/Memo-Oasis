@@ -1,9 +1,12 @@
-import {Badge, List, ListItem, ListItemButton, Typography, useColorScheme} from "@mui/joy";
+import {Badge, List, ListItem, ListItemButton, Typography} from "@mui/joy";
 import {useEffect, useState} from "react";
 import {get_category, get_category_all, get_category_number} from "@/assets/js/api.js";
+import {useDispatch, useSelector} from "react-redux";
+import {selectCategory, setCategoryValue} from "@/assets/js/data/reducer/category_slice.js";
 
 export const CategoriesList = () => {
-    const themeMode = useColorScheme();
+    const cat = useSelector(selectCategory);
+    const dispatch = useDispatch();
     const [categories, setCategories] = useState({data: [], refresh: true});
 
     useEffect(() => {
@@ -23,12 +26,20 @@ export const CategoriesList = () => {
         });
     }, [categories.refresh]);
 
+    function selectedCategory(name) {
+        dispatch(setCategoryValue(name));
+    }
+
     return (
         <>
             <List
+                className={'select-none'}
                 size="lg"
                 color="primary"
                 variant="plain"
+                sx={{
+                    "--List-gap": "5px"
+                }}
             >
                 <Typography level="h4" color="neutral">
                     <span style={{
@@ -39,10 +50,14 @@ export const CategoriesList = () => {
                     return a.catName.toLowerCase()
                         .localeCompare(b.catName.toLowerCase());
                 }).map((category) => (
-                    <ListItem key={category} className={`cursor-pointer`} sx={{
+                    <ListItem key={category} className={`cursor-pointer select-none`} sx={{
                         width: '100%'
                     }}>
-                        <ListItemButton className={'flex flex-row justify-between'} sx={{
+                        <ListItemButton
+                            onClick={() => selectedCategory(category.catName)}
+                            selected={category.catName === cat}
+                            color={category.catName === cat ? "primary" : undefined}
+                            className={'flex flex-row justify-between'} sx={{
                             borderRadius: '6px'
                         }}>
                             <p className={`text-base font-bold`}>{category.catName}</p>

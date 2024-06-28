@@ -45,12 +45,16 @@ export const ProfileCard = ({
                         color="primary"
                         variant="soft"
                         size="sm"
+                        sx={{
+                            borderRadius: '2px',
+                            fontSize: '0.55rem'
+                        }}
                     >
                         <span className={'font-bold'}>{tag.toUpperCase()}</span>
                     </Chip>))}
                 </div>
                 {(quote !== null && quote !== "") && <Card
-                    color="neutral" variant="soft" sx={{
+                    color="primary" variant="soft" sx={{
                     boxShadow: 'lg',
                 }}
                 >

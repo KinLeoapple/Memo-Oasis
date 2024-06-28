@@ -2,10 +2,9 @@ import {Button, Input, Stack, useColorScheme} from "@mui/joy";
 import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
 import {Link, useLocation} from "react-router-dom";
 import Search from '@mui/icons-material/Search';
+import {useEffect, useState} from "react";
 
-export const NavBar = ({
-                           searchBar = true
-                       }) => {
+export const NavBar = () => {
     const navButtons = [{
         name: "Home",
         path: "/"
@@ -16,6 +15,14 @@ export const NavBar = ({
         }];
     let themeMode = useColorScheme();
     let location = useLocation();
+    let [searchBar, setSearchBar] = useState(true);
+
+    useEffect(() => {
+        switch (location.pathname) {
+            case "/admin": setSearchBar(false); break;
+            case "/": setSearchBar(true); break;
+        }
+    }, [location]);
 
     return (
         <div className={'w-full h-24 z-[999]'}>

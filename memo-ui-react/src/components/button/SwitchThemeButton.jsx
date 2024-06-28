@@ -1,24 +1,14 @@
 import '@/assets/css/swtichThemeButton.css';
 import {useColorScheme} from "@mui/joy";
-import {useEffect, useState} from "react";
 
 export const SwitchThemeButton = () => {
     const { mode, setMode } = useColorScheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) {
-        return null;
-    }
 
     return (
         <>
             <label className="theme-switch">
                 <input type="checkbox" className="theme-switch__checkbox"
-                       checked={mode === 'dark' ? true : false}
+                       checked={mode === 'dark'}
                        onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')}/>
                 <div className="theme-switch__container">
                     <div className="theme-switch__clouds"></div>
