@@ -1,6 +1,6 @@
 import {Badge, List, ListItem, ListItemButton, Typography} from "@mui/joy";
 import {useEffect, useState} from "react";
-import {get_category, get_category_all, get_category_number} from "@/assets/js/api.js";
+import {get_category, get_category_all, get_category_number} from "@/assets/js/api/api.js";
 import {useDispatch, useSelector} from "react-redux";
 import {selectCategory, setCategoryValue} from "@/assets/js/data/reducer/category_slice.js";
 

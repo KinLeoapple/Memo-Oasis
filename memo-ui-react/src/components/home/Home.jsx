@@ -1,6 +1,6 @@
 import {ProfileCard} from "@/components/home/ProfileCard.jsx";
 import {useEffect, useState} from "react";
-import {basic_info} from "@/assets/js/api.js";
+import {basic_info} from "@/assets/js/api/api.js";
 import {Divider} from "@mui/joy";
 import {CategoriesList} from "@/components/home/CategoriesList.jsx";
 import {BlogList} from "@/components/home/BlogList.jsx";
@@ -30,11 +30,10 @@ export const Home = () => {
         <>
             <Layout
                 left={
-                    <>
+                    <div className={'fixed w-[20%] h-[100%]'}>
                         <ProfileCard name={name} quote={quote} quoteName={quoteName}/>
-                        <Divider/>
                         <CategoriesList/>
-                    </>
+                    </div>
                 }
                 content={
                     <div className={`min-h-full`}>

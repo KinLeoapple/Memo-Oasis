@@ -1,4 +1,4 @@
-import {Avatar, Card, Chip, Skeleton, Typography, useColorScheme} from "@mui/joy";
+import {Avatar, Card, Chip, Divider, Skeleton, Typography, useColorScheme} from "@mui/joy";
 import avatarWhite from "@/assets/img/megalobox-white.webp";
 import avatarBlack from "@/assets/img/megalobox.webp";
 import {useState} from "react";
@@ -67,6 +67,7 @@ export const ProfileCard = ({
                         </span>}
                     </Typography>
                 </Card>}
+                <Divider />
             </div>
         </>
     )

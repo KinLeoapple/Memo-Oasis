@@ -1,13 +1,14 @@
 import {useEffect, useState} from "react";
-import {get_blog, get_blog_all} from "@/assets/js/api.js";
+import {get_blog, get_blog_all} from "@/assets/js/api/api.js";
 import {AspectRatio, Card, CardContent, Divider, Typography} from "@mui/joy";
-import {to_date} from "@/assets/js/to_date.js";
+import {to_date} from "@/assets/js/utils/to_date.js";
 import CalculateMonth from '@mui/icons-material/CalendarMonth';
 import CategoryIcon from '@mui/icons-material/Category';
 import {useDispatch, useSelector} from "react-redux";
 import {selectBlogPage} from "@/assets/js/data/reducer/blog_page_slice.js";
 import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
 import {setNumberValue} from "@/assets/js/data/reducer/blog_number_slice.js";
+import {scroll_to_top} from "@/assets/js/utils/scroll.js";
 
 export const BlogList = () => {
     const [ids, setIds] = useState({data: [], refresh: false});
@@ -16,11 +17,17 @@ export const BlogList = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        scroll_to_top();
+    }, [page]);
+
+    useEffect(() => {
         get_blog_all().then(r => {
             if (r !== null) {
-                let list = [];
-                for (let i in r) {
-                    list.push(r[i].id);
+                let list = new Array(9);
+                for (let j = 0; j < list.length; j++) {
+                    for (let i in r) {
+                        list[j] = r[i].id;
+                    }
                 }
                 setIds({data: list, refresh: true});
             } else {
@@ -30,7 +37,7 @@ export const BlogList = () => {
     }, [ids.refresh]);
     
     useEffect(() => {
-        dispatch(setNumberValue(parseInt(ids.data.length / MAX_PER_PAGE) || 0));
+        dispatch(setNumberValue(parseInt(Math.ceil(ids.data.length / MAX_PER_PAGE).toString()) || 0));
     }, [dispatch, ids]);
 
     useEffect(() => {
@@ -62,7 +69,8 @@ export const BlogList = () => {
                 blogs.data.sort((a, b) => {
                     return Number(b.date) - Number(a.date);
                 }).map((blog) => (
-                    <Card key={blog} color="primary" variant="soft" className={`cursor-pointer select-none`} sx={{
+                    <Card key={blog} color="primary" variant="soft" className={`mb-5 cursor-pointer select-none`}
+                          sx={{
                         boxShadow: 'lg',
                     }}>
                         <AspectRatio minHeight="120px" maxHeight="200px">

@@ -7,7 +7,7 @@ function App() {
     let themeMode = useColorScheme();
 
     return (
-        <div className={`w-full h-full ${themeMode.colorScheme === 'dark' ? 'bg-gray-950' : 'bg-white'}`}>
+        <div className={`min-w-full min-h-full ${themeMode.colorScheme === 'dark' ? 'bg-gray-950' : 'bg-white'}`}>
             <RouterProvider router={routers}/>
         </div>
     )

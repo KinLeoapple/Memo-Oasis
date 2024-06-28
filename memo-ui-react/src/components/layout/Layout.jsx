@@ -3,8 +3,11 @@ import {useMemo} from "react";
 import {NavBar} from "@/components/common/NavBar.jsx";
 
 export const Layout = ({
+                           // eslint-disable-next-line react/prop-types
                            left = <></>,
+                           // eslint-disable-next-line react/prop-types
                            right = <></>,
+                           // eslint-disable-next-line react/prop-types
                            content = <></>
                        }) => {
 
@@ -23,7 +26,7 @@ export const Layout = ({
                     <Grid xs={2} className={`ml-5 mr-5`}>
                         {content}
                     </Grid>
-                    <Grid xs={0.8}>
+                    <Grid xs={0.8} className={``}>
                         {right}
                     </Grid>
                 </Grid>

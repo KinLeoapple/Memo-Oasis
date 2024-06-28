@@ -5,6 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {decrement, increment, selectBlogPage, setPageValue} from "@/assets/js/data/reducer/blog_page_slice.js";
 
 export const Pagination = ({
+                               // eslint-disable-next-line react/prop-types
                                count = 0
                            }) => {
     const page = useSelector(selectBlogPage);
@@ -15,9 +16,14 @@ export const Pagination = ({
     useEffect(() => {
         let front = true;
         let back = true;
-        if (page - 1 < 3) {
+        if (count > 3) {
+            if (page - 1 < 3) {
+                front = false;
+            } else if (count - page < 3) {
+                back = false;
+            }
+        } else {
             front = false;
-        } else if (count - page < 3) {
             back = false;
         }
         setDots({front: front, back: back});
@@ -28,21 +34,24 @@ export const Pagination = ({
     }, [dots]);
 
     function fillRenderCount() {
-        let length = 0;
-        let start = 0;
-        if (dots.front && dots.back) {
-            length = 3;
-            start = page - 1;
-        } else {
-            length = 4;
-            if (!dots.front) {
-                start = 2;
+        let length = count;
+        let start = 1;
+        if (count > 3) {
+            if (dots.front && dots.back) {
+                length = 3;
+                start = page - 1;
             } else {
-                start = count - 4;
+                length = 4;
+                if (!dots.front) {
+                    start = 2;
+                } else {
+                    start = count - 4;
+                }
             }
         }
+        let end = length === count ? length - 1 : length + start;
         let list = [];
-        for (let i = start; i < length + start; i++) {
+        for (let i = start; i < end; i++) {
             list.push(i);
         }
         return list;
@@ -65,9 +74,9 @@ export const Pagination = ({
     }
 
     return (
-        <div className={`w-full flex flex-col justify-center items-center mt-2`}>
+        <div className={`w-full flex flex-col justify-center items-center mt-2 mb-2`}>
             {count > 1 &&
-                <Stack direction="row" spacing={2} className={`w-11/12 flex flex-col justify-between`}>
+                <Stack direction="row" spacing={2} className={`w-11/12 flex flex-col justify-center`}>
                     <IconButton
                         onClick={previousPage}
                         color="primary" size="sm" tabIndex={-1}>

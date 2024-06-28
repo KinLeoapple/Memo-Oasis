@@ -1,6 +1,6 @@
 // Environment Values
-import {crypt_str} from "@/assets/js/crypt.js";
-import {api_prefix} from "@/assets/js/api_prefix.js";
+import {crypt_str} from "@/assets/js/crypt/crypt.js";
+import {api_prefix} from "@/assets/js/api/api_prefix.js";
 
 const prefix = api_prefix();
 
