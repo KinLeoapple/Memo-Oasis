@@ -1,7 +1,3 @@
-import {ProfileCard} from "@/components/home/ProfileCard.jsx";
-import {useEffect, useState} from "react";
-import {basic_info} from "@/assets/js/api/api.js";
-import {Divider} from "@mui/joy";
 import {CategoriesList} from "@/components/home/CategoriesList.jsx";
 import {BlogList} from "@/components/home/BlogList.jsx";
 import {Layout} from "@/components/layout/Layout.jsx";
@@ -9,39 +5,38 @@ import {Pagination} from "@/components/common/Pagination.jsx";
 import {useSelector} from "react-redux";
 import {selectBlogNumber} from "@/assets/js/data/reducer/blog_number_slice.js";
 import {Condition} from "@/components/home/Condition.jsx";
+import {selectBlog} from "@/assets/js/data/reducer/blog_slice.js";
+import {BlogRenderer} from "@/components/home/BlogRenderer.jsx";
+import {BlogIndex} from "@/components/home/BlogIndex.jsx";
 
 export const Home = () => {
-    // Basic Information
-    const [name, setName] = useState(null);
-    const [quote, setQuote] = useState(null);
-    const [quoteName, setQuoteName] = useState(null);
-
     const pagination = useSelector(selectBlogNumber);
-
-    useEffect(() => {
-        basic_info().then(r => {
-            setName(r.name);
-            setQuote(r.quote);
-            setQuoteName(r.quote_name);
-        });
-    }, [name, quote, quoteName]);
+    const blog = useSelector(selectBlog);
 
     return (
         <>
             <Layout
-                left={
-                    <div className={'fixed w-[20%] h-[100%]'}>
-                        <ProfileCard name={name} quote={quote} quoteName={quoteName}/>
-                        <CategoriesList/>
+                left={{
+                    el: <>
+                        {blog === 0 ?
+                            <CategoriesList/> :
+                            <BlogIndex/>
+                        }
+                    </>,
+                    fixed: true
+                }}
+                content={{
+                    el: <div className={`min-h-full`}>
+                        {blog === 0 ?
+                            <>
+                                <Condition/>
+                                <BlogList/>
+                                <Pagination count={pagination}/>
+                            </> :
+                            <BlogRenderer/>
+                        }
                     </div>
-                }
-                content={
-                    <div className={`min-h-full`}>
-                        <Condition/>
-                        <BlogList/>
-                        <Pagination count={pagination}/>
-                    </div>
-                }
+                }}
             />
         </>
     )

@@ -4,11 +4,11 @@ import {NavBar} from "@/components/common/NavBar.jsx";
 
 export const Layout = ({
                            // eslint-disable-next-line react/prop-types
-                           left = <></>,
+                           left = {el: <></>, fixed: false},
                            // eslint-disable-next-line react/prop-types
-                           right = <></>,
+                           right = {el: <></>, fixed: false},
                            // eslint-disable-next-line react/prop-types
-                           content = <></>
+                           content = {el: <></>, fixed: false}
                        }) => {
 
     const navBar = useMemo(() => {
@@ -17,17 +17,26 @@ export const Layout = ({
 
     return (
         <>
-            <Stack className={`min-h-full`}>
+            <Stack className={`min-h-full min-w-full`}>
                 {navBar}
-                <Grid className={`min-h-full`} container spacing={0} columns={4} sx={{flexGrow: 1}}>
-                    <Grid xs={0.8} className={`flex flex-col gap-5 ml-10`}>
-                        {left}
+                <Grid className={`min-h-full min-w-full flex justify-between gap-1`} container spacing={0} columns={4} sx={{flexGrow: 1}}>
+                    <Grid xs={0.8} className={`flex flex-col gap-5 ml-5`}>
+                        <div className={`${left.fixed ? 'fixed w-[20%]' : ''}
+                        h-[100%] flex-shrink-0`}>
+                            {left.el}
+                        </div>
                     </Grid>
-                    <Grid xs={2} className={`ml-5 mr-5`}>
-                        {content}
+                    <Grid xs={2}>
+                        <div className={`${content.fixed ? 'fixed h-[50%]' : ''}
+                        h-[100%] flex-shrink-0`}>
+                            {content.el}
+                        </div>
                     </Grid>
-                    <Grid xs={0.8} className={``}>
-                        {right}
+                    <Grid xs={0.8} className={`flex flex-col gap-5 mr-5`}>
+                        <div className={`${right.fixed ? 'fixed w-[20%]' : ''}
+                        h-[100%] flex-shrink-0`}>
+                            {right.el}
+                        </div>
                     </Grid>
                 </Grid>
             </Stack>

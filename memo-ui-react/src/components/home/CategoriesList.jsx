@@ -2,10 +2,16 @@ import {Badge, List, ListItem, ListItemButton, Typography} from "@mui/joy";
 import {useEffect, useState} from "react";
 import {get_category, get_category_all, get_category_number} from "@/assets/js/api/api.js";
 import {useDispatch, useSelector} from "react-redux";
-import {selectCategory, setCategoryValue} from "@/assets/js/data/reducer/category_slice.js";
+import {
+    selectCondition,
+    append,
+    newCondition,
+    remove,
+    ConditionType
+} from "@/assets/js/data/reducer/condition_slice.js";
 
 export const CategoriesList = () => {
-    const cat = useSelector(selectCategory);
+    const conditions = useSelector(selectCondition);
     const dispatch = useDispatch();
     const [categories, setCategories] = useState({data: [], refresh: true});
 
@@ -27,7 +33,23 @@ export const CategoriesList = () => {
     }, [categories.refresh]);
 
     function selectedCategory(name) {
-        dispatch(setCategoryValue(name));
+        if (isSelected(name)) {
+            dispatch(remove(newCondition(ConditionType.Category, name)));
+        } else {
+            dispatch(append(newCondition(ConditionType.Category, name)));
+        }
+    }
+
+    function isSelected(name) {
+        let isSelected = false;
+        for (let i = 0; i < conditions.length; i++) {
+            let item = conditions[i];
+            if (item.type === ConditionType.Category && item.condition === name) {
+                isSelected = true;
+                break;
+            }
+        }
+        return isSelected;
     }
 
     return (
@@ -49,14 +71,14 @@ export const CategoriesList = () => {
                 {categories.data.length > 0 && categories.data.sort((a, b) => {
                     return a.catName.toLowerCase()
                         .localeCompare(b.catName.toLowerCase());
-                }).map((category) => (
-                    <ListItem key={category} className={`cursor-pointer select-none`} sx={{
+                }).map((category, i) => (
+                    <ListItem key={i} className={`cursor-pointer select-none`} sx={{
                         width: '100%'
                     }}>
                         <ListItemButton
                             onClick={() => selectedCategory(category.catName)}
-                            selected={category.catName === cat}
-                            color={category.catName === cat ? "primary" : undefined}
+                            selected={isSelected(category.catName)}
+                            color={"primary"}
                             className={'flex flex-row justify-between'} sx={{
                             borderRadius: '6px'
                         }}>

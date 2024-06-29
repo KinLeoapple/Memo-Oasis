@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {get_blog, get_blog_all} from "@/assets/js/api/api.js";
-import {AspectRatio, Card, CardContent, Divider, Typography} from "@mui/joy";
+import {AspectRatio, Card, CardContent, Chip, Divider, Typography} from "@mui/joy";
 import {to_date} from "@/assets/js/utils/to_date.js";
 import CalculateMonth from '@mui/icons-material/CalendarMonth';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -9,11 +9,16 @@ import {selectBlogPage} from "@/assets/js/data/reducer/blog_page_slice.js";
 import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
 import {setNumberValue} from "@/assets/js/data/reducer/blog_number_slice.js";
 import {scroll_to_top} from "@/assets/js/utils/scroll.js";
+import {append, ConditionType, newCondition, selectCondition} from "@/assets/js/data/reducer/condition_slice.js";
+import img from "@/assets/img/img.webp";
+import {setBlogValue} from "@/assets/js/data/reducer/blog_slice.js";
 
 export const BlogList = () => {
     const [ids, setIds] = useState({data: [], refresh: false});
     const [blogs, setBlogs] = useState({data: [], refresh: false});
+    const [filterBlogs, setFilterBlogs] = useState({data: [], refresh: false});
     const page = useSelector(selectBlogPage);
+    const conditions = useSelector(selectCondition);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -23,11 +28,9 @@ export const BlogList = () => {
     useEffect(() => {
         get_blog_all().then(r => {
             if (r !== null) {
-                let list = new Array(9);
-                for (let j = 0; j < list.length; j++) {
-                    for (let i in r) {
-                        list[j] = r[i].id;
-                    }
+                let list = [];
+                for (let i in r) {
+                    list.push(r[i].id);
                 }
                 setIds({data: list, refresh: true});
             } else {
@@ -35,10 +38,39 @@ export const BlogList = () => {
             }
         });
     }, [ids.refresh]);
-    
+
     useEffect(() => {
-        dispatch(setNumberValue(parseInt(Math.ceil(ids.data.length / MAX_PER_PAGE).toString()) || 0));
-    }, [dispatch, ids]);
+        dispatch(setNumberValue(parseInt(Math.ceil(filterBlogs.data.length / MAX_PER_PAGE).toString()) || 0));
+    }, [filterBlogs, dispatch]);
+
+    useEffect(() => {
+        if (conditions.length > 0) {
+            let list = blogs.data;
+            if (conditions.filter(item => item.type === ConditionType.Category).length > 0) {
+                list = list.filter(item => {
+                    for (let i = 0; i < conditions.length; i++) {
+                        let con = conditions[i];
+                        if (con.type === ConditionType.Category && item.category === con.condition) {
+                            return true;
+                        }
+                    }
+                });
+            }
+            if (conditions.filter(item => item.type === ConditionType.Date).length > 0) {
+                list = list.filter(item => {
+                    for (let i = 0; i < conditions.length; i++) {
+                        let con = conditions[i];
+                        if (con.type === ConditionType.Date && item.date === con.condition) {
+                            return true;
+                        }
+                    }
+                });
+            }
+            setFilterBlogs({data: list, refresh: true});
+        } else {
+            setFilterBlogs(blogs);
+        }
+    }, [blogs.refresh, conditions]);
 
     useEffect(() => {
         let requests = [];
@@ -63,19 +95,34 @@ export const BlogList = () => {
         }
     }, [blogs.refresh, ids.data, page]);
 
+    function appendDateCondition(date) {
+        dispatch(append(newCondition(ConditionType.Date, date)));
+    }
+
+    function appendCategoryCondition(category) {
+        dispatch(append(newCondition(ConditionType.Category, category)));
+    }
+
+    function selectedBlog(blogId) {
+        dispatch(setBlogValue(blogId));
+    }
+
     return (
         <>
             {
-                blogs.data.sort((a, b) => {
+                filterBlogs.data.sort((a, b) => {
                     return Number(b.date) - Number(a.date);
-                }).map((blog) => (
-                    <Card key={blog} color="primary" variant="soft" className={`mb-5 cursor-pointer select-none`}
+                }).map((blog, i) => (
+                    <Card
+                        onClick={() => selectedBlog(blog.id)}
+                        invertedColors key={i} color="primary" variant="soft"
+                          className={`mb-5 cursor-pointer select-none`}
                           sx={{
-                        boxShadow: 'lg',
-                    }}>
+                              boxShadow: 'lg',
+                          }}>
                         <AspectRatio minHeight="120px" maxHeight="200px">
                             <img
-                                src="https://images.unsplash.com/photo-1527549993586-dff825b37782?auto=format&fit=crop&w=286"
+                                src={img}
                                 loading="lazy"
                                 alt=""
                                 draggable={false}
@@ -83,12 +130,25 @@ export const BlogList = () => {
                         </AspectRatio>
                         <div>
                             <Typography level="title-lg">{blog.title}</Typography>
-                            <div className={`text-xs flex gap-2`}>
+                            <div className={`flex gap-2`}>
                                 <span className={`flex items-center gap-1`}><CalculateMonth
-                                    sx={{fontSize: 'small'}}/>{to_date(blog.date)}</span>
+                                    sx={{fontSize: 'small'}}/><Chip
+                                    onClick={() => appendDateCondition(blog.date)}
+                                    size="sm" className={'text-xs'} color="primary" variant="soft" sx={{
+                                    "--Chip-paddingInline": "5px",
+                                    "--Chip-minHeight": "16px",
+                                    "--Chip-decoratorChildHeight": "16px",
+                                }}>{to_date(blog.date)}</Chip></span>
                                 <Divider orientation="vertical"/>
                                 <span className={`flex items-center gap-1`}><CategoryIcon
-                                    sx={{fontSize: 'small'}}/>{blog.category}</span>
+                                    sx={{fontSize: 'small'}}/>
+                                    <Chip
+                                        onClick={() => appendCategoryCondition(blog.category)}
+                                        size="sm" className={'text-xs'} color="primary" variant="soft" sx={{
+                                        "--Chip-paddingInline": "5px",
+                                        "--Chip-minHeight": "16px",
+                                        "--Chip-decoratorChildHeight": "16px",
+                                    }}>{blog.category}</Chip></span>
                             </div>
                         </div>
                         <CardContent>

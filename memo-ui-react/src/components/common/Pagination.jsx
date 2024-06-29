@@ -74,7 +74,7 @@ export const Pagination = ({
     }
 
     return (
-        <div className={`w-full flex flex-col justify-center items-center mt-2 mb-2`}>
+        <div className={`w-full flex flex-col justify-center items-center mt-2 mb-10`}>
             {count > 1 &&
                 <Stack direction="row" spacing={2} className={`w-11/12 flex flex-col justify-center`}>
                     <IconButton
