@@ -1,11 +1,10 @@
 package org.kinleoapple.database.dao.draft
 
-import com.github.yitter.idgen.YitIdHelper
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Draft
-import org.kinleoapple.database.util.generateId
+import org.kinleoapple.util.generateId
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
 import org.ktorm.dsl.update

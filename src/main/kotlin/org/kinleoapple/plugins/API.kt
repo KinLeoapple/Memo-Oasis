@@ -1,6 +1,7 @@
 package org.kinleoapple.plugins
 
 import io.ktor.server.application.*
+import io.ktor.server.plugins.defaultheaders.*
 import org.kinleoapple.api.*
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.configureDatabase
@@ -14,4 +15,5 @@ fun Application.configureAPI() {
     categoryAPI(database)
     draftAPI(database)
     imgAPI(database)
+    rsaKeyAPI()
 }

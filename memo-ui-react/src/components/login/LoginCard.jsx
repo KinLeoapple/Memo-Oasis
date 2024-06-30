@@ -13,26 +13,66 @@ import {
 } from "@mui/joy";
 import {AccountCircle, Lock, NorthEast, Visibility, VisibilityOff} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {post_login} from "@/assets/js/api/api.js";
+import {useSelector} from "react-redux";
+import {selectLoginState} from "@/assets/js/data/reducer/login_state_slice.js";
 
 export const LoginCard = () => {
-    const [visibility, setVisibility] = useState(false);
     const navigate = useNavigate();
+
+    const [visibility, setVisibility] = useState(false);
+    const [checking, setChecking] = useState(false);
+
+    const [name, setName] = useState("");
+    const [pass, setPass] = useState("");
+
+    const isLogin = useSelector(selectLoginState);
+
+    useEffect(() => {
+        if (isLogin) {
+            navigate("/", {replace: true});
+        }
+    }, [isLogin, navigate]);
+
 
     function changeVisibility() {
         setVisibility(!visibility);
+    }
+
+    function changeName(e) {
+        setName(e.target.value);
+    }
+
+    function changePass(e) {
+        setPass(e.target.value);
     }
 
     function toSignUp() {
         navigate("/signup", {replace: true});
     }
 
-    function login() {
+    async function login() {
+        setChecking(true);
+        post_login(name, pass).then(r => {
+            if (r !== null) {
+                if (r.login !== null && r.login !== undefined) {
+                    localStorage.setItem("token", r.login);
+                    navigate("/", {replace: true});
+                }
+            }
+            setChecking(false);
+        });
+    }
 
+    async function handleKeyBoardSubmit(e) {
+        if (e.keyCode === 13) {
+            await login();
+        }
     }
 
     return (
-        <div className={'flex flex-col gap-2'}>
+        <div className={'flex flex-col gap-2'} onKeyDown={(e) => handleKeyBoardSubmit(e)}>
             <Card invertedColors variant="soft" color="primary"
                   sx={{
                       boxShadow: "lg"
@@ -51,7 +91,7 @@ export const LoginCard = () => {
                         justifyContent="center"
                         spacing={6}>
                         <FormControl className={'flex justify-center items-center'}>
-                            <Input startDecorator={
+                            <Input onChange={changeName} startDecorator={
                                 <Chip variant="outlined" startDecorator={<AccountCircle/>}
                                       style={{
                                           cursor: "default"
@@ -66,7 +106,7 @@ export const LoginCard = () => {
                             }}/>
                         </FormControl>
                         <FormControl className={'flex justify-center items-center'}>
-                            <Input startDecorator={
+                            <Input onChange={changePass} startDecorator={
                                 <Chip variant="outlined" startDecorator={<Lock/>}
                                       style={{
                                           cursor: "default",
@@ -92,7 +132,7 @@ export const LoginCard = () => {
                     </Stack>
                 </CardContent>
                 <CardActions buttonFlex="0 1 200px" className={'flex justify-center items-center'}>
-                    <Button variant="solid" color="primary" className={'capitalize'}
+                    <Button loading={checking} variant="solid" color="primary" className={'capitalize'}
                             onClick={login}>
                         sign in
                     </Button>

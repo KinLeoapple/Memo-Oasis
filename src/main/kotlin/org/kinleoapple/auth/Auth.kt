@@ -3,8 +3,8 @@ package org.kinleoapple.auth
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import org.kinleoapple.util.generateSecretKey
 import java.io.File
-import java.security.SecureRandom
 import java.util.*
 
 
@@ -24,9 +24,7 @@ object Auth {
     }
 
     private fun initSecretKey(secretKeyFile: File) {
-        val secureRandom = SecureRandom()
-        val random = (Math.random() * 10).toInt()
-        val secretKey = secureRandom.generateSeed(random)
+        val secretKey = generateSecretKey()
         secretKeyFile.createNewFile()
         secretKeyFile.writeBytes(secretKey)
     }
@@ -36,15 +34,14 @@ object Auth {
         .withIssuer(issuer)
         .build()
 
-    fun sign(name: String, role: Int, ip: String, ua: String): String {
-        return makeToken(name, role, ip, ua)
+    fun sign(name: String, ip: String, ua: String): String {
+        return makeToken(name, ip, ua)
     }
 
-    private fun makeToken(name: String, role: Int, ip: String, ua: String): String = JWT.create()
+    private fun makeToken(name: String, ip: String, ua: String): String = JWT.create()
         .withSubject("Authentication")
         .withIssuer(issuer)
         .withClaim("name", name)
-        .withClaim("role", role)
         .withClaim("ip", ip)
         .withClaim("ua", ua)
         .withExpiresAt(getExpiration())

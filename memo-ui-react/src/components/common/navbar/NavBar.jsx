@@ -17,8 +17,11 @@ import '@fontsource/kalam';
 import avatar from "@/assets/img/avatar.webp";
 import {basic_info, post_token_login} from "@/assets/js/api/api.js";
 import {AvatarMenu} from "@/components/common/navbar/AvatarMenu.jsx";
+import {useDispatch} from "react-redux";
+import {setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
 
 export const NavBar = () => {
+    const dispatch = useDispatch();
     const navButtons = [{
         name: "Home",
         path: "/"
@@ -27,9 +30,9 @@ export const NavBar = () => {
             name: "Admin",
             path: "/admin"
         }];
-    let themeMode = useColorScheme();
-    let location = useLocation();
-    let [searchBar, setSearchBar] = useState(true);
+    const themeMode = useColorScheme();
+    const location = useLocation();
+    const [searchBar, setSearchBar] = useState(true);
     const tags = ["gamer", "developer"];
 
     // Basic Information
@@ -66,18 +69,22 @@ export const NavBar = () => {
                     let newToken = r.login;
                     if (newToken !== null) {
                         setLogin(true);
+                        dispatch(setLoginStateValue(true));
                         localStorage.setItem("token", newToken);
                     } else {
+                        dispatch(setLoginStateValue(false));
                         setLogin(false);
                     }
                 } else {
+                    dispatch(setLoginStateValue(false));
                     setLogin(false);
                 }
             });
         } else {
+            dispatch(setLoginStateValue(false));
             setLogin(false);
         }
-    }, [login]);
+    }, [dispatch, login]);
 
     useEffect(() => {
         if (login) {

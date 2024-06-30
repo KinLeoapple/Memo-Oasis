@@ -15,9 +15,8 @@ fun getTokenLogin(token: JWTPrincipal,  call: ApplicationCall): Map<String, Stri
     val ua = call.request.headers["User-Agent"]
     ua?.let {
         val username = token["name"]
-        val role = token["role"]
-        if (username != null && role != null) {
-            val newToken = Auth.sign(username, role.toInt(), call.request.origin.remoteHost, it)
+        if (username != null) {
+            val newToken = Auth.sign(username, call.request.origin.remoteHost, it)
             return mapOf("login" to newToken)
         } else
             return mapOf("login" to null)

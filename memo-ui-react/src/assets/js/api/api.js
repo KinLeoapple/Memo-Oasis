@@ -5,7 +5,10 @@ const prefix = api_prefix();
 
 export function basic_info() {
     return new Promise(resolve => {
-        fetch(`${prefix}/basic_info`).then(r =>
+        fetch(`${prefix}/basic_info`, {
+            method: "GET",
+            credentials: "include"
+        }).then(r =>
             resolve(r.json())
         ).catch(_ => resolve(new Promise(() => resolve(null))));
     });
@@ -17,6 +20,7 @@ export function post_login(username, password) {
             fetch(`${prefix}/login`, {
                 method: "POST",
                 mode: "cors",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -36,6 +40,7 @@ export function post_token_login(token) {
         fetch(`${prefix}/login/token`, {
             method: "POST",
             mode: "cors",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -51,7 +56,10 @@ Blog
 
 export function get_blog_all() {
     return new Promise(resolve => {
-        fetch(`${prefix}/blog/null`).then(r => {
+        fetch(`${prefix}/blog/null`, {
+            method: "GET",
+            credentials: "include"
+        }).then(r => {
             resolve(r.json())
         }).catch(_ => resolve(new Promise(() => resolve(null))));
     });
@@ -59,7 +67,10 @@ export function get_blog_all() {
 
 export function get_blog(id) {
     return new Promise(resolve => {
-        fetch(`${prefix}/blog/${id}`).then(r => {
+        fetch(`${prefix}/blog/${id}`, {
+            method: "GET",
+            credentials: "include"
+        }).then(r => {
             resolve(r.json())
         }).catch(_ => resolve(new Promise(() => resolve(null))));
     });
@@ -67,7 +78,10 @@ export function get_blog(id) {
 
 export function get_blog_content(id) {
     return new Promise(resolve => {
-        fetch(`${prefix}/blog/content/${id}`).then(r => {
+        fetch(`${prefix}/blog/content/${id}`, {
+            method: "GET",
+            credentials: "include"
+        }).then(r => {
             resolve(r.json())
         }).catch(_ => resolve(new Promise(() => resolve(null))));
     });
@@ -78,6 +92,7 @@ export function post_blog(token, title, blog, catId, blogDes, id = null) {
         fetch(`${prefix}/blog/${id}`, {
             method: "POST",
             mode: "cors",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -98,6 +113,7 @@ export function delete_blog(token, id) {
         fetch(`${prefix}/blog`, {
             method: "DELETE",
             mode: "cors",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -118,6 +134,7 @@ export function get_draft(token, id) {
     return new Promise(resolve => {
         fetch(`${prefix}/blog/draft/${id}`, {
             method: "GET",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -131,6 +148,7 @@ export function get_draft_all(token) {
     return new Promise(resolve => {
         fetch(`${prefix}/blog/draft/null`, {
             method: "GET",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -144,6 +162,7 @@ export function get_draft_content(token, id) {
     return new Promise(resolve => {
         fetch(`${prefix}/blog/draft/content/${id}`, {
             method: "GET",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -158,6 +177,7 @@ export function post_draft(token, title, draft, id = null) {
         fetch(`${prefix}/blog/draft/${id}`, {
             method: "POST",
             mode: "cors",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -176,6 +196,7 @@ export function delete_draft(token, id) {
         fetch(`${prefix}/blog/draft`, {
             method: "DELETE",
             mode: "cors",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -200,6 +221,7 @@ export function post_img(token, file, id = null) {
         fetch(`${prefix}/img/${id}`, {
             method: "POST",
             mode: "cors",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -219,6 +241,7 @@ export function post_category(token, categoryName, id = null) {
         fetch(`${prefix}/cat/${id}`, {
             method: "POST",
             mode: "cors",
+            credentials: "include",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -233,7 +256,10 @@ export function post_category(token, categoryName, id = null) {
 
 export function get_category(id) {
     return new Promise(resolve => {
-        fetch(`${prefix}/cat/${id}`)
+        fetch(`${prefix}/cat/${id}`, {
+            method: "GET",
+            credentials: "include"
+        })
             .then(r => {
                 resolve(r.json())
             }).catch(_ => resolve(new Promise(() => resolve(null))));
@@ -242,7 +268,10 @@ export function get_category(id) {
 
 export function get_category_all() {
     return new Promise(resolve => {
-        fetch(`${prefix}/cat/null`)
+        fetch(`${prefix}/cat/null`, {
+            method: "GET",
+            credentials: "include"
+        })
             .then(r => {
                 resolve(r.json())
             }).catch(_ => resolve(new Promise(() => resolve(null))));
@@ -251,7 +280,26 @@ export function get_category_all() {
 
 export function get_category_number(id) {
     return new Promise(resolve => {
-        fetch(`${prefix}/cat/number/${id}`)
+        fetch(`${prefix}/cat/number/${id}`, {
+            method: "GET",
+            credentials: "include"
+        })
+            .then(r => {
+                resolve(r.json())
+            }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
+/*
+ RSA Key
+ */
+
+export function get_key() {
+    return new Promise(resolve => {
+        fetch(`${prefix}/key`, {
+            method: "GET",
+            credentials: "include"
+        })
             .then(r => {
                 resolve(r.json())
             }).catch(_ => resolve(new Promise(() => resolve(null))));

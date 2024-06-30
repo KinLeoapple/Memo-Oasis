@@ -1,4 +1,4 @@
-package org.kinleoapple.database.util
+package org.kinleoapple.util
 
 import com.github.yitter.idgen.YitIdHelper
 
