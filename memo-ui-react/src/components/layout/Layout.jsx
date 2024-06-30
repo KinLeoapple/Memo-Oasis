@@ -1,6 +1,6 @@
 import {Grid, Stack} from "@mui/joy";
 import {useMemo} from "react";
-import {NavBar} from "@/components/common/NavBar.jsx";
+import {NavBar} from "@/components/common/navbar/NavBar.jsx";
 
 export const Layout = ({
                            // eslint-disable-next-line react/prop-types
@@ -8,7 +8,9 @@ export const Layout = ({
                            // eslint-disable-next-line react/prop-types
                            right = {el: <></>, fixed: false},
                            // eslint-disable-next-line react/prop-types
-                           content = {el: <></>, fixed: false}
+                           content = {el: <></>, fixed: false},
+                           // eslint-disable-next-line react/prop-types
+                           center = {el: <></>, show: false},
                        }) => {
 
     const navBar = useMemo(() => {
@@ -19,7 +21,8 @@ export const Layout = ({
         <>
             <Stack className={`min-h-full min-w-full`}>
                 {navBar}
-                <Grid className={`min-h-full min-w-full flex justify-between gap-1`} container spacing={0} columns={4} sx={{flexGrow: 1}}>
+                <Grid className={`min-h-full min-w-full flex justify-between gap-1`} container spacing={0} columns={4}
+                      sx={{flexGrow: 1}}>
                     <Grid xs={0.8} className={`flex flex-col gap-5 ml-5`}>
                         <div className={`${left.fixed ? 'fixed w-[20%]' : ''}
                         h-[100%] flex-shrink-0`}>
@@ -27,8 +30,7 @@ export const Layout = ({
                         </div>
                     </Grid>
                     <Grid xs={2}>
-                        <div className={`${content.fixed ? 'fixed h-[50%]' : ''}
-                        h-[100%] flex-shrink-0`}>
+                        <div className={`h-[100%] flex-shrink-0`}>
                             {content.el}
                         </div>
                     </Grid>
@@ -40,6 +42,11 @@ export const Layout = ({
                     </Grid>
                 </Grid>
             </Stack>
+            {center.show &&
+                <div className={'fixed inset-0 flex items-center justify-center'}>
+                    {center.el}
+                </div>
+            }
         </>
     )
 }

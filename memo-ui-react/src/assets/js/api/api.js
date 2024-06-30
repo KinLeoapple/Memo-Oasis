@@ -1,4 +1,3 @@
-// Environment Values
 import {crypt_str} from "@/assets/js/crypt/crypt.js";
 import {api_prefix} from "@/assets/js/api/api_prefix.js";
 
@@ -29,6 +28,20 @@ export function post_login(username, password) {
                 resolve(r.json())
             }).catch(_ => resolve(new Promise(() => resolve(null))));
         });
+    });
+}
+
+export function post_token_login(token) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/login/token`, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
     });
 }
 
@@ -109,8 +122,8 @@ export function get_draft(token, id) {
                 Authorization: `Bearer ${token}`,
             },
         }).then(r => {
-                resolve(r.json())
-            }).catch(_ => resolve(new Promise(() => resolve(null))));
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
     });
 }
 

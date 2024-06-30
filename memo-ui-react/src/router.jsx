@@ -5,6 +5,8 @@ import {
 
 import {Home} from "@/components/home/Home.jsx";
 import {Admin} from "@/components/admin/Admin.jsx";
+import {Login} from "@/components/login/Login.jsx";
+import {SignUp} from "@/components/signup/SignUp.jsx";
 
 const routers = createBrowserRouter([
     {
@@ -14,6 +16,14 @@ const routers = createBrowserRouter([
     {
         path: "/admin",
         element: <Admin />,
+    },
+    {
+        path: "/login",
+        element: <Login />,
+    },
+    {
+        path: "/signup",
+        element: <SignUp />,
     }
 ]);
 

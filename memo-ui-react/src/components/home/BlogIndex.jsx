@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 import {selectBlogContent} from "@/assets/js/data/reducer/blog_content_slice.js";
-import {List, ListItem, ListItemButton, ListItemDecorator, Typography} from "@mui/joy";
+import {List, ListItem, ListItemButton, Typography} from "@mui/joy";
 import {useEffect, useState} from "react";
 import {marked} from "marked";
 import {smooth_scroll} from "@/assets/js/utils/scroll.js";
@@ -24,10 +24,10 @@ export const BlogIndex = () => {
     useEffect(() => {
         const render = document.querySelector("#render");
         for (let i = min; i >= max; i--)
-            findHeading(render, i);
+            markHeadings(render, i);
     }, [blogIndex, max, min]);
 
-    const findHeading = async (render, level) => {
+    async function markHeadings (render, level){
         const levelHeading = blogIndex.filter(el => {
             return el.tag === level;
         });
@@ -37,9 +37,9 @@ export const BlogIndex = () => {
         render.querySelectorAll(`h${level}`).forEach((el, i) => {
             el.setAttribute("id", `blog-index-${levelHeading[i].id}`);
         });
-    };
+    }
 
-    const indexOfBlog = (content) => {
+    function indexOfBlog(content) {
         if (content !== null) {
             let anchor = 0;
             let rendererMD = new marked.Renderer();
