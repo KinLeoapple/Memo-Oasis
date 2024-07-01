@@ -1,33 +1,13 @@
 import {Divider, ListItemDecorator, Menu, MenuItem} from "@mui/joy";
-import {AccountCircle, Login, Logout, PersonAdd} from "@mui/icons-material";
-import {useNavigate} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {selectLoginState, setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
-import {useEffect, useState} from "react";
+import {AccountCircle, Logout} from "@mui/icons-material";
+import {useDispatch} from "react-redux";
+import {setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
 
 export const AvatarMenu = () => {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const isLogin = useSelector(selectLoginState);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const notLoginMenuItem = [
-        {
-            decorator: <Login/>,
-            text: "sign in",
-            color: "primary",
-            func: login
-        },
-        {
-            decorator: <PersonAdd/>,
-            text: "sign up",
-            color: "primary",
-            func: signUp
-        }
-    ];
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const loginMenuItem = [
+    const menuItems = [
         {
             decorator: <AccountCircle/>,
             text: "profile",
@@ -42,12 +22,6 @@ export const AvatarMenu = () => {
         },
     ]
 
-    const [menuItems, setMenuItems] = useState([]);
-
-    useEffect(() => {
-        isLogin ? setMenuItems(loginMenuItem) : setMenuItems(notLoginMenuItem);
-    }, [isLogin]);
-
     function colorCssVar(name) {
         switch (name) {
             case "primary":
@@ -55,14 +29,6 @@ export const AvatarMenu = () => {
             case "danger":
                 return "var(--variant-plainColor, var(--joy-palette-danger-plainColor, var(--joy-palette-danger-500, #C41C1C)))";
         }
-    }
-
-    function login() {
-        navigate("/login", {replace: true});
-    }
-
-    function signUp() {
-        navigate("/signup", {replace: true});
     }
 
     function signOut() {

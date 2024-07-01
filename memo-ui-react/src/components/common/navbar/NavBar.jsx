@@ -10,7 +10,7 @@ import {
     useColorScheme
 } from "@mui/joy";
 import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
-import {Link, useLocation} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import Search from '@mui/icons-material/Search';
 import {useEffect, useState} from "react";
 import '@fontsource/kalam';
@@ -45,6 +45,7 @@ export const NavBar = () => {
     const [quote, setQuote] = useState(null);
     const [quoteName, setQuoteName] = useState(null);
 
+    const navigate = useNavigate();
     const isLogin = useSelector(selectLoginState);
     const [login, setLogin] = useState(false);
 
@@ -108,12 +109,18 @@ export const NavBar = () => {
         }
     }, [login, name, quote, quoteName]);
 
+    function signIn() {
+        navigate("/login", {replace: true});
+    }
+
     return (
         <div className={'w-full h-24 z-[999]'}>
             <Grid container columns={3} spacing={0.1} className={`w-full fixed flex flex-col 
              justify-between items-center gap-5 flex-nowrap p-5 mb-3 
             bg-opacity-80 ${themeMode.colorScheme === 'dark' ? 'bg-gray-950' : 'bg-white'}`} sx={{flexGrow: 1}}>
-                <Grid className={'flex justify-start items-center gap-3 select-none'} xs={1}>
+                <Grid onClick={login ? null : signIn} className={`flex justify-start items-center gap-3
+                ${login ? '' : 'cursor-pointer'}
+                 select-none`} xs={1}>
                     <Dropdown>
                         <AspectRatio sx={{width: 46}} ratio="1/1" variant="plain" objectFit="contain">
                             <MenuButton
@@ -127,9 +134,11 @@ export const NavBar = () => {
                                 <Skeleton loading={loading} animation="wave" variant="circular"/>
                             </MenuButton>
                         </AspectRatio>
-                        <AvatarMenu isLogin={login}/>
+                        {login &&
+                            <AvatarMenu/>
+                        }
                     </Dropdown>
-                    {login &&
+                    {login ?
                         <>
                             <Divider inset="none" orientation="vertical"/>
                             <div className={'flex flex-col justify-center items-start'}>
@@ -161,7 +170,8 @@ export const NavBar = () => {
                                     }
                                 </div>
                             </div>
-                        </>
+                        </> :
+                        <Typography color="primary" variant="plain" className={'capitalize'}>Sign In</Typography>
                     }
                 </Grid>
                 {searchBar &&
