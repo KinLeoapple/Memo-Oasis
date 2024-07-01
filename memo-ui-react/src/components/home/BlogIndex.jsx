@@ -7,25 +7,25 @@ import {smooth_scroll} from "@/assets/js/utils/scroll.js";
 
 export const BlogIndex = () => {
     const content = useSelector(selectBlogContent);
-    const [maxTitle, setMaxTitle] = useState(null);
     const [blogIndex, setBlogIndex] = useState([]);
-    const [max, setMax] = useState(1);
+    const [max, setMax] = useState(6);
     const [min] = useState(6);
 
     useEffect(() => {
         indexOfBlog(content);
-        console.log(blogIndex)
     }, [content]);
 
     useEffect(() => {
-        setMax(maxTitle);
-    }, [maxTitle]);
+        for (let i = 0; i < blogIndex.length; i++) {
+            if (max > blogIndex[i].tag) {
+                setMax(blogIndex[i].tag);
+            }
+        }
 
-    useEffect(() => {
         const render = document.querySelector("#render");
         for (let i = min; i >= max; i--)
             markHeadings(render, i);
-    }, [blogIndex, max, min]);
+    }, [blogIndex, max]);
 
     async function markHeadings (render, level){
         const levelHeading = blogIndex.filter(el => {
@@ -45,9 +45,9 @@ export const BlogIndex = () => {
             let rendererMD = new marked.Renderer();
             // eslint-disable-next-line no-unused-vars
             rendererMD.heading = (text, level, _) => {
-                if (maxTitle === null || level < maxTitle) {
-                    setMaxTitle(level);
-                }
+                if (max > level)
+                    setMax(level);
+
                 anchor += 1;
 
                 let isExists = false;
@@ -100,14 +100,11 @@ export const BlogIndex = () => {
                 <Typography level="h4" color="neutral">
                     <span style={{
                         fontSize: 'x-large'
-                    }}>I</span>ndex
+                    }}>C</span>ontents
                 </Typography>
                 {
                     blogIndex.map((item, i) => (
                         <ListItem key={i} className={`cursor-pointer select-none`}
-                                  style={{
-                                      marginLeft: `${((item.tag - maxTitle) * 10)}px`
-                                  }}
                                   sx={{
                                       width: '100%'
                                   }}>
@@ -117,7 +114,11 @@ export const BlogIndex = () => {
                                 className={'flex flex-row justify-start'} sx={{
                                 borderRadius: '6px'
                             }}>
-                                <p className={`text-base font-bold`}>{item.text}</p>
+                                <span
+                                    style={{
+                                        marginLeft: `${((item.tag - max) * 10)}px`
+                                    }}
+                                    className={`text-base font-bold`}>{item.text}</span>
                             </ListItemButton>
                         </ListItem>
                     ))

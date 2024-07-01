@@ -1,6 +1,8 @@
 import {Grid, Stack} from "@mui/joy";
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {NavBar} from "@/components/common/navbar/NavBar.jsx";
+import {ToTopButton} from "@/components/button/ToTopButton.jsx";
+import {scroll_distance_to_top} from "@/assets/js/utils/distance_to_top.js";
 
 export const Layout = ({
                            // eslint-disable-next-line react/prop-types
@@ -17,6 +19,25 @@ export const Layout = ({
         return <NavBar/>;
     }, []);
 
+    const [mounted, setMounted] = useState(false);
+    const [display, setDisplay] = useState(false);
+
+    useEffect(() => {
+        if (!mounted) {
+            setMounted(true);
+        } else {
+            document.body.onscroll = null;
+        }
+    }, []);
+
+    function displayToTopButton() {
+        scroll_distance_to_top() > 100 ? setDisplay(true) : setDisplay(false);
+    }
+
+    document.body.onscroll = () => {
+        displayToTopButton();
+    }
+
     return (
         <>
             <Stack className={`min-h-full min-w-full`}>
@@ -30,7 +51,7 @@ export const Layout = ({
                         </div>
                     </Grid>
                     <Grid xs={2}>
-                        <div className={`h-[100%] flex-shrink-0`}>
+                        <div className={`min-h-full flex-shrink-0`}>
                             {content.el}
                         </div>
                     </Grid>
@@ -41,6 +62,9 @@ export const Layout = ({
                         </div>
                     </Grid>
                 </Grid>
+                <div className={display ? '' : 'hidden'}>
+                    <ToTopButton/>
+                </div>
             </Stack>
             {center.show &&
                 <div className={'fixed inset-0 flex items-center justify-center'}>

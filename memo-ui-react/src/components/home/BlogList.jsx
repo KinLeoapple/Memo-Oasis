@@ -114,7 +114,7 @@ export const BlogList = () => {
                     return Number(b.date) - Number(a.date);
                 }).map((blog, i) => (
                     <Card
-                        onClick={() => selectedBlog(blog.id)}
+                        onClick={(e) => selectedBlog(blog.id)}
                         invertedColors key={i} color="primary" variant="soft"
                           className={`mb-5 cursor-pointer select-none`}
                           sx={{
@@ -133,7 +133,10 @@ export const BlogList = () => {
                             <div className={`flex gap-2`}>
                                 <span className={`flex items-center gap-1`}><CalculateMonth
                                     sx={{fontSize: 'small'}}/><Chip
-                                    onClick={() => appendDateCondition(blog.date)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        appendDateCondition(blog.date);
+                                    }}
                                     size="sm" className={'text-xs'} color="primary" variant="soft" sx={{
                                     "--Chip-paddingInline": "5px",
                                     "--Chip-minHeight": "16px",
@@ -143,7 +146,10 @@ export const BlogList = () => {
                                 <span className={`flex items-center gap-1`}><CategoryIcon
                                     sx={{fontSize: 'small'}}/>
                                     <Chip
-                                        onClick={() => appendCategoryCondition(blog.category)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            appendCategoryCondition(blog.category);
+                                        }}
                                         size="sm" className={'text-xs'} color="primary" variant="soft" sx={{
                                         "--Chip-paddingInline": "5px",
                                         "--Chip-minHeight": "16px",

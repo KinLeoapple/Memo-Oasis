@@ -20,7 +20,6 @@ import org.mindrot.jbcrypt.BCrypt
  * @param database The database which wish to search.
  * @param json The json containers the information.
  * @param call The ApplicationCall.
- * @param role The role of the user.
  * @return A map of the login result.
  */
 fun getLogin(database: Database, json: String, call: ApplicationCall): Map<String, String?> {

@@ -33,7 +33,6 @@ fun Application.api(database: Database) {
         }
 
         post("/login") {
-            println(call.sessions.get<Session>())
             val json = call.receiveText()
             call.respond(getLogin(database, json, call))
         }

@@ -17,19 +17,24 @@ import '@fontsource/kalam';
 import avatar from "@/assets/img/avatar.webp";
 import {basic_info, post_token_login} from "@/assets/js/api/api.js";
 import {AvatarMenu} from "@/components/common/navbar/AvatarMenu.jsx";
-import {useDispatch} from "react-redux";
-import {setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
+import {useDispatch, useSelector} from "react-redux";
+import {selectLoginState, setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
+import {Dashboard, HomeRounded} from "@mui/icons-material";
 
 export const NavBar = () => {
     const dispatch = useDispatch();
-    const navButtons = [{
-        name: "Home",
-        path: "/"
-    },
+    const navButtons = [
         {
-            name: "Admin",
-            path: "/admin"
-        }];
+            name: "Home",
+            decorator: <HomeRounded/>,
+            path: "/"
+        },
+        {
+            name: "Dashboard",
+            decorator: <Dashboard/>,
+            path: "/dashboard"
+        }
+    ];
     const themeMode = useColorScheme();
     const location = useLocation();
     const [searchBar, setSearchBar] = useState(true);
@@ -40,13 +45,14 @@ export const NavBar = () => {
     const [quote, setQuote] = useState(null);
     const [quoteName, setQuoteName] = useState(null);
 
+    const isLogin = useSelector(selectLoginState);
     const [login, setLogin] = useState(false);
 
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         switch (location.pathname) {
-            case "/admin":
+            case "/dashboard":
                 setSearchBar(false);
                 break;
             case "/login":
@@ -62,29 +68,33 @@ export const NavBar = () => {
     }, [location]);
 
     useEffect(() => {
-        let token = localStorage.getItem("token");
-        if (token !== null && token !== undefined && token !== "") {
-            post_token_login(token).then(r => {
-                if (r !== null) {
-                    let newToken = r.login;
-                    if (newToken !== null) {
-                        setLogin(true);
-                        dispatch(setLoginStateValue(true));
-                        localStorage.setItem("token", newToken);
+        if (!isLogin) {
+            let token = localStorage.getItem("token");
+            if (token !== null && token !== undefined && token !== "") {
+                post_token_login(token).then(r => {
+                    if (r !== null) {
+                        let newToken = r.login;
+                        if (newToken !== null) {
+                            setLogin(true);
+                            dispatch(setLoginStateValue(true));
+                            localStorage.setItem("token", newToken);
+                        } else {
+                            dispatch(setLoginStateValue(false));
+                            setLogin(false);
+                        }
                     } else {
                         dispatch(setLoginStateValue(false));
                         setLogin(false);
                     }
-                } else {
-                    dispatch(setLoginStateValue(false));
-                    setLogin(false);
-                }
-            });
+                });
+            } else {
+                dispatch(setLoginStateValue(false));
+                setLogin(false);
+            }
         } else {
-            dispatch(setLoginStateValue(false));
-            setLogin(false);
+            setLogin(true);
         }
-    }, [dispatch, login]);
+    }, [dispatch, isLogin, login]);
 
     useEffect(() => {
         if (login) {
@@ -169,8 +179,12 @@ export const NavBar = () => {
                     <div className={'flex flex-row justify-end items-center gap-2'}>
                         <div className={'flex flex-row gap-3'}>
                             {navButtons.map((btn) => (
-                                <Link key={btn.name} to={btn.path} replace={true}>
-                                    <Button variant={location.pathname === btn.path ? "soft" : "plain"}>
+                                <Link
+                                    className={btn.path === "/dashboard" ? (isLogin ? "" : "hidden") : ""}
+                                    key={btn.name} to={btn.path} replace={true}>
+                                    <Button
+                                        startDecorator={btn.decorator}
+                                        variant={location.pathname === btn.path ? "soft" : "plain"}>
                                         {btn.name}
                                     </Button>
                                 </Link>

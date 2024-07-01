@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 
 import {Home} from "@/components/home/Home.jsx";
-import {Admin} from "@/components/admin/Admin.jsx";
+import {DashBoard} from "@/components/dashboard/DashBoard.jsx";
 import {Login} from "@/components/login/Login.jsx";
 import {SignUp} from "@/components/signup/SignUp.jsx";
 
@@ -14,8 +14,8 @@ const routers = createBrowserRouter([
         element: <Home />,
     },
     {
-        path: "/admin",
-        element: <Admin />,
+        path: "/dashboard",
+        element: <DashBoard />,
     },
     {
         path: "/login",
