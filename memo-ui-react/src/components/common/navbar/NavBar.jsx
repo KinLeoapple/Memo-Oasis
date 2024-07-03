@@ -117,8 +117,11 @@ export const NavBar = () => {
         <div className={'w-full h-24 z-[999]'}>
             <Grid container columns={3} spacing={0.1} className={`w-full fixed flex flex-col 
              justify-between items-center gap-5 flex-nowrap p-5 mb-3 
-            bg-opacity-80 ${themeMode.colorScheme === 'dark' ? 'bg-gray-950' : 'bg-white'}`} sx={{flexGrow: 1}}>
-                <Grid onClick={login ? null : signIn} className={`flex justify-start items-center gap-3
+            bg-opacity-80`} sx={{flexGrow: 1}}>
+                <div style={{
+                    maskImage: "linear-gradient(black 40%, transparent)"
+                }} className={'absolute top-0 left-0 w-full h-20 pointer-events-none backdrop-blur-lg'}></div>
+                <Grid onClick={login ? null : signIn} className={`z-30 flex justify-start items-center gap-3
                 ${login ? '' : 'cursor-pointer'}
                  select-none`} xs={1}>
                     <Dropdown>

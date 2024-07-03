@@ -12,8 +12,6 @@ import org.kinleoapple.database.dao.blog.*
 import org.kinleoapple.security.verifyToken
 
 fun Application.blogAPI(database: Database) {
-    val content = environment.config.propertyOrNull("markdown.content")?.getString()
-
     routing {
         authenticate {
             post("/blog/{id}") {
@@ -36,10 +34,15 @@ fun Application.blogAPI(database: Database) {
             }
         }
 
+        get("/blog/total") {
+            call.respond(getBolgTotal(database))
+        }
+
         get("/blog/{id}") {
             val id = call.parameters["id"]
-            if (id == "null")
-                call.respond(getBlogAll(database))
+            if (id == "null") {
+                call.respond(getBlogAll(database, call))
+            }
             else
                 id?.let {
                     call.respond(getBlog(database, it.toLong()))

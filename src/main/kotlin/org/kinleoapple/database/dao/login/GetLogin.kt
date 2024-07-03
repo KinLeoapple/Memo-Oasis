@@ -10,7 +10,7 @@ import io.ktor.server.sessions.*
 import org.kinleoapple.auth.Auth
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.User
-import org.kinleoapple.dataclass.Session
+import org.kinleoapple.dataclass.SessionData
 import org.ktorm.dsl.*
 import org.mindrot.jbcrypt.BCrypt
 
@@ -35,9 +35,9 @@ fun getLogin(database: Database, json: String, call: ApplicationCall): Map<Strin
     val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
 
     var decryptPass: String? = null
-    val session = call.sessions.get<Session>()
+    val sessionData = call.sessions.get<SessionData>()
 
-    session?.let {
+    sessionData?.let {
         val privateKey = it.privateKey
         val  publicKey = it.publicKey
         val rsa = RSA(privateKey, publicKey)

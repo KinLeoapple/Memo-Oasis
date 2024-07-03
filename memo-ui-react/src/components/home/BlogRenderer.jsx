@@ -1,4 +1,4 @@
-import {AspectRatio, Button, Card, CardContent, CardOverflow, Typography, useColorScheme} from "@mui/joy";
+import {AspectRatio, Button, Card, CardContent, CardOverflow, useColorScheme} from "@mui/joy";
 import img from "@/assets/img/img.webp";
 import {useDispatch, useSelector} from "react-redux";
 import {selectBlog, setBlogValue} from "@/assets/js/data/reducer/blog_slice.js";
@@ -38,11 +38,12 @@ export const BlogRenderer = () => {
 
     function goBack() {
         dispatch(setBlogValue(0));
+        dispatch(setContentValue(""));
     }
 
     return (
         <div className={'relative mt-10'}>
-            <Button onClick={goBack} invertedColors color="neutral" variant="solid" sx={{
+            <Button onClick={goBack} color="neutral" variant="solid" sx={{
                 width: "50px",
                 height: "50px",
                 borderRadius: "50%",
@@ -79,17 +80,15 @@ export const BlogRenderer = () => {
                     </AspectRatio>
                 </CardOverflow>
                 <CardContent>
-                    <Typography>
-                        <MdPreview
-                            theme={theme.mode === "dark" ? "dark" : "light"}
-                            style={{
-                                backgroundColor: "transparent",
-                            }}
-                            editorId={id}
-                            modelValue={content}
-                            sanitize={sanitize}
-                            previewTheme={"vuepress"}/>
-                    </Typography>
+                    <MdPreview
+                        theme={theme.mode === "dark" ? "dark" : "light"}
+                        style={{
+                            backgroundColor: "transparent",
+                        }}
+                        editorId={id}
+                        modelValue={content}
+                        sanitize={sanitize}
+                        previewTheme={"vuepress"}/>
                 </CardContent>
             </Card>
         </div>

@@ -1,9 +1,9 @@
 package org.kinleoapple.database.dao.draft
 
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Draft
+import org.kinleoapple.dataclass.DeleteDraftData
 import org.ktorm.dsl.delete
 import org.ktorm.dsl.eq
 import java.io.File
@@ -16,12 +16,7 @@ import java.io.File
  * @return A map of the delete draft result.
  */
 fun deleteDraft(database: Database, json: String): Map<String, Boolean> {
-    data class DataClass(
-        @SerializedName("draft_id")
-        val draftId: String,
-    )
-
-    val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
+    val dataClass: DeleteDraftData = Gson().fromJson(json, DeleteDraftData::class.java)
 
     // delete the information in database anyway.
     database.getConnection().delete(Draft) {

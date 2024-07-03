@@ -1,5 +1,5 @@
 import {Grid, Stack} from "@mui/joy";
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {NavBar} from "@/components/common/navbar/NavBar.jsx";
 import {ToTopButton} from "@/components/button/ToTopButton.jsx";
 import {scroll_distance_to_top} from "@/assets/js/utils/distance_to_top.js";
@@ -25,18 +25,15 @@ export const Layout = ({
     useEffect(() => {
         if (!mounted) {
             setMounted(true);
+            window.addEventListener("scroll", displayToTopButton);
         } else {
-            document.body.onscroll = null;
+            window.removeEventListener("scroll", displayToTopButton);
         }
     }, []);
 
-    function displayToTopButton() {
+    const displayToTopButton = useCallback(() => {
         scroll_distance_to_top() > 100 ? setDisplay(true) : setDisplay(false);
-    }
-
-    document.body.onscroll = () => {
-        displayToTopButton();
-    }
+    }, []);
 
     return (
         <>

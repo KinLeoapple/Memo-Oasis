@@ -27,7 +27,7 @@ export const BlogIndex = () => {
             markHeadings(render, i);
     }, [blogIndex, max]);
 
-    async function markHeadings (render, level){
+    async function markHeadings(render, level) {
         const levelHeading = blogIndex.filter(el => {
             return el.tag === level;
         });

@@ -54,9 +54,20 @@ export function post_token_login(token) {
 Blog
  */
 
-export function get_blog_all() {
+export function get_blog_total() {
     return new Promise(resolve => {
-        fetch(`${prefix}/blog/null`, {
+        fetch(`${prefix}/blog/total`, {
+            method: "GET",
+            credentials: "include"
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
+export function get_blog_all(offset = 0, size = 5) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog/null?offset=${offset}&size=${size}`, {
             method: "GET",
             credentials: "include"
         }).then(r => {

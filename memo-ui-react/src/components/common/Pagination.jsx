@@ -3,15 +3,25 @@ import {KeyboardArrowLeft, KeyboardArrowRight, MoreHoriz} from "@mui/icons-mater
 import {useEffect, useState} from "react";
 import {useSelector, useDispatch} from 'react-redux';
 import {decrement, increment, selectBlogPage, setPageValue} from "@/assets/js/data/reducer/blog_page_slice.js";
+import {selectBlogNumber} from "@/assets/js/data/reducer/blog_number_slice.js";
+import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
+import {selectCondition} from "@/assets/js/data/reducer/condition_slice.js";
+import {selectBlogFilterNumber} from "@/assets/js/data/reducer/blog_filter_number_slice.js";
 
-export const Pagination = ({
-                               // eslint-disable-next-line react/prop-types
-                               count = 0
-                           }) => {
+export const Pagination = () => {
+    const conditions = useSelector(selectCondition);
     const page = useSelector(selectBlogPage);
+    const total = useSelector(selectBlogNumber);
+    const filterNumber = useSelector(selectBlogFilterNumber);
     const dispatch = useDispatch();
+    const [count, setCount] = useState(0);
     const [dots, setDots] = useState({front: false, back: false});
     const [renderCount, setRenderCount] = useState(fillRenderCount());
+
+    useEffect(() => {
+        let count = conditions.length > 0 ? filterNumber : total;
+        setCount(parseInt(Math.ceil(count / MAX_PER_PAGE).toString()) || 0);
+    }, [conditions, filterNumber, total]);
 
     useEffect(() => {
         let front = true;

@@ -1,9 +1,9 @@
 package org.kinleoapple.database.dao.blog
 
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Blog
+import org.kinleoapple.dataclass.DeleteBlogData
 import org.ktorm.dsl.delete
 import org.ktorm.dsl.eq
 import java.io.File
@@ -16,12 +16,7 @@ import java.io.File
  * @return A map of the delete blog result.
  */
 fun deleteBlog(database: Database, json: String): Map<String, Boolean> {
-    data class DataClass(
-        @SerializedName("blog_id")
-        val blogId: String,
-    )
-
-    val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
+    val dataClass: DeleteBlogData = Gson().fromJson(json, DeleteBlogData::class.java)
 
     // delete the information in database anyway.
     database.getConnection().delete(Blog) {

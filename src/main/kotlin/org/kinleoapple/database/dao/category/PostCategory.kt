@@ -1,9 +1,9 @@
 package org.kinleoapple.database.dao.category
 
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Category
+import org.kinleoapple.dataclass.CategoryData
 import org.kinleoapple.util.generateId
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
@@ -19,12 +19,7 @@ import org.ktorm.dsl.update
  */
 fun postCategory(database: Database, json: String, id: Long?): Map<String, String?> {
     try {
-        data class DataClass(
-            @SerializedName("catName")
-            val catName: String,
-        )
-
-        val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
+        val dataClass: CategoryData = Gson().fromJson(json, CategoryData::class.java)
 
         if (dataClass.catName != "null" && dataClass.catName.trimIndent().isNotEmpty()) {
             val newId = generateId(id) // get id or generate id

@@ -1,9 +1,9 @@
 package org.kinleoapple.database.dao.draft
 
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.relation.Draft
+import org.kinleoapple.dataclass.PostDraftData
 import org.kinleoapple.util.generateId
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
@@ -21,14 +21,7 @@ import java.time.LocalDateTime
  */
 fun postDraft(database: Database, json: String, id: Long?): Map<String, String?> {
     try {
-        data class DataClass(
-            @SerializedName("title")
-            val title: String,
-            @SerializedName("draft")
-            val draft: String,
-        )
-
-        val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
+        val dataClass: PostDraftData = Gson().fromJson(json, PostDraftData::class.java)
 
         if (dataClass.draft != "null" && dataClass.draft.trimIndent().isNotEmpty()) {
             val newId = generateId(id) // get id or generate id

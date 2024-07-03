@@ -3,14 +3,12 @@ import {BlogList} from "@/components/home/BlogList.jsx";
 import {Layout} from "@/components/layout/Layout.jsx";
 import {Pagination} from "@/components/common/Pagination.jsx";
 import {useSelector} from "react-redux";
-import {selectBlogNumber} from "@/assets/js/data/reducer/blog_number_slice.js";
 import {Condition} from "@/components/home/Condition.jsx";
 import {selectBlog} from "@/assets/js/data/reducer/blog_slice.js";
 import {BlogRenderer} from "@/components/home/BlogRenderer.jsx";
 import {BlogIndex} from "@/components/home/BlogIndex.jsx";
 
 export const Home = () => {
-    const pagination = useSelector(selectBlogNumber);
     const blog = useSelector(selectBlog);
 
     return (
@@ -31,7 +29,7 @@ export const Home = () => {
                             <>
                                 <Condition/>
                                 <BlogList/>
-                                <Pagination count={pagination}/>
+                                <Pagination/>
                             </> :
                             <BlogRenderer/>
                         }

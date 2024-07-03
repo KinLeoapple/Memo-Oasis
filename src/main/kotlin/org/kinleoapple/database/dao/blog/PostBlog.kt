@@ -1,10 +1,10 @@
 package org.kinleoapple.database.dao.blog
 
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import org.kinleoapple.database.Database
 import org.kinleoapple.database.dao.draft.deleteDraft
 import org.kinleoapple.database.relation.Blog
+import org.kinleoapple.dataclass.PostBlogData
 import org.kinleoapple.util.generateId
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
@@ -22,18 +22,7 @@ import java.time.LocalDateTime
  */
 fun postBlog(database: Database, json: String, id: Long?): Map<String, String?> {
     try {
-        data class DataClass(
-            @SerializedName("title")
-            val title: String,
-            @SerializedName("blog")
-            val blog: String,
-            @SerializedName("cat_id")
-            val catId: String,
-            @SerializedName("blog_des")
-            val blogDes: String,
-        )
-
-        val dataClass: DataClass = Gson().fromJson(json, DataClass::class.java)
+        val dataClass: PostBlogData = Gson().fromJson(json, PostBlogData::class.java)
 
         if (dataClass.blog != "null" && dataClass.blog.trimIndent().isNotEmpty()) {
             val newId = generateId(id) // get id or generate id
