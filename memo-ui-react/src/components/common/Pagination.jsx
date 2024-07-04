@@ -78,9 +78,11 @@ export const Pagination = () => {
     }
 
     function jumpTo(number) {
-        // eslint-disable-next-line no-constant-condition
-        if (number => 1 && number <= count)
-            dispatch(setPageValue(number));
+        if (number < 1)
+            number = 1;
+        else if (number > count)
+            number = count;
+        dispatch(setPageValue(number));
     }
 
     return (
