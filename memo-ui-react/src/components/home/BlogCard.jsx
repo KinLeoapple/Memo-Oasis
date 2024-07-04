@@ -84,7 +84,7 @@ export const BlogCard = ({
                     </div>
                 </div>
                 <CardContent>
-                    <Typography>
+                    <Typography noWrap>
                         <span className={`text-xl`}>{desc.charAt(0)}</span>
                         <span>{desc.substring(1, desc.length)}</span>
                     </Typography>

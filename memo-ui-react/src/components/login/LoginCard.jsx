@@ -9,9 +9,17 @@ import {
     Input,
     Stack,
     Typography,
-    Link, IconButton
+    Link, IconButton, Snackbar
 } from "@mui/joy";
-import {AccountCircle, Lock, NorthEast, Visibility, VisibilityOff} from "@mui/icons-material";
+import {
+    AccountCircle,
+    Close,
+    InfoOutlined,
+    Lock,
+    NorthEast,
+    Visibility,
+    VisibilityOff
+} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {post_login} from "@/assets/js/api/api.js";
@@ -26,6 +34,8 @@ export const LoginCard = () => {
 
     const [name, setName] = useState("");
     const [pass, setPass] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const isLogin = useSelector(selectLoginState);
 
@@ -35,6 +45,9 @@ export const LoginCard = () => {
         }
     }, [isLogin, navigate]);
 
+    useEffect(() => {
+        snackbarOpen ? null : setErrorMsg("");
+    }, [snackbarOpen]);
 
     function changeVisibility() {
         setVisibility(!visibility);
@@ -44,9 +57,18 @@ export const LoginCard = () => {
         setName(e.target.value);
     }
 
+    function cleanName() {
+        setName("");
+    }
+
     function changePass(e) {
         setPass(e.target.value);
     }
+
+    function cleanPass() {
+        setPass("");
+    }
+
 
     function toSignUp() {
         navigate("/signup", {replace: true});
@@ -59,6 +81,9 @@ export const LoginCard = () => {
                 if (r.login !== null && r.login !== undefined) {
                     localStorage.setItem("token", r.login);
                     navigate("/", {replace: true});
+                } else {
+                    setErrorMsg(r.msg);
+                    setSnackbarOpen(true);
                 }
             }
             setChecking(false);
@@ -91,13 +116,27 @@ export const LoginCard = () => {
                         justifyContent="center"
                         spacing={6}>
                         <FormControl className={'flex justify-center items-center'}>
-                            <Input onChange={changeName} startDecorator={
+                            <Input onChange={changeName} value={name} startDecorator={
                                 <Chip variant="outlined" startDecorator={<AccountCircle/>}
                                       style={{
                                           cursor: "default"
                                       }}
                                 >username</Chip>
                             }
+                                   endDecorator={
+                                       name !== "" &&
+                                       <IconButton
+                                           onClick={cleanName}
+                                           sx={{
+                                               background: "transparent",
+                                               "&:hover": {
+                                                   background: "transparent",
+                                               }
+                                           }}
+                                       >
+                                           <Close/>
+                                       </IconButton>
+                                   }
                                    color="primary" variant="soft"
                                    className={'w-11/12'}
                                    maxLength={20}
@@ -106,7 +145,7 @@ export const LoginCard = () => {
                             }}/>
                         </FormControl>
                         <FormControl className={'flex justify-center items-center'}>
-                            <Input onChange={changePass} startDecorator={
+                            <Input onChange={changePass} value={pass} startDecorator={
                                 <Chip variant="outlined" startDecorator={<Lock/>}
                                       style={{
                                           cursor: "default",
@@ -114,12 +153,28 @@ export const LoginCard = () => {
                                 >password</Chip>
                             }
                                    endDecorator={
-                                       <IconButton
-                                           onClick={changeVisibility}
-                                       >{
-                                           visibility ?
-                                               <Visibility/> : <VisibilityOff/>}
-                                       </IconButton>
+                                       <div className={'flex gap-2'}>
+                                           {
+                                               pass !== "" &&
+                                               <IconButton
+                                                   onClick={cleanPass}
+                                                   sx={{
+                                                       background: "transparent",
+                                                       "&:hover": {
+                                                           background: "transparent",
+                                                       }
+                                                   }}
+                                               >
+                                                   <Close/>
+                                               </IconButton>
+                                           }
+                                           <IconButton
+                                               onClick={changeVisibility}
+                                           >{
+                                               visibility ?
+                                                   <Visibility/> : <VisibilityOff/>}
+                                           </IconButton>
+                                       </div>
                                    }
                                    color="primary" variant="soft"
                                    className={'w-11/12'}
@@ -158,6 +213,34 @@ export const LoginCard = () => {
                         }>New to Here?</Typography>
                 </CardContent>
             </Card>
+            <Snackbar
+                autoHideDuration={3000}
+                color="danger"
+                variant="solid"
+                anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+                open={snackbarOpen}
+                onClose={() => setSnackbarOpen(false)}
+                startDecorator={<InfoOutlined/>}
+                endDecorator={
+                    <IconButton
+                        onClick={() => setSnackbarOpen(false)}
+                        variant="plain" sx={{
+                        color: "inherit"
+                    }}>
+                        <Close style={{
+                            color: "inherit"
+                        }}/>
+                    </IconButton>
+                }
+            >
+                <Typography sx={{
+                    color: "inherit"
+                }}>
+                    <Typography level={"body-sm"} sx={{
+                        color: "inherit"
+                    }}>{errorMsg}</Typography>
+                </Typography>
+            </Snackbar>
         </div>
     )
 }

@@ -3,18 +3,19 @@ import {RouterProvider} from "react-router-dom";
 import routers from "@/router.jsx";
 import {useColorScheme} from "@mui/joy";
 import {useEffect} from "react";
+import {BG, BG_DARK} from "@/assets/js/data/static.js";
 
 function App() {
     let themeMode = useColorScheme();
 
     useEffect(() => {
-        document.body.classList.remove('bg-gray-950');
-        document.body.classList.remove('bg-white');
-        document.body.classList.add(themeMode.mode === 'dark' ? 'bg-gray-950' : 'bg-white');
+        document.body.classList.remove(BG_DARK);
+        document.body.classList.remove(BG);
+        document.body.classList.add(themeMode.mode === 'dark' ? BG_DARK : BG);
     }, [themeMode]);
 
     return (
-        <div className={`min-w-full min-h-full ${themeMode.mode === 'dark' ? 'bg-gray-950' : 'bg-white'}`}>
+        <div className={`min-w-full min-h-full ${themeMode.mode === 'dark' ? BG_DARK : BG}`}>
             <RouterProvider router={routers}/>
         </div>
     )

@@ -6,6 +6,7 @@ import {condition_slice} from "@/assets/js/data/reducer/condition_slice.js";
 import {blog_content_slice} from "@/assets/js/data/reducer/blog_content_slice.js";
 import {login_state_slice} from "@/assets/js/data/reducer/login_state_slice.js";
 import {blog_filter_number_slice} from "@/assets/js/data/reducer/blog_filter_number_slice.js";
+import {user_basic_info_slice} from "@/assets/js/data/reducer/user_basic_info_slice.js";
 
 export const store = configureStore({
     reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
         blogFilterNumber: blog_filter_number_slice.reducer,
         blogContent: blog_content_slice.reducer,
         condition: condition_slice.reducer,
-        loginState: login_state_slice.reducer
+        loginState: login_state_slice.reducer,
+        userBasicInfo: user_basic_info_slice.reducer
     },
 })

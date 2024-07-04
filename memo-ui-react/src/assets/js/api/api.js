@@ -1,5 +1,6 @@
 import {crypt_str} from "@/assets/js/crypt/crypt.js";
 import {api_prefix} from "@/assets/js/api/api_prefix.js";
+import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
 
 const prefix = api_prefix();
 
@@ -65,7 +66,7 @@ export function get_blog_total() {
     });
 }
 
-export function get_blog_all(offset = 0, size = 5) {
+export function get_blog_all(offset = 0, size = MAX_PER_PAGE) {
     return new Promise(resolve => {
         fetch(`${prefix}/blog/null?offset=${offset}&size=${size}`, {
             method: "GET",
@@ -308,6 +309,22 @@ export function get_category_number(id) {
 export function get_key() {
     return new Promise(resolve => {
         fetch(`${prefix}/key`, {
+            method: "GET",
+            credentials: "include"
+        })
+            .then(r => {
+                resolve(r.json())
+            }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
+/*
+ Search
+ */
+
+export function get_search_blog(keyword, offset = 0, size = MAX_PER_PAGE) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/search/blog?keyword=${keyword}&offset=${offset}&size=${size}`, {
             method: "GET",
             credentials: "include"
         })

@@ -4,7 +4,7 @@ import {
     Button,
     Chip,
     Divider, Dropdown,
-    Grid,
+    Grid, IconButton,
     Input, MenuButton, Skeleton,
     Typography,
     useColorScheme
@@ -19,7 +19,9 @@ import {basic_info, post_token_login} from "@/assets/js/api/api.js";
 import {AvatarMenu} from "@/components/common/navbar/AvatarMenu.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState, setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
-import {Dashboard, HomeRounded} from "@mui/icons-material";
+import {Close, Dashboard, HomeRounded} from "@mui/icons-material";
+import {BG, BG_DARK} from "@/assets/js/data/static.js";
+import {selectUserBasicInfo, setUserBasicInfoValue} from "@/assets/js/data/reducer/user_basic_info_slice.js";
 
 export const NavBar = () => {
     const dispatch = useDispatch();
@@ -37,13 +39,15 @@ export const NavBar = () => {
     ];
     const themeMode = useColorScheme();
     const location = useLocation();
-    const [searchBar, setSearchBar] = useState(true);
+    const [searchBar, setSearchBar] = useState(false);
+    const [searchText, setSearchText] = useState("");
     const tags = ["gamer", "developer"];
 
     // Basic Information
-    const [name, setName] = useState(null);
-    const [quote, setQuote] = useState(null);
-    const [quoteName, setQuoteName] = useState(null);
+    const userBasicInfo = useSelector(selectUserBasicInfo);
+    const [name, setName] = useState(userBasicInfo.name);
+    const [quote, setQuote] = useState(userBasicInfo.quote);
+    const [quoteName, setQuoteName] = useState(userBasicInfo.quoteName);
 
     const navigate = useNavigate();
     const isLogin = useSelector(selectLoginState);
@@ -99,28 +103,40 @@ export const NavBar = () => {
 
     useEffect(() => {
         if (login) {
-            setLoading(true);
-            basic_info().then(r => {
-                setName(r.name);
-                setQuote(r.quote);
-                setQuoteName(r.quote_name);
-                setLoading(false);
-            });
+            if (name === null && quote === null && quoteName === null) {
+                setLoading(true);
+                basic_info().then(r => {
+                    setName(r.name);
+                    setQuote(r.quote);
+                    setQuoteName(r.quote_name);
+                    dispatch(setUserBasicInfoValue({
+                        name: r.name,
+                        quote: r.quote,
+                        quoteName: r.quote_name
+                    }));
+                    setLoading(false);
+                });
+            }
         }
-    }, [login, name, quote, quoteName]);
+    }, [dispatch, login, name, quote, quoteName]);
 
     function signIn() {
         navigate("/login", {replace: true});
     }
 
+    function handleSearchChange(e) {
+        setSearchText(e.target.value);
+    }
+
+    function cleanSearchText() {
+        setSearchText("");
+    }
+
     return (
         <div className={'w-full h-24 z-[999]'}>
             <Grid container columns={3} spacing={0.1} className={`w-full fixed flex flex-col 
-             justify-between items-center gap-5 flex-nowrap p-5 mb-3 
-            bg-opacity-80`} sx={{flexGrow: 1}}>
-                <div style={{
-                    maskImage: "linear-gradient(black 40%, transparent)"
-                }} className={'absolute top-0 left-0 w-full h-20 pointer-events-none backdrop-blur-lg'}></div>
+             justify-between items-center gap-5 flex-nowrap p-5 mb-3 backdrop-blur-lg
+            bg-opacity-80 ${themeMode.mode === 'dark' ? BG_DARK : BG}`} sx={{flexGrow: 1}}>
                 <Grid onClick={login ? null : signIn} className={`z-30 flex justify-start items-center gap-3
                 ${login ? '' : 'cursor-pointer'}
                  select-none`} xs={1}>
@@ -179,11 +195,28 @@ export const NavBar = () => {
                 </Grid>
                 {searchBar &&
                     <Grid xs={0.8}>
-                        <Input startDecorator={
-                            <Search/>
-                        }
-                               color="primary" variant="soft"
-                               size="md" placeholder="Search" sx={{
+                        <Input
+                            startDecorator={
+                                <Search/>
+                            }
+                            endDecorator={
+                                searchText !== "" &&
+                                <IconButton
+                                    onClick={cleanSearchText}
+                                    sx={{
+                                        background: "transparent",
+                                        "&:hover": {
+                                            background: "transparent",
+                                        }
+                                    }}
+                                >
+                                    <Close/>
+                                </IconButton>
+                            }
+                            onChange={(e) => handleSearchChange(e)}
+                            value={searchText}
+                            color="primary" variant="soft"
+                            size="md" placeholder="Search" sx={{
                             '--Input-focusedThickness': '0',
                         }}/>
                     </Grid>
