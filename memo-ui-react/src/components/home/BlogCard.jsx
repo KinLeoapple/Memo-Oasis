@@ -6,7 +6,7 @@ import CategoryIcon from "@mui/icons-material/Category";
 import {append, ConditionType, newCondition} from "@/assets/js/data/reducer/condition_slice.js";
 import {setBlogValue} from "@/assets/js/data/reducer/blog_slice.js";
 import {useDispatch} from "react-redux";
-import {setSearchBlogKeyword} from "@/assets/js/data/reducer/search_keyword_slice.js";
+import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/search_keyword_slice.js";
 
 export const BlogCard = ({
                              // eslint-disable-next-line react/prop-types
@@ -32,7 +32,7 @@ export const BlogCard = ({
 
     function selectedBlog(blogId) {
         dispatch(setBlogValue(blogId));
-        dispatch(setSearchBlogKeyword(""));
+        dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
     }
 
     return (
