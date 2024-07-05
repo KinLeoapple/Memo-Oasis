@@ -126,6 +126,7 @@ export const LoginCard = () => {
                                    endDecorator={
                                        name !== "" &&
                                        <IconButton
+                                           tabIndex={-1}
                                            onClick={cleanName}
                                            sx={{
                                                background: "transparent",
@@ -157,6 +158,7 @@ export const LoginCard = () => {
                                            {
                                                pass !== "" &&
                                                <IconButton
+                                                   tabIndex={-1}
                                                    onClick={cleanPass}
                                                    sx={{
                                                        background: "transparent",
@@ -187,7 +189,7 @@ export const LoginCard = () => {
                     </Stack>
                 </CardContent>
                 <CardActions buttonFlex="0 1 200px" className={'flex justify-center items-center'}>
-                    <Button loading={checking} variant="solid" color="primary" className={'capitalize'}
+                    <Button tabIndex={-1} loading={checking} variant="solid" color="primary" className={'capitalize'}
                             onClick={login}>
                         sign in
                     </Button>
@@ -202,7 +204,6 @@ export const LoginCard = () => {
                         endDecorator={
                             <Link
                                 variant="plain"
-                                aria-labelledby="heading-demo"
                                 onClick={toSignUp}
                                 fontSize="md"
                                 borderRadius="sm"

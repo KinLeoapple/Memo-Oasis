@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export const blog_page_slice = createSlice({
-    name: 'blogPage',
+    name: 'blog_page',
     initialState: {
         value: 1,
     },

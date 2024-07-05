@@ -12,7 +12,7 @@ import {
 import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import Search from '@mui/icons-material/Search';
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import '@fontsource/kalam';
 import avatar from "@/assets/img/avatar.webp";
 import {basic_info, post_token_login} from "@/assets/js/api/api.js";
@@ -20,8 +20,15 @@ import {AvatarMenu} from "@/components/common/navbar/AvatarMenu.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState, setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
 import {Close, Dashboard, HomeRounded} from "@mui/icons-material";
-import {BG, BG_DARK} from "@/assets/js/data/static.js";
+import {BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/js/data/static.js";
 import {selectUserBasicInfo, setUserBasicInfoValue} from "@/assets/js/data/reducer/user_basic_info_slice.js";
+import {
+    newSearchBlogKeyword,
+    selectSearchKeyword,
+    setSearchBlogKeyword
+} from "@/assets/js/data/reducer/search_keyword_slice.js";
+import {SearchMenu} from "@/components/common/navbar/SearchMenu.jsx";
+import {setShowResultValue} from "@/assets/js/data/reducer/show_search_result_slice.js";
 
 export const NavBar = () => {
     const dispatch = useDispatch();
@@ -39,8 +46,10 @@ export const NavBar = () => {
     ];
     const themeMode = useColorScheme();
     const location = useLocation();
+    const keyword = useSelector(selectSearchKeyword);
     const [searchBar, setSearchBar] = useState(false);
     const [searchText, setSearchText] = useState("");
+    const [searchBarFocus, setSearchBarFocus] = useState(false);
     const tags = ["gamer", "developer"];
 
     // Basic Information
@@ -120,20 +129,58 @@ export const NavBar = () => {
         }
     }, [dispatch, login, name, quote, quoteName]);
 
+    useEffect(() => {
+        setSearchText(keyword.value);
+    }, [keyword]);
+
     function signIn() {
         navigate("/login", {replace: true});
     }
 
     function handleSearchChange(e) {
-        setSearchText(e.target.value);
+        let value = e.target.value;
+        setSearchText(value);
+        dispatch(setSearchBlogKeyword(newSearchBlogKeyword(value)));
     }
 
     function cleanSearchText() {
         setSearchText("");
+        dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
+        dispatch(setShowResultValue(false));
     }
 
+    function handleFocus() {
+        setSearchBarFocus(true);
+        document.body.addEventListener("keyup", search);
+    }
+
+    function handleBlur() {
+        setSearchBarFocus(false);
+        document.body.removeEventListener("keyup", search);
+    }
+
+    const search = useCallback((e) => {
+        const fn = (e) => {
+            let target = e.target;
+            if (target.value === undefined) {
+               target = document.getElementById("searchInput");
+            }
+            let value = target.value;
+            if (value !== "") {
+                dispatch(setSearchBlogKeyword(newSearchBlogKeyword(value, e.type)));
+                dispatch(setShowResultValue(true));
+            }
+        }
+
+        if (e.type === "keyup" && e.keyCode === 13) {
+            fn(e);
+        } else if (e.type === "click") {
+            fn(e);
+        }
+    }, []);
+
     return (
-        <div className={'w-full h-24 z-[999]'}>
+        <div className={'w-full h-24 z-[999] overflow-hidden'}>
             <Grid container columns={3} spacing={0.1} className={`w-full fixed flex flex-col 
              justify-between items-center gap-5 flex-nowrap p-5 mb-3 backdrop-blur-lg
             bg-opacity-80 ${themeMode.mode === 'dark' ? BG_DARK : BG}`} sx={{flexGrow: 1}}>
@@ -194,31 +241,56 @@ export const NavBar = () => {
                     }
                 </Grid>
                 {searchBar &&
-                    <Grid xs={0.8}>
+                    <Grid xs={0.8} className={'relative'}>
                         <Input
-                            startDecorator={
-                                <Search/>
-                            }
-                            endDecorator={
-                                searchText !== "" &&
-                                <IconButton
-                                    onClick={cleanSearchText}
-                                    sx={{
-                                        background: "transparent",
-                                        "&:hover": {
-                                            background: "transparent",
+                            slots={{root: Input}}
+                            slotProps={{
+                                root: {
+                                    id: "searchInput",
+                                    endDecorator: <div className={'flex gap-2'}>
+                                        {
+                                            searchText !== "" &&
+                                            <IconButton
+                                                tabIndex={-1}
+                                                onClick={cleanSearchText}
+                                                sx={{
+                                                    background: "transparent",
+                                                    "&:hover": {
+                                                        background: "transparent",
+                                                    }
+                                                }}
+                                            >
+                                                <Close/>
+                                            </IconButton>
                                         }
-                                    }}
-                                >
-                                    <Close/>
-                                </IconButton>
-                            }
-                            onChange={(e) => handleSearchChange(e)}
-                            value={searchText}
-                            color="primary" variant="soft"
-                            size="md" placeholder="Search" sx={{
-                            '--Input-focusedThickness': '0',
-                        }}/>
+                                        <IconButton
+                                            onClick={search}
+                                            tabIndex={-1} variant={"plain"} color={"primary"} sx={{
+                                            borderRadius: "50%",
+                                        }}>
+                                            <Search/>
+                                        </IconButton>
+                                    </div>,
+                                    onFocus: handleFocus,
+                                    onBlur: handleBlur,
+                                    onChange: (e) => handleSearchChange(e),
+                                    onInput: (e) => handleSearchChange(e),
+                                    value: searchText,
+                                    variant: "soft",
+                                    size: "md",
+                                    placeholder: "Search",
+                                    sx: {
+                                        '--Input-focusedThickness': '0',
+                                        transition: 'box-shadow .2s',
+                                        backgroundColor: themeMode.mode === 'dark' ? SEARCH_INPUT_DARK : SEARCH_INPUT,
+                                        boxShadow: searchBarFocus ? 'lg' : ''
+                                    }
+                                }
+                            }}>
+                        </Input>
+                        <div className={`absolute w-full ${searchBarFocus ? '' : 'opacity-0 -z-50'}`}>
+                            <SearchMenu/>
+                        </div>
                     </Grid>
                 }
                 <Grid xs={1}>

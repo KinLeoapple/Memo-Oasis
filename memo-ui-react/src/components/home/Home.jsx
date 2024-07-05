@@ -2,14 +2,25 @@ import {CategoriesList} from "@/components/home/CategoriesList.jsx";
 import {BlogList} from "@/components/home/BlogList.jsx";
 import {Layout} from "@/components/layout/Layout.jsx";
 import {Pagination} from "@/components/common/Pagination.jsx";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Condition} from "@/components/home/Condition.jsx";
-import {selectBlog} from "@/assets/js/data/reducer/blog_slice.js";
+import {selectBlog, setBlogValue} from "@/assets/js/data/reducer/blog_slice.js";
 import {BlogRenderer} from "@/components/home/BlogRenderer.jsx";
 import {BlogIndex} from "@/components/home/BlogIndex.jsx";
+import {useEffect} from "react";
+import {setContentValue} from "@/assets/js/data/reducer/blog_content_slice.js";
+import {selectShowSearchResult} from "@/assets/js/data/reducer/show_search_result_slice.js";
+import {SearchResult} from "@/components/home/SearchResult.jsx";
 
 export const Home = () => {
+    const dispatch = useDispatch();
     const blog = useSelector(selectBlog);
+    const showResult = useSelector(selectShowSearchResult);
+
+    useEffect(() => {
+        dispatch(setBlogValue(0));
+        dispatch(setContentValue(""));
+    }, []);
 
     return (
         <>
@@ -28,8 +39,12 @@ export const Home = () => {
                         {blog === 0 ?
                             <>
                                 <Condition/>
-                                <BlogList/>
-                                <Pagination/>
+                                {showResult ? <SearchResult/> :
+                                    <>
+                                        <BlogList/>
+                                        <Pagination/>
+                                    </>
+                                }
                             </> :
                             <BlogRenderer/>
                         }

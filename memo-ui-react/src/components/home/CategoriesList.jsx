@@ -9,6 +9,8 @@ import {
     remove,
     ConditionType
 } from "@/assets/js/data/reducer/condition_slice.js";
+import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/search_keyword_slice.js";
+import {setShowResultValue} from "@/assets/js/data/reducer/show_search_result_slice.js";
 
 export const CategoriesList = () => {
     const conditions = useSelector(selectCondition);
@@ -37,6 +39,8 @@ export const CategoriesList = () => {
             dispatch(remove(newCondition(ConditionType.Category, name)));
         } else {
             dispatch(append(newCondition(ConditionType.Category, name)));
+            dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
+            dispatch(setShowResultValue(false));
         }
     }
 
@@ -82,7 +86,11 @@ export const CategoriesList = () => {
                             className={'flex flex-row justify-between'} sx={{
                             borderRadius: '6px'
                         }}>
-                            <p className={`text-base font-bold`}>{category.catName}</p>
+                            <Typography noWrap className={`text-base font-bold`}
+                                        sx={{
+                                            color: "inherit"
+                                        }}
+                            >{category.catName}</Typography>
                             <Badge variant="soft" size="sm" badgeContent={category.number} sx={{
                                 '--Badge-ring': '0 0 0 0'
                             }}/>

@@ -9,6 +9,8 @@ import {MdPreview} from "md-editor-rt";
 import 'md-editor-rt/lib/preview.css';
 import {is_html} from "@/assets/js/utils/is_html.js";
 import {Close} from "@mui/icons-material";
+import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/search_keyword_slice.js";
+import {setShowResultValue} from "@/assets/js/data/reducer/show_search_result_slice.js";
 
 export const BlogRenderer = () => {
     const theme = useColorScheme();
@@ -39,6 +41,8 @@ export const BlogRenderer = () => {
     function goBack() {
         dispatch(setBlogValue(0));
         dispatch(setContentValue(""));
+        dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
+        dispatch(setShowResultValue(false));
     }
 
     return (

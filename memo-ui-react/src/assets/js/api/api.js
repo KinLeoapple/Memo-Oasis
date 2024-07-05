@@ -326,7 +326,7 @@ export function get_search_blog(keyword, offset = 0, size = MAX_PER_PAGE) {
     return new Promise(resolve => {
         fetch(`${prefix}/search/blog?keyword=${keyword}&offset=${offset}&size=${size}`, {
             method: "GET",
-            credentials: "include"
+            credentials: "include",
         })
             .then(r => {
                 resolve(r.json())
