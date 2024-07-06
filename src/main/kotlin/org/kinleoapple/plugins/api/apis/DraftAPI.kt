@@ -28,18 +28,27 @@ fun Application.draftAPI(database: Database) {
                     call.response.status(HttpStatusCode(401, "Invalid Token"))
             }
 
-            get("/blog/draft/{id}") {
+            get("/blog/draft/{userId}/{id}") {
                 val token = call.authentication.principal<JWTPrincipal>()
                 if (token?.let { verifyToken(database, it, call) } == true) {
+                    val userId = call.parameters["userId"]
                     val id = call.parameters["id"]
-                    if (id == "null")
-                        call.respond(getDraftAll(database))
-                    else
-                        id?.let {
-                            call.respond(getDraft(database, it.toLong()))
+                    if (userId != "null") {
+                        userId?.let { uid ->
+                            if (id == "null")
+                                call.respond(getDraftAll(database, uid.toLong(), call))
+                            else
+                                id?.let {
+                                    call.respond(getDraft(database, uid.toLong(), it.toLong()))
+                                }
                         }
+                    }
                 } else
                     call.response.status(HttpStatusCode(401, "Invalid Token"))
+            }
+
+            get("/blog/draft/total") {
+                call.respond(getDraftTotal(database))
             }
 
             post("/blog/draft/{id}") {

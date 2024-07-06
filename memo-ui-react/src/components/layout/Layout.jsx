@@ -6,19 +6,25 @@ import {scroll_distance_to_top} from "@/assets/js/utils/distance_to_top.js";
 
 export const Layout = ({
                            // eslint-disable-next-line react/prop-types
-                           left = {el: <></>, fixed: false},
+                           left = {el: <></>, fixed: false,},
                            // eslint-disable-next-line react/prop-types
                            right = {el: <></>, fixed: false},
                            // eslint-disable-next-line react/prop-types
-                           content = {el: <></>, fixed: false},
+                           content = {el: <></>},
                            // eslint-disable-next-line react/prop-types
                            center = {el: <></>, show: false},
+                           // eslint-disable-next-line react/prop-types
+                           leftMargin = true,
+                           // eslint-disable-next-line react/prop-types
+                           rightMargin = true,
                        }) => {
 
     const navBar = useMemo(() => {
         return <NavBar/>;
     }, []);
 
+    const marginLeft = leftMargin === undefined ? true : leftMargin;
+    const marginRight = rightMargin === undefined ? true : rightMargin;
     const [mounted, setMounted] = useState(false);
     const [display, setDisplay] = useState(false);
 
@@ -41,7 +47,7 @@ export const Layout = ({
                 {navBar}
                 <Grid className={`min-h-full min-w-full flex justify-between gap-1`} container spacing={0} columns={4}
                       sx={{flexGrow: 1}}>
-                    <Grid xs={0.8} className={`flex flex-col gap-5 ml-5`}>
+                    <Grid xs={0.8} className={`flex flex-col gap-5 ${marginLeft ? 'ml-5' : ''}`}>
                         <div className={`${left.fixed ? 'fixed w-[20%]' : ''}
                         h-[100%] flex-shrink-0`}>
                             {left.el}
@@ -52,7 +58,7 @@ export const Layout = ({
                             {content.el}
                         </div>
                     </Grid>
-                    <Grid xs={0.8} className={`flex flex-col gap-5 mr-5`}>
+                    <Grid xs={0.8} className={`flex flex-col gap-5 ${marginRight ? 'mr-5' : ''}`}>
                         <div className={`${right.fixed ? 'fixed w-[20%]' : ''}
                         h-[100%] flex-shrink-0`}>
                             {right.el}

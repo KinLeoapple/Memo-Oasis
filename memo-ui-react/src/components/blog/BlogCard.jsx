@@ -3,10 +3,10 @@ import img from "@/assets/img/img.webp";
 import CalculateMonth from "@mui/icons-material/CalendarMonth";
 import {to_date} from "@/assets/js/utils/to_date.js";
 import CategoryIcon from "@mui/icons-material/Category";
-import {append, ConditionType, newCondition} from "@/assets/js/data/reducer/condition_slice.js";
-import {setBlogValue} from "@/assets/js/data/reducer/blog_slice.js";
+import {append, ConditionType, newCondition} from "@/assets/js/data/reducer/blog/condition_slice.js";
+import {setBlogValue} from "@/assets/js/data/reducer/blog/blog_slice.js";
 import {useDispatch} from "react-redux";
-import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/search_keyword_slice.js";
+import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
 
 export const BlogCard = ({
                              // eslint-disable-next-line react/prop-types

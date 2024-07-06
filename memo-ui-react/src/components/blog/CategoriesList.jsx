@@ -8,9 +8,9 @@ import {
     newCondition,
     remove,
     ConditionType
-} from "@/assets/js/data/reducer/condition_slice.js";
-import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/search_keyword_slice.js";
-import {setShowResultValue} from "@/assets/js/data/reducer/show_search_result_slice.js";
+} from "@/assets/js/data/reducer/blog/condition_slice.js";
+import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
+import {setShowResultValue} from "@/assets/js/data/reducer/blog/show_search_result_slice.js";
 
 export const CategoriesList = () => {
     const conditions = useSelector(selectCondition);

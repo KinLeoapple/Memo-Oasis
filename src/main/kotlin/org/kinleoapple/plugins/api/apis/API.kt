@@ -19,14 +19,18 @@ fun Application.api(database: Database) {
             post("/login/token") {
                 val token = call.authentication.principal<JWTPrincipal>()
                 if (token?.let { verifyToken(database, it, call) } == true) {
-                    call.respond(getTokenLogin(token, call))
+                    call.respond(getTokenLogin(database, token, call))
                 } else
                     call.response.status(HttpStatusCode(401, "Invalid Token"))
             }
         }
 
-        get("/basic_info") {
-            call.respond(getBasicInfo(database))
+        get("/basic_info/{id}") {
+            val id = call.parameters["id"]
+            id?.let {
+                call.respond(getBasicInfo(database, it.toLong()))
+            }
+            call.respond(getBasicInfo(database, -1))
         }
 
         post("/login") {

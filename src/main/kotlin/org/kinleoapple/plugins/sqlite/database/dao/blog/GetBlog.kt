@@ -10,10 +10,11 @@ import java.time.ZoneOffset
  * Return a map of the blog information.
  *
  * @param database The database which wish to search.
+ * @param userId The ID of the user.
  * @param id The id of the blog.
  * @return A map of the blog information.
  */
-fun getBlog(database: Database, id: Long): Map<String, String?> {
+fun getBlog(database: Database, userId: Long, id: Long): Map<String, String?> {
     var title: String? = null
     var desc: String? = null
     var date: String? = null
@@ -22,6 +23,7 @@ fun getBlog(database: Database, id: Long): Map<String, String?> {
 
     val result = database.getConnection().from(Blog)
         .select(Blog.blogTitle, Blog.blogDes, Blog.blogPubDt, Blog.catId)
+        .where { Blog.userId eq userId }
         .where(Blog.blogId eq id)
 
     result.forEach {

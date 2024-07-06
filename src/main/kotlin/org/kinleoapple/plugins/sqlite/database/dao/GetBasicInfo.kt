@@ -1,5 +1,6 @@
 package org.kinleoapple.plugins.sqlite.database.dao
 
+import io.ktor.server.auth.jwt.*
 import org.kinleoapple.plugins.sqlite.database.Database
 import org.kinleoapple.plugins.sqlite.database.dao.user.getUser
 import org.kinleoapple.plugins.sqlite.database.relation.Designer
@@ -11,16 +12,16 @@ import org.ktorm.dsl.*
  * @param database The database which wish to search.
  * @return A map of basic information.
  */
-fun getBasicInfo(database: Database): Map<String, String?> {
-    var name: String? = null
+fun getBasicInfo(database: Database, id: Long): Map<String, String?> {
+    var userName: String? = null
     var quote: String? = null
     var quoteName: String? = null
     var designerName: String? = null
-    var designerPage: String? = null;
+    var designerPage: String? = null
 
-    getUser(database, 0).forEach {
+    getUser(database, id).forEach {
         when (it.key) {
-            "name" -> name = it.value
+            "name" -> userName = it.value
             "quote" -> quote = it.value
             "quote_name" -> quoteName = it.value
         }
@@ -41,7 +42,7 @@ fun getBasicInfo(database: Database): Map<String, String?> {
     }
 
     return mapOf(
-        "name" to name,
+        "name" to userName,
         "quote" to quote,
         "quote_name" to quoteName,
         "desi_name" to designerName,

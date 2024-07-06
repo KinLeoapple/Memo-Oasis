@@ -1,16 +1,16 @@
 import {AspectRatio, Button, Card, CardContent, CardOverflow, useColorScheme} from "@mui/joy";
 import img from "@/assets/img/img.webp";
 import {useDispatch, useSelector} from "react-redux";
-import {selectBlog, setBlogValue} from "@/assets/js/data/reducer/blog_slice.js";
+import {selectBlog, setBlogValue} from "@/assets/js/data/reducer/blog/blog_slice.js";
 import {useEffect, useState} from "react";
 import {get_blog_content} from "@/assets/js/api/api.js";
-import {setContentValue} from "@/assets/js/data/reducer/blog_content_slice.js";
+import {setContentValue} from "@/assets/js/data/reducer/blog/blog_content_slice.js";
 import {MdPreview} from "md-editor-rt";
 import 'md-editor-rt/lib/preview.css';
 import {is_html} from "@/assets/js/utils/is_html.js";
 import {Close} from "@mui/icons-material";
-import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/search_keyword_slice.js";
-import {setShowResultValue} from "@/assets/js/data/reducer/show_search_result_slice.js";
+import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
+import {setShowResultValue} from "@/assets/js/data/reducer/blog/show_search_result_slice.js";
 
 export const BlogRenderer = () => {
     const theme = useColorScheme();

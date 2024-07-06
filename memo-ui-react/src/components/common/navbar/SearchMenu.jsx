@@ -10,9 +10,9 @@ import {
     newSearchBlogKeyword,
     selectSearchKeyword,
     setSearchBlogKeyword
-} from "@/assets/js/data/reducer/search_keyword_slice.js";
+} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
 import {SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/js/data/static.js";
-import {setBlogValue} from "@/assets/js/data/reducer/blog_slice.js";
+import {setBlogValue} from "@/assets/js/data/reducer/blog/blog_slice.js";
 import {useEffect, useRef, useState} from "react";
 import {get_search_blog} from "@/assets/js/api/api.js";
 import {Inventory2} from "@mui/icons-material";
@@ -58,7 +58,8 @@ export const SearchMenu = () => {
 
     return (
         <>
-            {keyword.value !== "" &&
+            {
+                keyword.value !== "" &&
                 <Stack
                     className={`w-full ${searchList.length === 0 ? 'min-h-24' : 'h-auto'} select-none`}
                     sx={{
@@ -87,9 +88,11 @@ export const SearchMenu = () => {
                                             marginRight: "5px",
                                             marginBottom: "4px",
                                         }}>
-                                            <ListItemButton color={"primary"} onClick={() => goToRender(item.id)}>
+                                            <ListItemButton tabIndex={-1} color={"primary"}
+                                                            onClick={() => goToRender(item.id)}>
                                                 <Typography>
-                                                    <Typography className={'font-bold'}>{item.title}</Typography><br/>
+                                                    <Typography
+                                                        className={'font-bold'}>{item.title}</Typography><br/>
                                                     <Typography level={'body-sm'}>{item.desc}</Typography>
                                                 </Typography>
                                             </ListItemButton>
@@ -118,7 +121,7 @@ export const SearchMenu = () => {
                                         </Typography>
                                     </>
                                 }</>
-                              }</>
+                            }</>
                         }
                     </List>
                 </Stack>

@@ -23,10 +23,12 @@ import {
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {post_login} from "@/assets/js/api/api.js";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState} from "@/assets/js/data/reducer/login_state_slice.js";
+import {setUserBasicInfoValue} from "@/assets/js/data/reducer/user_basic_info_slice.js";
 
 export const LoginCard = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [visibility, setVisibility] = useState(false);
@@ -80,6 +82,9 @@ export const LoginCard = () => {
             if (r !== null) {
                 if (r.login !== null && r.login !== undefined) {
                     localStorage.setItem("token", r.login);
+                    dispatch(setUserBasicInfoValue({
+                        id: r.id
+                    }));
                     navigate("/", {replace: true});
                 } else {
                     setErrorMsg(r.msg);

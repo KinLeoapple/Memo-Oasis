@@ -4,9 +4,9 @@ import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
 
 const prefix = api_prefix();
 
-export function basic_info() {
+export function basic_info(id) {
     return new Promise(resolve => {
-        fetch(`${prefix}/basic_info`, {
+        fetch(`${prefix}/basic_info/${id}`, {
             method: "GET",
             credentials: "include"
         }).then(r =>
@@ -66,9 +66,9 @@ export function get_blog_total() {
     });
 }
 
-export function get_blog_all(offset = 0, size = MAX_PER_PAGE) {
+export function get_blog_all(userId, offset = 0, size = MAX_PER_PAGE) {
     return new Promise(resolve => {
-        fetch(`${prefix}/blog/null?offset=${offset}&size=${size}`, {
+        fetch(`${prefix}/blog/${userId}/null?offset=${offset}&size=${size}`, {
             method: "GET",
             credentials: "include"
         }).then(r => {
@@ -77,9 +77,9 @@ export function get_blog_all(offset = 0, size = MAX_PER_PAGE) {
     });
 }
 
-export function get_blog(id) {
+export function get_blog(userId, id) {
     return new Promise(resolve => {
-        fetch(`${prefix}/blog/${id}`, {
+        fetch(`${prefix}/blog/${userId}/${id}`, {
             method: "GET",
             credentials: "include"
         }).then(r => {
@@ -142,9 +142,9 @@ export function delete_blog(token, id) {
  Draft
  */
 
-export function get_draft(token, id) {
+export function get_draft_total(token) {
     return new Promise(resolve => {
-        fetch(`${prefix}/blog/draft/${id}`, {
+        fetch(`${prefix}/blog/draft/total`, {
             method: "GET",
             credentials: "include",
             headers: {
@@ -156,9 +156,23 @@ export function get_draft(token, id) {
     });
 }
 
-export function get_draft_all(token) {
+export function get_draft(token, userId, id) {
     return new Promise(resolve => {
-        fetch(`${prefix}/blog/draft/null`, {
+        fetch(`${prefix}/blog/draft/${userId}/${id}`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }).then(r => {
+            resolve(r.json())
+        }).catch(_ => resolve(new Promise(() => resolve(null))));
+    });
+}
+
+export function get_draft_all(token, userId, offset = 0, size = MAX_PER_PAGE) {
+    return new Promise(resolve => {
+        fetch(`${prefix}/blog/draft/${userId}/null?offset=${offset}&size=${size}`, {
             method: "GET",
             credentials: "include",
             headers: {

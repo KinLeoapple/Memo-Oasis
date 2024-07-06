@@ -1,5 +1,5 @@
 import {useSelector} from "react-redux";
-import {selectBlogContent} from "@/assets/js/data/reducer/blog_content_slice.js";
+import {selectBlogContent} from "@/assets/js/data/reducer/blog/blog_content_slice.js";
 import {List, ListItem, ListItemButton, Typography} from "@mui/joy";
 import {useEffect, useState} from "react";
 import {marked} from "marked";
@@ -41,6 +41,7 @@ export const BlogIndex = () => {
 
     function indexOfBlog(content) {
         if (content !== null) {
+            let list = [];
             let anchor = 0;
             let rendererMD = new marked.Renderer();
             // eslint-disable-next-line no-unused-vars
@@ -51,15 +52,14 @@ export const BlogIndex = () => {
                 anchor += 1;
 
                 let isExists = false;
-                for (let i = 0; i < blogIndex.length; i++) {
-                    if (blogIndex[i].id === anchor) {
+                for (let i = 0; i < list.length; i++) {
+                    if (list[i].id === anchor) {
                         isExists = true;
                         break;
                     }
                 }
 
                 if (!isExists) {
-                    let list = blogIndex;
                     list.push(
                         {
                             'id': anchor,
@@ -83,13 +83,15 @@ export const BlogIndex = () => {
                 xhtml: false
             });
             marked(content);
+        } else {
+            setBlogIndex([]);
         }
     }
 
     return (
         <>
             <List
-                className={'select-none'}
+                className={`${blogIndex.length > 0 ? '' : 'hidden'} select-none`}
                 size="lg"
                 color="primary"
                 variant="plain"

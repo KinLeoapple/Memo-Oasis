@@ -2,11 +2,11 @@ import {IconButton, Stack, SvgIcon} from "@mui/joy";
 import {KeyboardArrowLeft, KeyboardArrowRight, MoreHoriz} from "@mui/icons-material";
 import {useEffect, useState} from "react";
 import {useSelector, useDispatch} from 'react-redux';
-import {decrement, increment, selectBlogPage, setPageValue} from "@/assets/js/data/reducer/blog_page_slice.js";
-import {selectBlogNumber} from "@/assets/js/data/reducer/blog_number_slice.js";
+import {decrement, increment, selectBlogPage, setPageValue} from "@/assets/js/data/reducer/blog/blog_page_slice.js";
+import {selectBlogNumber} from "@/assets/js/data/reducer/blog/blog_number_slice.js";
 import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
-import {selectCondition} from "@/assets/js/data/reducer/condition_slice.js";
-import {selectBlogFilterNumber} from "@/assets/js/data/reducer/blog_filter_number_slice.js";
+import {selectCondition} from "@/assets/js/data/reducer/blog/condition_slice.js";
+import {selectBlogFilterNumber} from "@/assets/js/data/reducer/blog/blog_filter_number_slice.js";
 
 export const Pagination = () => {
     const conditions = useSelector(selectCondition);

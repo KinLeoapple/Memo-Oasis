@@ -38,15 +38,19 @@ fun Application.blogAPI(database: Database) {
             call.respond(getBolgTotal(database))
         }
 
-        get("/blog/{id}") {
+        get("/blog/{userId}/{id}") {
+            val userId = call.parameters["userId"]
             val id = call.parameters["id"]
-            if (id == "null") {
-                call.respond(getBlogAll(database, call))
-            }
-            else
-                id?.let {
-                    call.respond(getBlog(database, it.toLong()))
+            if (userId != "null") {
+                userId?.let { uid ->
+                    if (id == "null") {
+                        call.respond(getBlogAll(database, uid.toLong(), call))
+                    } else
+                        id?.let {
+                            call.respond(getBlog(database, uid.toLong(), it.toLong()))
+                        }
                 }
+            }
         }
 
         get("/blog/content/{id}") {

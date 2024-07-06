@@ -23,6 +23,7 @@ import org.mindrot.jbcrypt.BCrypt
  * @return A map of the login result.
  */
 fun getLogin(database: Database, json: String, call: ApplicationCall): Map<String, String?> {
+    var userId: Long? = null
     var pass: String? = null
 
     val dataClass: LoginData = Gson().fromJson(json, LoginData::class.java)
@@ -37,9 +38,10 @@ fun getLogin(database: Database, json: String, call: ApplicationCall): Map<Strin
         decryptPass = rsa.decryptStr(dataClass.password, KeyType.PrivateKey);
     }
     val result = database.getConnection().from(User)
-        .select(User.userPassword)
+        .select(User.userId, User.userPassword)
         .where(User.userName eq dataClass.username)
     result.forEach {
+        userId = it[User.userId]
         pass = it[User.userPassword]
     }
 
@@ -52,7 +54,10 @@ fun getLogin(database: Database, json: String, call: ApplicationCall): Map<Strin
                 val ua = call.request.headers["User-Agent"]
                 ua?.let {
                     val token = Auth.sign(dataClass.username, call.request.origin.remoteHost, it)
-                    return mapOf("login" to token)
+                    return mapOf(
+                        "id" to "$userId",
+                        "login" to token
+                    )
                 }
                 mapOf(
                     "login" to null,

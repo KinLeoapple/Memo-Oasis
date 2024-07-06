@@ -4,6 +4,7 @@ export const user_basic_info_slice = createSlice({
     name: 'user_basic_info',
     initialState: {
         value: {
+            id: null,
             name: null,
             quote: null,
             quoteName: null

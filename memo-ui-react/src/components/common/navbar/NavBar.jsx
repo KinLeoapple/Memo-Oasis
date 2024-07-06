@@ -26,9 +26,9 @@ import {
     newSearchBlogKeyword,
     selectSearchKeyword,
     setSearchBlogKeyword
-} from "@/assets/js/data/reducer/search_keyword_slice.js";
+} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
 import {SearchMenu} from "@/components/common/navbar/SearchMenu.jsx";
-import {setShowResultValue} from "@/assets/js/data/reducer/show_search_result_slice.js";
+import {setShowResultValue} from "@/assets/js/data/reducer/blog/show_search_result_slice.js";
 
 export const NavBar = () => {
     const dispatch = useDispatch();
@@ -65,17 +65,20 @@ export const NavBar = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        switch (location.pathname) {
-            case "/dashboard":
+        switch (location.pathname.split("/")[1]) {
+            case "dashboard":
                 setSearchBar(false);
                 break;
-            case "/login":
+            case "login":
                 setSearchBar(false);
                 break;
-            case "/signup":
+            case "signup":
                 setSearchBar(false);
                 break;
-            case "/":
+            case "blog":
+                setSearchBar(true);
+                break;
+            case "":
                 setSearchBar(true);
                 break;
         }
@@ -92,6 +95,9 @@ export const NavBar = () => {
                             setLogin(true);
                             dispatch(setLoginStateValue(true));
                             localStorage.setItem("token", newToken);
+                            dispatch(setUserBasicInfoValue({
+                                id: r.id
+                            }));
                         } else {
                             dispatch(setLoginStateValue(false));
                             setLogin(false);
@@ -112,20 +118,19 @@ export const NavBar = () => {
 
     useEffect(() => {
         if (login) {
-            if (name === null && quote === null && quoteName === null) {
-                setLoading(true);
-                basic_info().then(r => {
-                    setName(r.name);
-                    setQuote(r.quote);
-                    setQuoteName(r.quote_name);
-                    dispatch(setUserBasicInfoValue({
-                        name: r.name,
-                        quote: r.quote,
-                        quoteName: r.quote_name
-                    }));
-                    setLoading(false);
-                });
-            }
+            setLoading(true);
+            basic_info(userBasicInfo.id).then(r => {
+                setName(r.name);
+                setQuote(r.quote);
+                setQuoteName(r.quote_name);
+                dispatch(setUserBasicInfoValue({
+                    id: userBasicInfo.id,
+                    name: r.name,
+                    quote: r.quote,
+                    quoteName: r.quote_name
+                }));
+                setLoading(false);
+            });
         }
     }, [dispatch, login, name, quote, quoteName]);
 
@@ -163,7 +168,7 @@ export const NavBar = () => {
         const fn = (e) => {
             let target = e.target;
             if (target.value === undefined) {
-               target = document.getElementById("searchInput");
+                target = document.getElementById("searchInput");
             }
             let value = target.value;
             if (value !== "") {
@@ -288,9 +293,11 @@ export const NavBar = () => {
                                 }
                             }}>
                         </Input>
-                        <div className={`absolute w-full ${searchBarFocus ? '' : 'opacity-0 -z-50'}`}>
-                            <SearchMenu/>
-                        </div>
+                        {location.pathname.split("/")[1] === "blog" &&
+                            <div className={`absolute w-full ${searchBarFocus ? '' : 'opacity-0 -z-50'}`}>
+                                <SearchMenu/>
+                            </div>
+                        }
                     </Grid>
                 }
                 <Grid xs={1}>

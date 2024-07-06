@@ -1,18 +1,21 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {get_blog, get_blog_all, get_blog_total} from "@/assets/js/api/api.js";
 import {useDispatch, useSelector} from "react-redux";
-import {selectBlogPage} from "@/assets/js/data/reducer/blog_page_slice.js";
+import {selectBlogPage} from "@/assets/js/data/reducer/blog/blog_page_slice.js";
 import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
-import {selectBlogNumber, setNumberValue} from "@/assets/js/data/reducer/blog_number_slice.js";
+import {selectBlogNumber, setNumberValue} from "@/assets/js/data/reducer/blog/blog_number_slice.js";
 import {scroll_to_top} from "@/assets/js/utils/scroll.js";
-import {ConditionType, selectCondition} from "@/assets/js/data/reducer/condition_slice.js";
-import {BlogCard} from "@/components/home/BlogCard.jsx";
-import {setFilterNumberValue} from "@/assets/js/data/reducer/blog_filter_number_slice.js";
+import {ConditionType, selectCondition} from "@/assets/js/data/reducer/blog/condition_slice.js";
+import {BlogCard} from "@/components/blog/BlogCard.jsx";
+import {setFilterNumberValue} from "@/assets/js/data/reducer/blog/blog_filter_number_slice.js";
+import {useParams} from "react-router-dom";
 
 export const BlogList = () => {
+    const params = useParams();
     const [ids, setIds] = useState({data: [], refresh: false});
     const [blogs, setBlogs] = useState({data: [], refresh: false});
     const [filterBlogs, setFilterBlogs] = useState({data: [], refresh: false});
+    const userId = useRef(params.id);
     const page = useSelector(selectBlogPage);
     const total = useSelector(selectBlogNumber);
     const conditions = useSelector(selectCondition);
@@ -38,7 +41,7 @@ export const BlogList = () => {
             offset = (page - 1) * MAX_PER_PAGE;
             size = total - offset;
         }
-        get_blog_all(offset, size).then(r => {
+        get_blog_all(userId.current, offset, size).then(r => {
             if (r !== null) {
                 let list = [];
                 for (let i in r) {
@@ -59,7 +62,7 @@ export const BlogList = () => {
         let requests = [];
         if (ids.data.length > 0) {
             for (let i in ids.data) {
-                requests.push(get_blog(ids.data[i]));
+                requests.push(get_blog(userId.current, ids.data[i]));
             }
             Promise.all(requests).then(arr => {
                 let list = [];
@@ -73,7 +76,7 @@ export const BlogList = () => {
                 setBlogs({data: list, refresh: true});
             });
         }
-    }, [blogs.refresh, ids.data]);
+    }, [blogs.refresh, ids.data, userId]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     function updateFilterBlogs() {

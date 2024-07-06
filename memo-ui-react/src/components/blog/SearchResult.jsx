@@ -4,10 +4,12 @@ import {
     newSearchBlogKeyword,
     selectSearchKeyword,
     setSearchBlogKeyword
-} from "@/assets/js/data/reducer/search_keyword_slice.js";
+} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
 import {get_search_blog} from "@/assets/js/api/api.js";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
+import {setBlogValue} from "@/assets/js/data/reducer/blog/blog_slice.js";
+import {append_list} from "@/assets/js/utils/append_list.js";
 
 export const SearchResult = () => {
     const dispatch = useDispatch();
@@ -57,7 +59,8 @@ export const SearchResult = () => {
         }
         const observer = new IntersectionObserver(callback, options);
         let children = document.querySelector('#resultList').children;
-        observer.observe(children[children.length - 1]);
+        if ((typeof children[children.length - 1]) != "undefined")
+            observer.observe(children[children.length - 1]);
     }, []);
 
     function loadData() {
@@ -73,23 +76,15 @@ export const SearchResult = () => {
             if (list.length === 0) {
                 loadAll.current = true;
             } else {
-                let temp = longList;
-                for (let i = 0; i < list.length; i++) {
-                    let isContains = false;
-                    for (let j = 0; j < temp.length; j++) {
-                        if (temp[j].id === list[i].id) {
-                            isContains = true;
-                            break;
-                        }
-                    }
-                    if (!isContains) {
-                        temp.push(list[i]);
-                    }
-                }
-                setLongList(temp);
+                setLongList(append_list(longList, list));
             }
             setLoading(false);
         });
+    }
+
+    function goToRender(id) {
+        dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
+        dispatch(setBlogValue(id));
     }
 
     return (
@@ -125,7 +120,7 @@ export const SearchResult = () => {
                                     marginRight: "3%",
                                     marginBottom: "3px",
                                 }}>
-                                    <ListItemButton>
+                                    <ListItemButton onClick={() => goToRender(item.id)}>
                                         <Typography>
                                             <Typography className={'font-bold'}>{item.title}</Typography><br/>
                                             <Typography noWrap level={'body-sm'}>{item.desc}</Typography><br/>

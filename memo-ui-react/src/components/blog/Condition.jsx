@@ -1,7 +1,7 @@
 import {Card, Chip, Divider, Grid, Typography} from "@mui/joy";
 import ChipDelete from "@mui/joy/ChipDelete";
 import {useDispatch, useSelector} from "react-redux";
-import {ConditionType, remove, selectCondition} from "@/assets/js/data/reducer/condition_slice.js";
+import {ConditionType, remove, selectCondition} from "@/assets/js/data/reducer/blog/condition_slice.js";
 import {to_date} from "@/assets/js/utils/to_date.js";
 
 export const Condition = () => {
@@ -28,7 +28,10 @@ export const Condition = () => {
     return (
         <>
             {conditions.length > 0 &&
-                <Card color="primary" variant="soft" className={'select-none mb-5'}>
+                <Card color="primary" variant="soft" className={'select-none mb-5'}
+                      sx={{
+                          boxShadow: "lg",
+                      }}>
                     <Typography level="title-lg">Filters</Typography>
                     <Divider inset="none"/>
 
