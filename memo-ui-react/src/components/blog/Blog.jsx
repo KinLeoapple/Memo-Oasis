@@ -36,17 +36,15 @@ export const Blog = () => {
                 }}
                 content={{
                     el: <div className={`min-h-full`}>
-                        {blog === 0 ?
-                            <>
-                                <Condition/>
-                                {showResult ? <SearchResult/> :
-                                    <>
-                                        <BlogList/>
-                                        <Pagination/>
-                                    </>
-                                }
-                            </> :
-                            <BlogRenderer/>
+                        {showResult ? <SearchResult/> :
+                            <>{blog === 0 ?
+                                <>
+                                    <Condition/>
+                                    <BlogList/>
+                                    <Pagination/>
+                                </> :
+                                <BlogRenderer/>
+                            }</>
                         }
                     </div>
                 }}

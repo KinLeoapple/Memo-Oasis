@@ -36,7 +36,7 @@ export const NavBar = () => {
         {
             name: "Home",
             decorator: <HomeRounded/>,
-            path: "/"
+            path: "/blog"
         },
         {
             name: "Dashboard",

@@ -1,4 +1,4 @@
-import {Card, CardContent, Chip, CircularProgress, Divider, List, ListItem, ListItemButton, Typography} from "@mui/joy";
+import {Card, CardContent, Chip, CircularProgress, Divider, Typography} from "@mui/joy";
 import {useDispatch, useSelector} from "react-redux";
 import {
     newSearchBlogKeyword,
@@ -7,9 +7,11 @@ import {
 } from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
 import {get_search_blog} from "@/assets/js/api/api.js";
 import {useCallback, useEffect, useRef, useState} from "react";
-import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
+import {MAX_LOAD} from "@/assets/js/data/static.js";
 import {setBlogValue} from "@/assets/js/data/reducer/blog/blog_slice.js";
 import {append_list} from "@/assets/js/utils/append_list.js";
+import {ResultList} from "@/components/common/ResultList.jsx";
+import {setShowResultValue} from "@/assets/js/data/reducer/blog/show_search_result_slice.js";
 
 export const SearchResult = () => {
     const dispatch = useDispatch();
@@ -64,9 +66,9 @@ export const SearchResult = () => {
     }, []);
 
     function loadData() {
-        let offset = (scrollCount.current - 1) * MAX_PER_PAGE;
+        let offset = (scrollCount.current - 1) * MAX_LOAD;
         setLoading(true);
-        get_search_blog(keyword.value, offset, MAX_PER_PAGE).then(r => {
+        get_search_blog(keyword.value, offset, MAX_LOAD).then(r => {
             let list = [];
             if (r !== null) {
                 for (let i in r) {
@@ -85,6 +87,7 @@ export const SearchResult = () => {
     function goToRender(id) {
         dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
         dispatch(setBlogValue(id));
+        dispatch(setShowResultValue(false));
     }
 
     return (
@@ -94,45 +97,23 @@ export const SearchResult = () => {
                     <Typography className={'font-bold'} level="title-sm" variant="plain" color="primary">
                         Results of
                     </Typography>
-                    <Chip variant="outlined" color="primary">{currKeyWord}</Chip>
+                    <Chip color="primary"
+                          size="sm"
+                          variant="outlined"
+                          sx={{
+                              "--Chip-minHeight": "19px",
+                              "--Chip-gap": "8px",
+                              "--Chip-paddingInline": "12px"
+                          }}>
+                        <span className={'w-full text-center'}>{currKeyWord}</span>
+                    </Chip>
                 </div>
                 <Divider sx={{
                     width: "95%",
                     marginLeft: "2.5%"
                 }}/>
                 <CardContent>
-                    <List
-                        id={"resultList"}
-                        color={"primary"}
-                        variant="soft"
-                        placement="bottom-start"
-                        sx={{
-                            padding: 0,
-                            borderRadius: "var(--joy-radius-sm)",
-                            backgroundColor: "transparent",
-                        }}>
-                        {longList.map((item, i) => (
-                            <div key={i}>
-                                <ListItem sx={{
-                                    borderRadius: 6,
-                                    marginTop: "3px",
-                                    marginLeft: "3%",
-                                    marginRight: "3%",
-                                    marginBottom: "3px",
-                                }}>
-                                    <ListItemButton onClick={() => goToRender(item.id)}>
-                                        <Typography>
-                                            <Typography className={'font-bold'}>{item.title}</Typography><br/>
-                                            <Typography noWrap level={'body-sm'}>{item.desc}</Typography><br/>
-                                            <Typography level={'body-sm'}>{
-                                                item.content.length <= 100 ? item.content : (item.content.slice(0, 100) + " ...")
-                                            }</Typography>
-                                        </Typography>
-                                    </ListItemButton>
-                                </ListItem>
-                            </div>
-                        ))}
-                    </List>
+                    <ResultList id={"resultList"} list={longList} fn={goToRender}/>
                     {loading &&
                         <div className="flex justify-center items-center">
                             <CircularProgress

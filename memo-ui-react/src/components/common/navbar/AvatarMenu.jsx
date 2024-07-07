@@ -2,6 +2,7 @@ import {Divider, ListItemDecorator, Menu, MenuItem} from "@mui/joy";
 import {AccountCircle, Logout} from "@mui/icons-material";
 import {useDispatch} from "react-redux";
 import {setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
+import {setUserBasicInfoValue} from "@/assets/js/data/reducer/user_basic_info_slice.js";
 
 export const AvatarMenu = () => {
     const dispatch = useDispatch();
@@ -34,6 +35,12 @@ export const AvatarMenu = () => {
     function signOut() {
         localStorage.removeItem("token");
         dispatch(setLoginStateValue(false));
+        dispatch(setUserBasicInfoValue({
+            id: null,
+            name: null,
+            quote: null,
+            quoteName: null
+        }));
     }
 
     return (

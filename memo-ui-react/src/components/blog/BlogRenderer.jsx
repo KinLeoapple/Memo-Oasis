@@ -20,6 +20,11 @@ export const BlogRenderer = () => {
     const [content, setContent] = useState("");
 
     useEffect(() => {
+        dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
+        dispatch(setShowResultValue(false));
+    }, []);
+
+    useEffect(() => {
         get_blog_content(blog).then(r => {
             setContent(r.content);
         });

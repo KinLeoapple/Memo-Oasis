@@ -10,18 +10,16 @@ import {
     get_draft_all,
     get_draft_content
 } from "@/assets/js/api/api.js";
-import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
+import {MAX_LOAD, MAX_PER_PAGE} from "@/assets/js/data/static.js";
 import {
+    Button,
     Card, CardContent,
     CircularProgress,
-    Divider, Link,
-    List,
-    ListItem,
-    ListItemButton,
-    Typography
+    Divider, Typography
 } from "@mui/joy";
 import {append_list} from "@/assets/js/utils/append_list.js";
-import {ExpandCircleDownOutlined, Inventory2} from "@mui/icons-material";
+import {ExpandCircleDownOutlined} from "@mui/icons-material";
+import {ResultList} from "@/components/common/ResultList.jsx";
 
 export const Writing = () => {
     const userBasicInfo = useSelector(selectUserBasicInfo);
@@ -59,13 +57,13 @@ export const Writing = () => {
             setOffsetCount(offsetCountRef.current + 1);
         }
 
-        let offset = offsetCount * MAX_PER_PAGE;
+        let offset = offsetCount * MAX_LOAD;
         if (sideBar === SideBarIndex.Blogs) {
-            get_blog_all(userBasicInfo.id, offset, MAX_PER_PAGE).then(r => {
+            get_blog_all(userBasicInfo.id, offset, MAX_LOAD).then(r => {
                 fn(r);
             });
         } else if (sideBar === SideBarIndex.Drafts) {
-            get_draft_all(localStorage.getItem("token"), userBasicInfo.id, offset, MAX_PER_PAGE).then(r => {
+            get_draft_all(localStorage.getItem("token"), userBasicInfo.id, offset, MAX_LOAD).then(r => {
                 fn(r);
             });
         }
@@ -73,17 +71,17 @@ export const Writing = () => {
 
     function loadData() {
         if (!loadAll.current) {
-            let offset = (offsetCount - 1) * MAX_PER_PAGE;
+            let offset = (offsetCount - 1) * MAX_LOAD;
             setLoading(true);
             dynamicListRef.current = dynamicList;
             offsetCountRef.current = offsetCount;
             if (sideBar === SideBarIndex.Blogs) {
-                get_blog_all(userBasicInfo.id, offset, MAX_PER_PAGE).then(r => {
+                get_blog_all(userBasicInfo.id, offset, MAX_LOAD).then(r => {
                     updateList(r);
                     hasNext();
                 });
             } else if (sideBar === SideBarIndex.Drafts) {
-                get_draft_all(localStorage.getItem("token"), userBasicInfo.id, offset, MAX_PER_PAGE).then(r => {
+                get_draft_all(localStorage.getItem("token"), userBasicInfo.id, offset, MAX_LOAD).then(r => {
                     updateList(r);
                     hasNext();
                 });
@@ -134,49 +132,7 @@ export const Writing = () => {
                     marginLeft: "2.5%"
                 }}/>
                 <CardContent>
-                    <List
-                        className={`${dynamicList.length === 0 ? 'flex justify-center items-center' : ''}`}
-                        id={"writingList"}
-                        color={"primary"}
-                        variant="soft"
-                        placement="bottom-start"
-                        sx={{
-                            padding: 0,
-                            borderRadius: "var(--joy-radius-sm)",
-                            backgroundColor: "transparent",
-                        }}>
-                        {dynamicList.length === 0 ?
-                            <>
-                                <Typography variant={"plain"} color={"primary"} level={'body-lg'}>
-                                    <Inventory2/>
-                                </Typography>
-                                <Typography level={'body-sm'}>
-                                    No Results Found
-                                </Typography>
-                            </> :
-                            <>{dynamicList.map((item, i) => (
-                                <div key={i}>
-                                    <ListItem sx={{
-                                        borderRadius: 6,
-                                        marginTop: "3px",
-                                        marginLeft: "3%",
-                                        marginRight: "3%",
-                                        marginBottom: "3px",
-                                    }}>
-                                        <ListItemButton tabIndex={-1} onClick={null}>
-                                            <Typography>
-                                                <Typography className={'font-bold'}>{item.title}</Typography><br/>
-                                                <Typography noWrap level={'body-sm'}>{item.desc}</Typography><br/>
-                                                <Typography level={'body-sm'}>{
-                                                    item.content.length <= 100 ? item.content : (item.content.slice(0, 100) + " ...")
-                                                }</Typography>
-                                            </Typography>
-                                        </ListItemButton>
-                                    </ListItem>
-                                </div>
-                            ))}</>
-                        }
-                    </List>
+                    <ResultList id={"writingList"} list={dynamicList} fn={null}/>
                 </CardContent>
                 {!isLoadAll &&
                     <>
@@ -197,15 +153,17 @@ export const Writing = () => {
                                 <CardContent className={'flex justify-center items-center'}>
                                     <Typography className={'p-[1px]'}
                                                 endDecorator={
-                                                    <Link className={'flex justify-center items-center gap-1'}
+                                                    <Button className={'flex justify-center items-center gap-1'}
                                                           variant="plain"
                                                           onClick={loadData}
                                                           fontSize="md"
-                                                          borderRadius="sm"
+                                                          sx={{
+                                                              borderRadius: "sm"
+                                                          }}
                                                     >
                                                         <ExpandCircleDownOutlined/>
                                                         show more
-                                                    </Link>
+                                                    </Button>
                                                 }/>
                                 </CardContent>
                             </>

@@ -8,18 +8,29 @@ import {scroll_to_top} from "@/assets/js/utils/scroll.js";
 import {ConditionType, selectCondition} from "@/assets/js/data/reducer/blog/condition_slice.js";
 import {BlogCard} from "@/components/blog/BlogCard.jsx";
 import {setFilterNumberValue} from "@/assets/js/data/reducer/blog/blog_filter_number_slice.js";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
+import {selectUserBasicInfo} from "@/assets/js/data/reducer/user_basic_info_slice.js";
 
 export const BlogList = () => {
     const params = useParams();
     const [ids, setIds] = useState({data: [], refresh: false});
     const [blogs, setBlogs] = useState({data: [], refresh: false});
     const [filterBlogs, setFilterBlogs] = useState({data: [], refresh: false});
+    const [refresh, setRefresh] = useState(false);
     const userId = useRef(params.id);
+    const userBasicInfo = useSelector(selectUserBasicInfo);
     const page = useSelector(selectBlogPage);
     const total = useSelector(selectBlogNumber);
     const conditions = useSelector(selectCondition);
     const dispatch = useDispatch();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.pathname.split("/")[1] === "blog") {
+            userId.current = params.id ? params.id : userBasicInfo.id;
+            setRefresh(!refresh);
+        }
+    }, [location, params, userBasicInfo.id]);
 
     useEffect(() => {
         get_blog_total().then(r => {
@@ -34,47 +45,51 @@ export const BlogList = () => {
     }, [page]);
 
     useEffect(() => {
-        let offset = 0, size;
-        if (page === 1) {
-            size = MAX_PER_PAGE;
-        } else {
-            offset = (page - 1) * MAX_PER_PAGE;
-            size = total - offset;
-        }
-        get_blog_all(userId.current, offset, size).then(r => {
-            if (r !== null) {
-                let list = [];
-                for (let i in r) {
-                    list.push(r[i].id);
-                }
-                setIds({data: list, refresh: true});
+        if (userId.current !== undefined) {
+            let offset = 0, size;
+            if (page === 1) {
+                size = MAX_PER_PAGE;
             } else {
-                setIds({data: [], refresh: false});
+                offset = (page - 1) * MAX_PER_PAGE;
+                size = total - offset;
             }
-        });
-    }, [ids.refresh, page, total]);
+            get_blog_all(userId.current, offset, size).then(r => {
+                if (r !== null) {
+                    let list = [];
+                    for (let i in r) {
+                        list.push(r[i].id);
+                    }
+                    setIds({data: list, refresh: true});
+                } else {
+                    setIds({data: [], refresh: false});
+                }
+            });
+        }
+    }, [ids.refresh, page, total, refresh]);
 
     useEffect(() => {
         updateFilterBlogs();
     }, [blogs.data, filterBlogs.refresh, conditions]);
 
     useEffect(() => {
-        let requests = [];
-        if (ids.data.length > 0) {
-            for (let i in ids.data) {
-                requests.push(get_blog(userId.current, ids.data[i]));
-            }
-            Promise.all(requests).then(arr => {
-                let list = [];
-                for (let i in arr) {
-                    if (arr[i] !== null) {
-                        list.push(arr[i]);
-                    } else {
-                        list.push(null);
-                    }
+        if (userId.current !== undefined) {
+            let requests = [];
+            if (ids.data.length > 0) {
+                for (let i in ids.data) {
+                    requests.push(get_blog(userId.current, ids.data[i]));
                 }
-                setBlogs({data: list, refresh: true});
-            });
+                Promise.all(requests).then(arr => {
+                    let list = [];
+                    for (let i in arr) {
+                        if (arr[i] !== null) {
+                            list.push(arr[i]);
+                        } else {
+                            list.push(null);
+                        }
+                    }
+                    setBlogs({data: list, refresh: true});
+                });
+            }
         }
     }, [blogs.refresh, ids.data, userId]);
 
@@ -108,7 +123,7 @@ export const BlogList = () => {
         }
         dispatch(setFilterNumberValue(filterBlogs.data.length));
     }
-    
+
     return (
         <>
             {

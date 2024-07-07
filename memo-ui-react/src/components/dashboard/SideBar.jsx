@@ -3,7 +3,7 @@ import {
     Box,
     List,
     ListItem,
-    ListItemButton,
+    ListItemButton, listItemClasses,
     ListItemContent,
     ListItemDecorator,
     listItemDecoratorClasses, Typography
@@ -44,125 +44,123 @@ export const SideBar = () => {
 
     return (
         <>
-            <Box sx={{py: 2, pr: 2, minWidth: 200, maxWidth: 250, width: 'auto'}}>
+            <List
+                aria-label="Sidebar"
+                size="lg"
+                className={'select-none'}
+                variant="plain"
+                sx={{
+                    "--List-gap": "5px",
+                    [`& .${listItemClasses.root}`]: {
+                        width: "100%",
+                    },
+                    [`& .${listItemDecoratorClasses.root}`]: {
+                        pr: '18px',
+                    },
+                    '& [role="button"]': {
+                        borderRadius: '6px'
+                    },
+                }}
+            >
                 <Typography level="h4" color="neutral">
                     <span style={{
                         fontSize: 'x-large'
                     }}>M</span>enu
                 </Typography>
-                <List
-                    aria-label="Sidebar"
-                    className={'select-none'}
-                    sx={{
-                        "--List-gap": "5px",
-                        '--ListItem-paddingLeft': '0px',
-                        '--ListItemDecorator-size': '64px',
-                        '--ListItem-minHeight': '32px',
-                        '--List-nestedInsetStart': '13px',
-                        [`& .${listItemDecoratorClasses.root}`]: {
-                            justifyContent: 'flex-end',
-                            pr: '18px',
-                        },
-                        '& [role="button"]': {
-                            borderRadius: '20px 20px 20px 20px',
-                        },
-                    }}
-                >
-                    <ListItem>
-                        <ListItemButton
-                            tabIndex={-1}
-                            selected={index === SideBarIndex.Profile}
-                            color={'primary'}
-                            variant="plain"
-                            onClick={() => selectedSideBar(SideBarIndex.Profile)}
-                        >
-                            <ListItemDecorator>
-                                <Person fontSize="lg"/>
-                            </ListItemDecorator>
-                            <ListItemContent>
-                                <Typography noWrap className={`text-base font-bold`}
-                                            sx={{
-                                                color: "inherit"
-                                            }}
-                                >Profile</Typography>
-                            </ListItemContent>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem nested={writingNest}>
-                        <ListItemButton
-                            tabIndex={-1}
-                            color={'primary'}
-                            variant="plain"
-                            onClick={handleWritingNest}
-                        >
-                            <ListItemDecorator>
-                                {writingNest ?
-                                    <ArrowDropDown fontSize="lg"/> :
-                                    <ArrowRight fontSize="lg"/>
-                                }
-                                <ModeEdit fontSize="lg"/>
-                            </ListItemDecorator>
-                            <ListItemContent>
-                                <Typography noWrap className={`text-base font-bold`}
-                                            sx={{
-                                                color: "inherit"
-                                            }}
-                                >Writing</Typography>
-                            </ListItemContent>
-                        </ListItemButton>
-                        {writingNest &&
-                            <List>
-                                <ListItem>
-                                    <ListItemButton
-                                        tabIndex={-1}
-                                        selected={index === SideBarIndex.Blogs}
-                                        color={'primary'}
-                                        variant="plain"
-                                        onClick={() => selectedSideBar(SideBarIndex.Blogs)}
-                                    >
-                                        <ListItemDecorator>
-                                            <Book fontSize="lg"/>
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography noWrap className={`text-base font-bold`}
-                                                        sx={{
-                                                            color: "inherit"
-                                                        }}
-                                            >Blogs</Typography>
-                                        </ListItemContent>
-                                        <Badge variant="soft" size="sm" badgeContent={blogTotal} sx={{
-                                            '--Badge-ring': '0 0 0 0'
-                                        }}/>
-                                    </ListItemButton>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemButton
-                                        tabIndex={-1}
-                                        selected={index === SideBarIndex.Drafts}
-                                        color={'primary'}
-                                        variant="plain"
-                                        onClick={() => selectedSideBar(SideBarIndex.Drafts)}
-                                    >
-                                        <ListItemDecorator>
-                                            <Draw fontSize="lg"/>
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography noWrap className={`text-base font-bold`}
-                                                        sx={{
-                                                            color: "inherit"
-                                                        }}
-                                            >Drafts</Typography>
-                                        </ListItemContent>
-                                        <Badge variant="soft" size="sm" badgeContent={draftTotal} sx={{
-                                            '--Badge-ring': '0 0 0 0'
-                                        }}/>
-                                    </ListItemButton>
-                                </ListItem>
-                            </List>
-                        }
-                    </ListItem>
-                </List>
-            </Box>
+                <ListItem>
+                    <ListItemButton
+                        tabIndex={-1}
+                        selected={index === SideBarIndex.Profile}
+                        color={'primary'}
+                        variant="plain"
+                        onClick={() => selectedSideBar(SideBarIndex.Profile)}
+                    >
+                        <ListItemDecorator>
+                            <Person fontSize="lg"/>
+                        </ListItemDecorator>
+                        <ListItemContent>
+                            <Typography noWrap className={`text-base font-bold`}
+                                        sx={{
+                                            color: "inherit"
+                                        }}
+                            >Profile</Typography>
+                        </ListItemContent>
+                    </ListItemButton>
+                </ListItem>
+                <ListItem nested={writingNest}>
+                    <ListItemButton
+                        tabIndex={-1}
+                        color={'primary'}
+                        variant="plain"
+                        onClick={handleWritingNest}
+                    >
+                        <ListItemDecorator>
+                            {writingNest ?
+                                <ArrowDropDown fontSize="lg"/> :
+                                <ArrowRight fontSize="lg"/>
+                            }
+                            <ModeEdit fontSize="lg"/>
+                        </ListItemDecorator>
+                        <ListItemContent>
+                            <Typography noWrap className={`text-base font-bold`}
+                                        sx={{
+                                            color: "inherit"
+                                        }}
+                            >Writing</Typography>
+                        </ListItemContent>
+                    </ListItemButton>
+                    {writingNest &&
+                        <List sx={{
+                          marginLeft: '13px'
+                        }}>
+                            <ListItem>
+                                <ListItemButton
+                                    tabIndex={-1}
+                                    selected={index === SideBarIndex.Blogs}
+                                    color={'primary'}
+                                    variant="plain"
+                                    onClick={() => selectedSideBar(SideBarIndex.Blogs)}
+                                >
+                                    <ListItemDecorator>
+                                        <Book fontSize="lg"/>
+                                    </ListItemDecorator>
+                                    <ListItemContent>
+                                        <Typography noWrap className={`text-base font-bold`}
+                                                    sx={{
+                                                        color: "inherit"
+                                                    }}
+                                        >Blogs</Typography>
+                                    </ListItemContent>
+                                    <Badge variant="soft" size="sm" badgeContent={blogTotal} sx={{
+                                        '--Badge-ring': '0 0 0 0'
+                                    }}/>
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemButton
+                                    tabIndex={-1}
+                                    selected={index === SideBarIndex.Drafts}
+                                    color={'primary'}
+                                    variant="plain"
+                                    onClick={() => selectedSideBar(SideBarIndex.Drafts)}
+                                >
+                                    <ListItemDecorator>
+                                        <Draw fontSize="lg"/>
+                                    </ListItemDecorator>
+                                        <Typography noWrap className={`text-base font-bold`}
+                                                    sx={{
+                                                        color: "inherit"
+                                                    }}
+                                        >Drafts</Typography>
+                                    <Badge variant="soft" size="sm" badgeContent={draftTotal} sx={{
+                                        '--Badge-ring': '0 0 0 0'
+                                    }}/>
+                                </ListItemButton>
+                            </ListItem>
+                        </List>
+                    }
+                </ListItem>
+            </List>
         </>
     )
 }
