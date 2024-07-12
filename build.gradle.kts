@@ -77,4 +77,6 @@ dependencies {
     implementation("com.github.yitter:yitter-idgenerator:1.0.6")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+
+    implementation("io.github.smiley4:ktor-swagger-ui:2.9.0")
 }

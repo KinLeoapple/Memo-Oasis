@@ -13,6 +13,7 @@ import org.kinleoapple.plugins.sqlite.database.dao.category.getCategoryAll
 import org.kinleoapple.plugins.sqlite.database.dao.category.getCategoryNumber
 import org.kinleoapple.plugins.sqlite.database.dao.category.postCategory
 import org.kinleoapple.util.security.verifyToken
+import org.kinleoapple.util.validation.isNull
 
 fun Application.categoryAPI(database: Database) {
     routing {
@@ -30,7 +31,7 @@ fun Application.categoryAPI(database: Database) {
 
         get("/cat/{id}") {
             val id = call.parameters["id"]
-            if (id == "null")
+            if (isNull(id))
                 call.respond(getCategoryAll(database))
             else
                 id?.let {
@@ -40,7 +41,7 @@ fun Application.categoryAPI(database: Database) {
 
         get("/cat/number/{id}") {
             val id = call.parameters["id"]
-            if (id == "null") {
+            if (isNull(id)) {
                 call.respond(getCategoryNumber(database, 0))
             } else {
                 id?.let {

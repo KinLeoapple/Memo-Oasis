@@ -20,12 +20,5 @@ export const user_basic_info_slice = createSlice({
 export const {setUserBasicInfoValue} = user_basic_info_slice.actions;
 
 export const selectUserBasicInfo = (state) => {
-    if (state.loginState.value)
-        return state.userBasicInfo.value;
-    else
-        return {
-            name: null,
-            quote: null,
-            quoteName: null
-        };
+    return state.userBasicInfo.value;
 }

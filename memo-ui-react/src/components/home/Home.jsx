@@ -4,7 +4,7 @@ export const Home = () => {
 
     return (
         <>
-            <Layout/>
+            <Layout navigate={false}/>
         </>
     )
 }

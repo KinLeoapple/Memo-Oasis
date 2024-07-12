@@ -10,6 +10,8 @@ import io.ktor.server.routing.*
 import org.kinleoapple.plugins.sqlite.database.Database
 import org.kinleoapple.plugins.sqlite.database.dao.blog.*
 import org.kinleoapple.util.security.verifyToken
+import org.kinleoapple.util.validation.isNull
+import org.kinleoapple.util.validation.isUndefined
 
 fun Application.blogAPI(database: Database) {
     routing {
@@ -41,9 +43,9 @@ fun Application.blogAPI(database: Database) {
         get("/blog/{userId}/{id}") {
             val userId = call.parameters["userId"]
             val id = call.parameters["id"]
-            if (userId != "null") {
+            if (!isNull(userId) && !isUndefined(userId)) {
                 userId?.let { uid ->
-                    if (id == "null") {
+                    if (isNull(id)) {
                         call.respond(getBlogAll(database, uid.toLong(), call))
                     } else
                         id?.let {
@@ -55,7 +57,7 @@ fun Application.blogAPI(database: Database) {
 
         get("/blog/content/{id}") {
             val id = call.parameters["id"]
-            if (id == "null")
+            if (isNull(id))
                 call.respond(getBlogContent(database, 0))
             else
                 id?.let {

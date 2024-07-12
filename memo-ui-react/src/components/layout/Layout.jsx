@@ -17,6 +17,8 @@ export const Layout = ({
                            leftMargin = true,
                            // eslint-disable-next-line react/prop-types
                            rightMargin = true,
+                           // eslint-disable-next-line react/prop-types
+                           navigate = true
                        }) => {
 
     const navBar = useMemo(() => {
@@ -31,9 +33,8 @@ export const Layout = ({
     useEffect(() => {
         if (!mounted) {
             setMounted(true);
-            window.addEventListener("scroll", displayToTopButton);
-        } else {
             window.removeEventListener("scroll", displayToTopButton);
+            window.addEventListener("scroll", displayToTopButton);
         }
     }, []);
 
@@ -44,7 +45,9 @@ export const Layout = ({
     return (
         <>
             <Stack className={`min-h-full min-w-full`}>
-                {navBar}
+                {navigate &&
+                    navBar
+                }
                 <Grid className={`min-h-full min-w-full flex justify-between gap-1`} container spacing={0} columns={4}
                       sx={{flexGrow: 1}}>
                     <Grid xs={0.8} className={`flex flex-col gap-5 ${marginLeft ? 'ml-5' : ''}`}>

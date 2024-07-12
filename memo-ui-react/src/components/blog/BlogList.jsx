@@ -8,8 +8,9 @@ import {scroll_to_top} from "@/assets/js/utils/scroll.js";
 import {ConditionType, selectCondition} from "@/assets/js/data/reducer/blog/condition_slice.js";
 import {BlogCard} from "@/components/blog/BlogCard.jsx";
 import {setFilterNumberValue} from "@/assets/js/data/reducer/blog/blog_filter_number_slice.js";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {selectUserBasicInfo} from "@/assets/js/data/reducer/user_basic_info_slice.js";
+import {selectLoginState} from "@/assets/js/data/reducer/login_state_slice.js";
 
 export const BlogList = () => {
     const params = useParams();
@@ -19,18 +20,25 @@ export const BlogList = () => {
     const [refresh, setRefresh] = useState(false);
     const userId = useRef(params.id);
     const userBasicInfo = useSelector(selectUserBasicInfo);
+    const loginState = useSelector(selectLoginState);
     const page = useSelector(selectBlogPage);
     const total = useSelector(selectBlogNumber);
     const conditions = useSelector(selectCondition);
     const dispatch = useDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (location.pathname.split("/")[1] === "blog") {
-            userId.current = params.id ? params.id : userBasicInfo.id;
-            setRefresh(!refresh);
+            if (loginState) {
+                userId.current = params.id ? params.id : userBasicInfo.id;
+                if (userId.current === undefined || userId.current === null) {
+                    navigate("/login", {replace: true});
+                }
+                setRefresh(!refresh)
+            }
         }
-    }, [location, params, userBasicInfo.id]);
+    }, [location, params, userBasicInfo, loginState]);
 
     useEffect(() => {
         get_blog_total().then(r => {

@@ -19,4 +19,5 @@ fun Application.module() {
     configureHTTP()
     configureRouting()
     configureAPI()
+    configureSwagger()
 }

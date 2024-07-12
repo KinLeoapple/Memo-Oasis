@@ -10,7 +10,7 @@ import {
     get_draft_all,
     get_draft_content
 } from "@/assets/js/api/api.js";
-import {MAX_LOAD, MAX_PER_PAGE} from "@/assets/js/data/static.js";
+import {MAX_LOAD} from "@/assets/js/data/static.js";
 import {
     Button,
     Card, CardContent,
@@ -121,56 +121,7 @@ export const Writing = () => {
 
     return (
         <div className={'mb-10'}>
-            <Card invertedColors variant={"soft"} color={"primary"}>
-                <div className={'flex justify-start gap-2 select-none'}>
-                    <Typography className={'font-bold'} level="title-sm" variant="plain" color="primary">
-                        {sideBar === SideBarIndex.Blogs ? 'Blogs' : 'Drafts'}
-                    </Typography>
-                </div>
-                <Divider sx={{
-                    width: "95%",
-                    marginLeft: "2.5%"
-                }}/>
-                <CardContent>
-                    <ResultList id={"writingList"} list={dynamicList} fn={null}/>
-                </CardContent>
-                {!isLoadAll &&
-                    <>
-                        {loading ?
-                            <div className="flex justify-center items-center">
-                                <CircularProgress
-                                    color="primary"
-                                    determinate={false}
-                                    size="md"
-                                    variant="soft"
-                                />
-                            </div> :
-                            <>
-                                <Divider sx={{
-                                    width: "95%",
-                                    marginLeft: "2.5%"
-                                }}/>
-                                <CardContent className={'flex justify-center items-center'}>
-                                    <Typography className={'p-[1px]'}
-                                                endDecorator={
-                                                    <Button className={'flex justify-center items-center gap-1'}
-                                                          variant="plain"
-                                                          onClick={loadData}
-                                                          fontSize="md"
-                                                          sx={{
-                                                              borderRadius: "sm"
-                                                          }}
-                                                    >
-                                                        <ExpandCircleDownOutlined/>
-                                                        show more
-                                                    </Button>
-                                                }/>
-                                </CardContent>
-                            </>
-                        }
-                    </>
-                }
-            </Card>
+            <ResultList id={"writingList"} />
         </div>
     )
 }

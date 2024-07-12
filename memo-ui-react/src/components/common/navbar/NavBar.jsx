@@ -19,7 +19,7 @@ import {basic_info, post_token_login} from "@/assets/js/api/api.js";
 import {AvatarMenu} from "@/components/common/navbar/AvatarMenu.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState, setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
-import {Close, Dashboard, HomeRounded} from "@mui/icons-material";
+import {Close, HomeRounded} from "@mui/icons-material";
 import {BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/js/data/static.js";
 import {selectUserBasicInfo, setUserBasicInfoValue} from "@/assets/js/data/reducer/user_basic_info_slice.js";
 import {
@@ -38,11 +38,6 @@ export const NavBar = () => {
             decorator: <HomeRounded/>,
             path: "/blog"
         },
-        {
-            name: "Dashboard",
-            decorator: <Dashboard/>,
-            path: "/dashboard"
-        }
     ];
     const themeMode = useColorScheme();
     const location = useLocation();
@@ -174,6 +169,7 @@ export const NavBar = () => {
             if (value !== "") {
                 dispatch(setSearchBlogKeyword(newSearchBlogKeyword(value, e.type)));
                 dispatch(setShowResultValue(true));
+                document.getElementById("searchInput").blur();
             }
         }
 

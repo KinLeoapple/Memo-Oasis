@@ -1,4 +1,15 @@
-import {AspectRatio, Card, CardContent, Chip, Divider, Typography} from "@mui/joy";
+import {
+    AspectRatio,
+    Card,
+    CardContent,
+    Chip,
+    Divider,
+    Dropdown,
+    IconButton, ListItemDecorator,
+    Menu,
+    MenuButton, MenuItem,
+    Typography
+} from "@mui/joy";
 import img from "@/assets/img/img.webp";
 import CalculateMonth from "@mui/icons-material/CalendarMonth";
 import {to_date} from "@/assets/js/utils/to_date.js";
@@ -7,6 +18,9 @@ import {append, ConditionType, newCondition} from "@/assets/js/data/reducer/blog
 import {setBlogValue} from "@/assets/js/data/reducer/blog/blog_slice.js";
 import {useDispatch} from "react-redux";
 import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
+import {AutoFixHigh, Delete, MoreVert} from "@mui/icons-material";
+import {useRef, useState} from "react";
+import {color_css_var} from "@/assets/js/utils/color_css_var.js";
 
 export const BlogCard = ({
                              // eslint-disable-next-line react/prop-types
@@ -20,7 +34,24 @@ export const BlogCard = ({
                              // eslint-disable-next-line react/prop-types
                              desc = ""
                          }) => {
+    const menuItems = [
+        {
+            decorator: <AutoFixHigh/>,
+            text: "modify",
+            color: "primary",
+            func: null
+        },
+        {
+            decorator: <Delete/>,
+            text: "delete",
+            color: "danger",
+            func: null
+        },
+    ]
+
     const dispatch = useDispatch();
+    const [open, setOpen] = useState(false);
+    const timer = useRef(null);
 
     function appendDateCondition(date) {
         dispatch(append(newCondition(ConditionType.Date, date)));
@@ -33,6 +64,21 @@ export const BlogCard = ({
     function selectedBlog(blogId) {
         dispatch(setBlogValue(blogId));
         dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
+    }
+
+    function handleMouseEnter(e) {
+        e.stopPropagation();
+        if (timer.current !== null) {
+            clearTimeout(timer.current);
+        }
+        setOpen(true);
+    }
+
+    function handleMouseLeave(e) {
+        e.stopPropagation();
+        timer.current = setTimeout(() => {
+            setOpen(false);
+        }, 100);
     }
 
     return (
@@ -56,9 +102,10 @@ export const BlogCard = ({
                         draggable={false}
                     />
                 </AspectRatio>
-                <div>
-                    <Typography level="title-lg">{title}</Typography>
-                    <div className={`flex gap-2`}>
+                <div className={'flex justify-between items-start'}>
+                    <div>
+                        <Typography level="title-lg">{title}</Typography>
+                        <div className={`flex gap-2`}>
                                 <span className={`flex items-center gap-1`}><CalculateMonth
                                     sx={{fontSize: 'small'}}/><Chip
                                     onClick={(e) => {
@@ -70,9 +117,9 @@ export const BlogCard = ({
                                     "--Chip-minHeight": "16px",
                                     "--Chip-decoratorChildHeight": "16px",
                                 }}>{to_date(date)}</Chip></span>
-                        <Divider orientation="vertical"/>
-                        <span className={`flex items-center gap-1`}><CategoryIcon
-                            sx={{fontSize: 'small'}}/>
+                            <Divider orientation="vertical"/>
+                            <span className={`flex items-center gap-1`}><CategoryIcon
+                                sx={{fontSize: 'small'}}/>
                                     <Chip
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -83,7 +130,73 @@ export const BlogCard = ({
                                         "--Chip-minHeight": "16px",
                                         "--Chip-decoratorChildHeight": "16px",
                                     }}>{category}</Chip></span>
+                        </div>
                     </div>
+                    {
+                        <Dropdown
+                            open={open}>
+                            <MenuButton
+                                slots={{root: IconButton}}
+                                slotProps={{
+                                    root: {
+                                        size: 'sm',
+                                        variant: 'plain',
+                                        color: 'primary',
+                                        onMouseEnter: handleMouseEnter,
+                                        onMouseLeave: handleMouseLeave
+                                    }
+                                }}
+                            >
+                                <MoreVert/>
+                            </MenuButton>
+                            <Menu
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                variant="soft"
+                                color="primary"
+                                placement="bottom-end"
+                                className={'select-none'}
+                                size="sm">
+                                {menuItems.map((item, index) => (
+                                    <div key={index}>
+                                        <MenuItem
+                                            onClick={
+                                                (e) => {
+                                                    e.stopPropagation();
+                                                    item.func()
+                                                }}
+                                            tabIndex={-1}
+                                            className={'flex justify-center items-center capitalize pl-2 pr-2'}
+                                            sx={{
+                                                borderRadius: 6,
+                                                marginTop: "3px",
+                                                marginLeft: "5px",
+                                                marginRight: "5px",
+                                                marginBottom: "4px",
+                                            }}>
+                                            <ListItemDecorator variant="plain" sx={{
+                                                color: color_css_var(item.color)
+                                            }}>
+                                                {item.decorator}
+                                            </ListItemDecorator>
+                                            <span className={'text-sm font-bold capitalize'} style={{
+                                                color: color_css_var(item.color)
+                                            }}>
+                                                {item.text}
+                                            </span>
+                                        </MenuItem>
+                                        {
+                                            index !== menuItems.length - 1 &&
+                                            <Divider sx={{
+                                                width: "80%",
+                                                marginLeft: "10%"
+                                            }}/>
+                                        }
+                                    </div>
+                                ))}
+                            </Menu>
+                        </Dropdown>
+                    }
                 </div>
                 <CardContent>
                     <Typography noWrap>

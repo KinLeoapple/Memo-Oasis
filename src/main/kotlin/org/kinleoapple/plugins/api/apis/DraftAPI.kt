@@ -10,6 +10,8 @@ import io.ktor.server.routing.*
 import org.kinleoapple.plugins.sqlite.database.Database
 import org.kinleoapple.plugins.sqlite.database.dao.draft.*
 import org.kinleoapple.util.security.verifyToken
+import org.kinleoapple.util.validation.isNull
+import org.kinleoapple.util.validation.isUndefined
 
 fun Application.draftAPI(database: Database) {
     routing {
@@ -18,7 +20,7 @@ fun Application.draftAPI(database: Database) {
                 val token = call.authentication.principal<JWTPrincipal>()
                 if (token?.let { verifyToken(database, it, call) } == true) {
                     val id = call.parameters["id"]
-                    if (id == "null")
+                    if (isNull(id))
                         call.respond(getDraftContent(database, 0))
                     else
                         id?.let {
@@ -33,9 +35,9 @@ fun Application.draftAPI(database: Database) {
                 if (token?.let { verifyToken(database, it, call) } == true) {
                     val userId = call.parameters["userId"]
                     val id = call.parameters["id"]
-                    if (userId != "null") {
+                    if (!isNull(userId) && !isUndefined(userId)) {
                         userId?.let { uid ->
-                            if (id == "null")
+                            if (isNull(id))
                                 call.respond(getDraftAll(database, uid.toLong(), call))
                             else
                                 id?.let {

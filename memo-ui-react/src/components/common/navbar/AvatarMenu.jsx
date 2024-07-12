@@ -3,9 +3,12 @@ import {AccountCircle, Logout} from "@mui/icons-material";
 import {useDispatch} from "react-redux";
 import {setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
 import {setUserBasicInfoValue} from "@/assets/js/data/reducer/user_basic_info_slice.js";
+import {useNavigate} from "react-router-dom";
+import {color_css_var} from "@/assets/js/utils/color_css_var.js";
 
 export const AvatarMenu = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const menuItems = [
@@ -23,15 +26,6 @@ export const AvatarMenu = () => {
         },
     ]
 
-    function colorCssVar(name) {
-        switch (name) {
-            case "primary":
-                return "var(--variant-plainColor, var(--joy-palette-primary-plainColor, var(--joy-palette-primary-500, #0B6BCB)))";
-            case "danger":
-                return "var(--variant-plainColor, var(--joy-palette-danger-plainColor, var(--joy-palette-danger-500, #C41C1C)))";
-        }
-    }
-
     function signOut() {
         localStorage.removeItem("token");
         dispatch(setLoginStateValue(false));
@@ -41,6 +35,7 @@ export const AvatarMenu = () => {
             quote: null,
             quoteName: null
         }));
+        navigate("/", {replace: true});
     }
 
     return (
@@ -57,7 +52,7 @@ export const AvatarMenu = () => {
                 {
                     menuItems.map((item, index) => (
                         <div key={index}>
-                            <MenuItem onClick={item.func} className={'pl-2 pr-2'} sx={{
+                            <MenuItem tabIndex={-1} onClick={item.func} className={'pl-2 pr-2'} sx={{
                                 borderRadius: 6,
                                 marginTop: "3px",
                                 marginLeft: "5px",
@@ -65,12 +60,12 @@ export const AvatarMenu = () => {
                                 marginBottom: "4px",
                             }}>
                                 <ListItemDecorator variant="plain" sx={{
-                                    color: colorCssVar(item.color)
+                                    color: color_css_var(item.color)
                                 }}>
                                     {item.decorator}
                                 </ListItemDecorator>
                                 <span className={'text-sm font-bold capitalize'} style={{
-                                    color: colorCssVar(item.color)
+                                    color: color_css_var(item.color)
                                 }}>
                                     {item.text}
                                 </span>

@@ -1,12 +1,15 @@
 package org.kinleoapple.util
 
 import io.ktor.server.application.*
+import org.kinleoapple.util.validation.isInt
 
 fun requestSize(call: ApplicationCall): Int {
     val sizePar = call.request.queryParameters["size"]
     var size = 5
     sizePar?.let {
-        size = it.toInt()
+        if (isInt(it)) {
+            size = it.toInt()
+        }
     }
     return size
 }

@@ -11,6 +11,7 @@ import org.kinleoapple.plugins.sqlite.database.Database
 import org.kinleoapple.plugins.sqlite.database.dao.img.getImg
 import org.kinleoapple.plugins.sqlite.database.dao.img.postImg
 import org.kinleoapple.util.security.verifyToken
+import org.kinleoapple.util.validation.isNull
 
 fun Application.imgAPI(database: Database) {
     routing {
@@ -28,7 +29,7 @@ fun Application.imgAPI(database: Database) {
 
         get("/img/{id}") {
             val id = call.parameters["id"]
-            if (id != "null") {
+            if (!isNull(id)) {
                 id?.let {
                     call.respondBytes(getImg(database, it.toLong()))
                 }
