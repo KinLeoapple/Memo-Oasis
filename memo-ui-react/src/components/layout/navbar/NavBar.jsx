@@ -1,36 +1,36 @@
 import {
-    AspectRatio,
-    Avatar,
+    Avatar, Box,
     Button,
-    Chip,
-    Divider, Dropdown,
+    Dropdown,
     Grid, IconButton,
-    Input, MenuButton, Skeleton,
-    Typography,
+    Input, MenuButton, Skeleton, Typography,
     useColorScheme
 } from "@mui/joy";
 import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import Search from '@mui/icons-material/Search';
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import '@fontsource/kalam';
 import avatar from "@/assets/img/avatar.webp";
 import {basic_info, post_token_login} from "@/assets/js/api/api.js";
-import {AvatarMenu} from "@/components/common/navbar/AvatarMenu.jsx";
+import {AvatarMenu} from "@/components/layout/navbar/AvatarMenu.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState, setLoginStateValue} from "@/assets/js/data/reducer/login_state_slice.js";
-import {Close, HomeRounded} from "@mui/icons-material";
-import {BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/js/data/static.js";
+import {Close, HomeRounded, Person} from "@mui/icons-material";
+import {AVATAR_RING, AVATAR_RING_DARK, BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/js/data/static.js";
 import {selectUserBasicInfo, setUserBasicInfoValue} from "@/assets/js/data/reducer/user_basic_info_slice.js";
 import {
     newSearchBlogKeyword,
     selectSearchKeyword,
     setSearchBlogKeyword
 } from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
-import {SearchMenu} from "@/components/common/navbar/SearchMenu.jsx";
+import {SearchMenu} from "@/components/layout/navbar/SearchMenu.jsx";
 import {setShowResultValue} from "@/assets/js/data/reducer/blog/show_search_result_slice.js";
 
-export const NavBar = () => {
+export const NavBar = ({
+                           // eslint-disable-next-line react/prop-types
+                           renderPending
+                       }) => {
     const dispatch = useDispatch();
     const navButtons = [
         {
@@ -45,7 +45,6 @@ export const NavBar = () => {
     const [searchBar, setSearchBar] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [searchBarFocus, setSearchBarFocus] = useState(false);
-    const tags = ["gamer", "developer"];
 
     // Basic Information
     const userBasicInfo = useSelector(selectUserBasicInfo);
@@ -55,9 +54,11 @@ export const NavBar = () => {
 
     const navigate = useNavigate();
     const isLogin = useSelector(selectLoginState);
-    const [login, setLogin] = useState(false);
+    const [login, setLogin] = useState(isLogin);
 
     const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
+    const timer = useRef(null);
 
     useEffect(() => {
         switch (location.pathname.split("/")[1]) {
@@ -80,7 +81,8 @@ export const NavBar = () => {
     }, [location]);
 
     useEffect(() => {
-        if (!isLogin) {
+        renderPending(true);
+        if (!login) {
             let token = localStorage.getItem("token");
             if (token !== null && token !== undefined && token !== "") {
                 post_token_login(token).then(r => {
@@ -101,15 +103,18 @@ export const NavBar = () => {
                         dispatch(setLoginStateValue(false));
                         setLogin(false);
                     }
+                    renderPending(false);
                 });
             } else {
                 dispatch(setLoginStateValue(false));
                 setLogin(false);
+                renderPending(false);
             }
         } else {
             setLogin(true);
+            renderPending(false);
         }
-    }, [dispatch, isLogin, login]);
+    }, []);
 
     useEffect(() => {
         if (login) {
@@ -159,6 +164,21 @@ export const NavBar = () => {
         document.body.removeEventListener("keyup", search);
     }
 
+    function handleMouseEnter(e) {
+        e.stopPropagation();
+        if (timer.current !== null) {
+            clearTimeout(timer.current);
+        }
+        setOpen(true);
+    }
+
+    function handleMouseLeave(e) {
+        e.stopPropagation();
+        timer.current = setTimeout(() => {
+            setOpen(false);
+        }, 100);
+    }
+
     const search = useCallback((e) => {
         const fn = (e) => {
             let target = e.target;
@@ -181,64 +201,48 @@ export const NavBar = () => {
     }, []);
 
     return (
-        <div className={'w-full h-24 z-[999] overflow-hidden'}>
+        <div className={'w-full h-24 z-[99999] overflow-hidden'}>
             <Grid container columns={3} spacing={0.1} className={`w-full fixed flex flex-col 
              justify-between items-center gap-5 flex-nowrap p-5 mb-3 backdrop-blur-lg
             bg-opacity-80 ${themeMode.mode === 'dark' ? BG_DARK : BG}`} sx={{flexGrow: 1}}>
-                <Grid onClick={login ? null : signIn} className={`z-30 flex justify-start items-center gap-3
-                ${login ? '' : 'cursor-pointer'}
-                 select-none`} xs={1}>
-                    <Dropdown>
-                        <AspectRatio sx={{width: 46}} ratio="1/1" variant="plain" objectFit="contain">
+                <Grid className={`relative z-30 flex justify-start items-center gap-3 select-none`} xs={1}>
+                    {login ?
+                        <Dropdown open={open}>
                             <MenuButton
+                                tabIndex={-1}
                                 slots={{root: Avatar}}
-                                slotProps={{root: {variant: 'plain', color: 'primary'}}}>
-                                {login ?
-                                    <Avatar alt={name} src={(loading ? '' : avatar)} color="primary"
-                                            variant="soft" className={'cursor-pointer'}></Avatar> :
-                                    <Avatar color="primary" variant="soft" className={'cursor-pointer'}/>
-                                }
+                                slotProps={{
+                                    root: {
+                                        variant: 'plain',
+                                        color: 'primary',
+                                        onMouseEnter: handleMouseEnter,
+                                        onMouseLeave: handleMouseLeave,
+                                        sx: {
+                                            transform: "scale(1.6)",
+                                            marginTop: "30px",
+                                            marginLeft: "20px",
+                                            position: "absolute",
+                                            border: "2px solid",
+                                            borderColor: open ?
+                                                (themeMode.mode === 'dark' ? AVATAR_RING_DARK : AVATAR_RING) :
+                                                "transparent",
+                                            transition: "all .2s",
+                                            "&:hover": {
+                                                borderColor: themeMode.mode === 'dark' ? AVATAR_RING_DARK : AVATAR_RING,
+                                            }
+                                        }
+                                    }
+                                }}>
+                                <Avatar alt={name} src={(loading ? '' : avatar)} color="primary"
+                                        variant="soft"
+                                        className={'cursor-pointer'}></Avatar>
                                 <Skeleton loading={loading} animation="wave" variant="circular"/>
                             </MenuButton>
-                        </AspectRatio>
-                        {login &&
-                            <AvatarMenu/>
-                        }
-                    </Dropdown>
-                    {login ?
-                        <>
-                            <Divider inset="none" orientation="vertical"/>
-                            <div className={'flex flex-col justify-center items-start'}>
-                                <Skeleton loading={loading} level="title-lg" animation="wave" variant="text"/>
-                                {!loading &&
-                                    <Typography level="title-lg" sx={{
-                                        fontFamily: "'Kalam', cursive"
-                                    }}>{name}</Typography>
-                                }
-                                <div className={`w-full flex flex-row justify-start content-center gap-1`}>
-                                    {
-                                        loading ? new Array(2).fill(0).map((_, i) => (
-                                            <div key={i} className={'w-16'}>
-                                                <Skeleton loading={loading} level="title-lg" animation="wave"
-                                                          variant="text"/>
-                                            </div>
-                                        )) : tags.map((tag) => (<Chip
-                                            key={tag}
-                                            color="primary"
-                                            variant="soft"
-                                            size="sm"
-                                            sx={{
-                                                "--Chip-radius": "2px",
-                                                fontSize: '0.55rem'
-                                            }}
-                                        >
-                                            <span className={'font-bold'}>{tag.toUpperCase()}</span>
-                                        </Chip>))
-                                    }
-                                </div>
-                            </div>
-                        </> :
-                        <Typography color="primary" variant="plain" className={'capitalize'}>Sign In</Typography>
+                            <AvatarMenu onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}/>
+                        </Dropdown> :
+                        <Button onClick={signIn} startDecorator={<Person/>}>
+                            Sign in
+                        </Button>
                     }
                 </Grid>
                 {searchBar &&
@@ -300,12 +304,14 @@ export const NavBar = () => {
                     <div className={'flex flex-row justify-end items-center gap-2'}>
                         <div className={'flex flex-row gap-3'}>
                             {navButtons.map((btn) => (
-                                <Link
-                                    className={btn.path === "/dashboard" ? (isLogin ? "" : "hidden") : ""}
-                                    key={btn.name} to={btn.path} replace={true}>
-                                    <Button
-                                        startDecorator={btn.decorator}
-                                        variant={location.pathname === btn.path ? "soft" : "plain"}>
+                                <Link tabIndex={-1}
+                                      className={btn.path.split("/")[1] === "blog" ? (login ? "" : "hidden") : ""}
+                                      key={btn.name} to={btn.path} replace={true}>
+                                    <Button tabIndex={-1}
+                                            startDecorator={btn.decorator}
+                                            variant={
+                                                location.pathname === btn.path ? "soft" : "plain"
+                                            }>
                                         {btn.name}
                                     </Button>
                                 </Link>

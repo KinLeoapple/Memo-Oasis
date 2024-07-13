@@ -16,11 +16,16 @@ import {to_date} from "@/assets/js/utils/to_date.js";
 import CategoryIcon from "@mui/icons-material/Category";
 import {append, ConditionType, newCondition} from "@/assets/js/data/reducer/blog/condition_slice.js";
 import {setBlogValue} from "@/assets/js/data/reducer/blog/blog_slice.js";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
 import {AutoFixHigh, Delete, MoreVert} from "@mui/icons-material";
-import {useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {color_css_var} from "@/assets/js/utils/color_css_var.js";
+import {useParams} from "react-router-dom";
+import {selectUserBasicInfo} from "@/assets/js/data/reducer/user_basic_info_slice.js";
+import {selectLoginState} from "@/assets/js/data/reducer/login_state_slice.js";
+import {setBlogDeleteValue} from "@/assets/js/data/reducer/blog/blog_delete_slice.js";
+import {selectBlogOpButton, setOpButtonValue} from "@/assets/js/data/reducer/blog/blog_op_button_slice.js";
 
 export const BlogCard = ({
                              // eslint-disable-next-line react/prop-types
@@ -45,13 +50,63 @@ export const BlogCard = ({
             decorator: <Delete/>,
             text: "delete",
             color: "danger",
-            func: null
+            func: deleteBlog
         },
     ]
 
+    const params = useParams();
+    const userId = useRef(params.id);
     const dispatch = useDispatch();
+    const blogOpButton = useSelector(selectBlogOpButton);
+    const userBasicInfo = useSelector(selectUserBasicInfo);
+    const loginState = useSelector(selectLoginState);
     const [open, setOpen] = useState(false);
-    const timer = useRef(null);
+    const openRef = useRef(open);
+    const [isSelf, setIsSelf] = useState(false);
+    const opBtn = useRef(undefined);
+
+    useEffect(() => {
+        window.addEventListener("scroll", scrollClose);
+    }, []);
+
+    useEffect(() => {
+        if (blogOpButton !== id) {
+            setOpen(false);
+            openRef.current = false;
+        }
+    }, [blogOpButton]);
+
+    const scrollClose = useCallback(() => {
+        const callback = (entries) => {
+            entries.forEach((entry => {
+                if (openRef.current) {
+                    if (entry.intersectionRatio < 1) {
+                        setOpen(false);
+                        openRef.current = false;
+                    }
+                }
+            }));
+        }
+        const observer = new IntersectionObserver(callback);
+        let dom = opBtn.current;
+        if (dom !== null) {
+            if ((typeof dom) != "undefined")
+                observer.observe(dom);
+        } else {
+            window.removeEventListener("scroll", scrollClose);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (location.pathname.split("/")[1] === "blog") {
+            if (loginState) {
+                userId.current = params.id ? params.id : userBasicInfo.id;
+                if (userId.current !== undefined && userId.current !== null) {
+                    setIsSelf(true);
+                }
+            }
+        }
+    }, [location, params, userBasicInfo, loginState]);
 
     function appendDateCondition(date) {
         dispatch(append(newCondition(ConditionType.Date, date)));
@@ -66,19 +121,20 @@ export const BlogCard = ({
         dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
     }
 
-    function handleMouseEnter(e) {
+    function handleMouseClick(e) {
         e.stopPropagation();
-        if (timer.current !== null) {
-            clearTimeout(timer.current);
+        setOpen(!open);
+        openRef.current = !openRef.current;
+        if (openRef.current) {
+            dispatch(setOpButtonValue(id));
         }
-        setOpen(true);
     }
 
-    function handleMouseLeave(e) {
+    function deleteBlog(e) {
         e.stopPropagation();
-        timer.current = setTimeout(() => {
-            setOpen(false);
-        }, 100);
+        setOpen(false);
+        openRef.current = false;
+        dispatch(setBlogDeleteValue(id));
     }
 
     return (
@@ -105,9 +161,10 @@ export const BlogCard = ({
                 <div className={'flex justify-between items-start'}>
                     <div>
                         <Typography level="title-lg">{title}</Typography>
-                        <div className={`flex gap-2`}>
-                                <span className={`flex items-center gap-1`}><CalculateMonth
+                        <div tabIndex={-1} className={`flex gap-2`}>
+                                <span tabIndex={-1} className={`flex items-center gap-1`}><CalculateMonth
                                     sx={{fontSize: 'small'}}/><Chip
+                                    tabIndex={-1}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         appendDateCondition(date);
@@ -118,9 +175,10 @@ export const BlogCard = ({
                                     "--Chip-decoratorChildHeight": "16px",
                                 }}>{to_date(date)}</Chip></span>
                             <Divider orientation="vertical"/>
-                            <span className={`flex items-center gap-1`}><CategoryIcon
+                            <span tabIndex={-1} className={`flex items-center gap-1`}><CategoryIcon
                                 sx={{fontSize: 'small'}}/>
                                     <Chip
+                                        tabIndex={-1}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             appendCategoryCondition(category);
@@ -132,26 +190,25 @@ export const BlogCard = ({
                                     }}>{category}</Chip></span>
                         </div>
                     </div>
-                    {
+                    {isSelf &&
                         <Dropdown
                             open={open}>
                             <MenuButton
+                                ref={opBtn}
+                                tabIndex={-1}
                                 slots={{root: IconButton}}
                                 slotProps={{
                                     root: {
                                         size: 'sm',
                                         variant: 'plain',
                                         color: 'primary',
-                                        onMouseEnter: handleMouseEnter,
-                                        onMouseLeave: handleMouseLeave
+                                        onClick: handleMouseClick,
                                     }
                                 }}
                             >
                                 <MoreVert/>
                             </MenuButton>
                             <Menu
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
                                 variant="soft"
                                 color="primary"
                                 placement="bottom-end"
@@ -160,12 +217,9 @@ export const BlogCard = ({
                                 {menuItems.map((item, index) => (
                                     <div key={index}>
                                         <MenuItem
-                                            onClick={
-                                                (e) => {
-                                                    e.stopPropagation();
-                                                    item.func()
-                                                }}
+                                            onClick={item.func}
                                             tabIndex={-1}
+                                            autoFocus={false}
                                             className={'flex justify-center items-center capitalize pl-2 pr-2'}
                                             sx={{
                                                 borderRadius: 6,

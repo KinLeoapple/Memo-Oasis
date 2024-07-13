@@ -7,7 +7,7 @@ export const SwitchThemeButton = () => {
     return (
         <>
             <label className="theme-switch">
-                <input type="checkbox" className="theme-switch__checkbox"
+                <input tabIndex={-1} type="checkbox" className="theme-switch__checkbox"
                        checked={mode === 'dark'}
                        onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')}/>
                 <div className="theme-switch__container">

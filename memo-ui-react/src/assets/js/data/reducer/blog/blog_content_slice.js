@@ -14,4 +14,4 @@ export const blog_content_slice = createSlice({
 
 export const {setContentValue} = blog_content_slice.actions;
 
-export const selectBlogContent = (state) => state.blogContent.value
+export const selectBlogContent = (state) => state.blogContent.value;

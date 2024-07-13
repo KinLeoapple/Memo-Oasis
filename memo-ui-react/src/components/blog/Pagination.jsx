@@ -7,6 +7,7 @@ import {selectBlogNumber} from "@/assets/js/data/reducer/blog/blog_number_slice.
 import {MAX_PER_PAGE} from "@/assets/js/data/static.js";
 import {selectCondition} from "@/assets/js/data/reducer/blog/condition_slice.js";
 import {selectBlogFilterNumber} from "@/assets/js/data/reducer/blog/blog_filter_number_slice.js";
+import {setOpButtonValue} from "@/assets/js/data/reducer/blog/blog_op_button_slice.js";
 
 export const Pagination = () => {
     const conditions = useSelector(selectCondition);
@@ -68,13 +69,17 @@ export const Pagination = () => {
     }
 
     function previousPage() {
-        if (page > 1)
+        if (page > 1) {
+            dispatch(setOpButtonValue(0));
             dispatch(decrement());
+        }
     }
 
     function nextPage() {
-        if (page < count)
+        if (page < count) {
+            dispatch(setOpButtonValue(0));
             dispatch(increment());
+        }
     }
 
     function jumpTo(number) {
@@ -82,6 +87,7 @@ export const Pagination = () => {
             number = 1;
         else if (number > count)
             number = count;
+        dispatch(setOpButtonValue(0));
         dispatch(setPageValue(number));
     }
 

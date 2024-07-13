@@ -76,10 +76,11 @@ export const CategoriesList = () => {
                     return a.catName.toLowerCase()
                         .localeCompare(b.catName.toLowerCase());
                 }).map((category, i) => (
-                    <ListItem key={i} className={`cursor-pointer select-none`} sx={{
+                    <ListItem tabIndex={-1} key={i} className={`cursor-pointer select-none`} sx={{
                         width: '100%'
                     }}>
                         <ListItemButton
+                            tabIndex={-1}
                             onClick={() => selectedCategory(category.catName)}
                             selected={isSelected(category.catName)}
                             color={"primary"}

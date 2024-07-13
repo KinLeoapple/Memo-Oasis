@@ -36,9 +36,14 @@ export const BlogList = () => {
                     navigate("/login", {replace: true});
                 }
                 setRefresh(!refresh)
+            } else {
+                userId.current = params.id;
+                if (userId.current === undefined || userId.current === null) {
+                    navigate("/login", {replace: true});
+                }
             }
         }
-    }, [location, params, userBasicInfo, loginState]);
+    }, [loginState]);
 
     useEffect(() => {
         get_blog_total().then(r => {

@@ -18,7 +18,7 @@ export const GoBackButton = () => {
 
     return (
         <>
-            <Button onClick={goBack} color="neutral" variant="solid" sx={{
+            <Button tabIndex={-1} onClick={goBack} color="neutral" variant="solid" sx={{
                 width: "50px",
                 height: "50px",
                 borderRadius: "50%",

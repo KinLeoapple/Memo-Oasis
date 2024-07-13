@@ -1,7 +1,7 @@
 import {CategoriesList} from "@/components/blog/CategoriesList.jsx";
 import {BlogList} from "@/components/blog/BlogList.jsx";
 import {Layout} from "@/components/layout/Layout.jsx";
-import {Pagination} from "@/components/common/Pagination.jsx";
+import {Pagination} from "@/components/blog/Pagination.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {Condition} from "@/components/blog/Condition.jsx";
 import {selectBlog, setBlogValue} from "@/assets/js/data/reducer/blog/blog_slice.js";
@@ -11,6 +11,8 @@ import {useEffect} from "react";
 import {setContentValue} from "@/assets/js/data/reducer/blog/blog_content_slice.js";
 import {selectShowSearchResult} from "@/assets/js/data/reducer/blog/show_search_result_slice.js";
 import {SearchResult} from "@/components/blog/SearchResult.jsx";
+import {DeleteConfirm} from "@/components/blog/DeleteConfirm.jsx";
+import {setOpButtonValue} from "@/assets/js/data/reducer/blog/blog_op_button_slice.js";
 
 export const Blog = () => {
     const dispatch = useDispatch();
@@ -20,6 +22,7 @@ export const Blog = () => {
     useEffect(() => {
         dispatch(setBlogValue(0));
         dispatch(setContentValue(""));
+        dispatch(setOpButtonValue(0));
     }, []);
 
     return (
@@ -42,6 +45,7 @@ export const Blog = () => {
                                     <Condition/>
                                     <BlogList/>
                                     <Pagination/>
+                                    <DeleteConfirm/>
                                 </> :
                                 <BlogRenderer/>
                             }</>

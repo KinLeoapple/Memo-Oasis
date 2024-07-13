@@ -19,7 +19,7 @@ import {
 } from "@mui/joy";
 import {append_list} from "@/assets/js/utils/append_list.js";
 import {ExpandCircleDownOutlined} from "@mui/icons-material";
-import {ResultList} from "@/components/common/ResultList.jsx";
+import {ResultList} from "@/components/blog/ResultList.jsx";
 
 export const Writing = () => {
     const userBasicInfo = useSelector(selectUserBasicInfo);

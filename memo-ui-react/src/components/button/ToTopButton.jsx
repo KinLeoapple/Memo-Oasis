@@ -4,10 +4,10 @@ import {smooth_scroll_to_top} from "@/assets/js/utils/scroll.js";
 
 export const ToTopButton = () => {
     return (
-        <div className={'fixed z-[999] bottom-5 right-5 m-auto'}>
-            <Tooltip title="Sroll to top" placement="left"
+        <div tabIndex={-1} className={'fixed z-[999] bottom-5 right-5 m-auto'}>
+            <Tooltip tabIndex={-1} title="Sroll to top" placement="left"
                      size="sm">
-                <IconButton onClick={smooth_scroll_to_top} color="primary" variant="soft" sx={{
+                <IconButton tabIndex={-1} onClick={smooth_scroll_to_top} color="primary" variant="soft" sx={{
                     borderRadius: "50%",
                     width: 40,
                     height: 40,

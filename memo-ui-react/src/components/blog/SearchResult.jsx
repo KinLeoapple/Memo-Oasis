@@ -1,4 +1,4 @@
-import {ResultList} from "@/components/common/ResultList.jsx";
+import {ResultList} from "@/components/blog/ResultList.jsx";
 
 export const SearchResult = () => {
     return (
