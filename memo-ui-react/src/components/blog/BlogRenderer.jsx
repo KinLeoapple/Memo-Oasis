@@ -7,10 +7,10 @@ import {get_blog_content} from "@/assets/js/api/api.js";
 import {setContentValue} from "@/assets/js/data/reducer/blog/blog_content_slice.js";
 import {MdPreview} from "md-editor-rt";
 import 'md-editor-rt/lib/preview.css';
-import {is_html} from "@/assets/js/utils/is_html.js";
 import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reducer/blog/search_keyword_slice.js";
 import {setShowResultValue} from "@/assets/js/data/reducer/blog/show_search_result_slice.js";
 import {GoBackButton} from "@/components/button/GoBackButton.jsx";
+import {sanitize} from "@/assets/js/utils/sanitize.js";
 
 export const BlogRenderer = () => {
     const theme = useColorScheme();
@@ -33,15 +33,6 @@ export const BlogRenderer = () => {
     useEffect(() => {
         dispatch(setContentValue(content));
     }, [content, dispatch]);
-
-    const sanitize = (html) => {
-        if (content !== null) {
-            if (is_html(content)) {
-                return content;
-            }
-            return html;
-        }
-    }
 
     return (
         <div className={'relative mt-10'}>
@@ -66,7 +57,7 @@ export const BlogRenderer = () => {
                         }}
                         editorId={id}
                         modelValue={content}
-                        sanitize={sanitize}
+                        sanitize={(html) => sanitize(content, html)}
                         previewTheme={"vuepress"}/>
                 </CardContent>
             </Card>

@@ -72,10 +72,11 @@ export const DeleteConfirm = () => {
                             flexDirection: { xs: 'column', sm: 'row-reverse' },
                         }}
                     >
-                        <Button variant="solid" color="primary" onClick={continueAction}>
+                        <Button tabIndex={-1} variant="solid" color="primary" onClick={continueAction}>
                             Continue
                         </Button>
                         <Button
+                            tabIndex={-1}
                             variant="outlined"
                             color="neutral"
                             onClick={cancelAction}

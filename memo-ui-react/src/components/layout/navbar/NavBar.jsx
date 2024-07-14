@@ -1,10 +1,8 @@
 import {
-    Avatar, Box,
-    Button,
+    Avatar, Button,
     Dropdown,
     Grid, IconButton,
-    Input, MenuButton, Skeleton, Typography,
-    useColorScheme
+    Input, MenuButton, Skeleton, useColorScheme
 } from "@mui/joy";
 import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
 import {Link, useLocation, useNavigate} from "react-router-dom";
@@ -201,7 +199,7 @@ export const NavBar = ({
     }, []);
 
     return (
-        <div className={'w-full h-24 z-[99999] overflow-hidden'}>
+        <div className={'w-full h-24 z-[1200] overflow-hidden'}>
             <Grid container columns={3} spacing={0.1} className={`w-full fixed flex flex-col 
              justify-between items-center gap-5 flex-nowrap p-5 mb-3 backdrop-blur-lg
             bg-opacity-80 ${themeMode.mode === 'dark' ? BG_DARK : BG}`} sx={{flexGrow: 1}}>

@@ -12,7 +12,7 @@ object Auth {
     private var secretKey: ByteArray
     private var algorithm: Algorithm
     private val issuer = "ktor.io"
-    private val validityInMs = 3600 * 1000 * 10 // 10 hours
+    private val validityInMs = 3600 * 1000 * 24 * 7 // 1 Week
 
     init {
         val secretKeyFile = File("./secretKey.key")

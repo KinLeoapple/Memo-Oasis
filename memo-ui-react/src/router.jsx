@@ -8,31 +8,40 @@ import {DashBoard} from "@/components/dashboard/DashBoard.jsx";
 import {Login} from "@/components/login/Login.jsx";
 import {SignUp} from "@/components/signup/SignUp.jsx";
 import {Home} from "@/components/home/Home.jsx";
+import {Writer} from "@/components/writer/Writer.jsx";
 
 const routers = createBrowserRouter([
     {
         path: "/",
-        element: <Home />,
+        element: <Home/>,
     },
     {
         path: "/blog",
-        element: <Blog />,
+        element: <Blog/>,
     },
     {
         path: "/blog/:id",
-        element: <Blog />,
+        element: <Blog/>,
+    },
+    {
+        path: "/writeblog",
+        element: <Writer/>
+    },
+    {
+        path: "/writeblog/:id",
+        element: <Writer/>
     },
     {
         path: "/dashboard",
-        element: <DashBoard />,
+        element: <DashBoard/>,
     },
     {
         path: "/login",
-        element: <Login />,
+        element: <Login/>,
     },
     {
         path: "/signup",
-        element: <SignUp />,
+        element: <SignUp/>,
     }
 ]);
 

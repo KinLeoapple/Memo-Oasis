@@ -27,7 +27,8 @@
     "redux": "^5.0.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "unplugin-imagemin": "^0.5.18",
-    "vite-plugin-compression": "^0.5.1"
+    "vite-plugin-compression": "^0.5.1",
+    "zl-fetch": "^6.0.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

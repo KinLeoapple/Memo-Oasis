@@ -21,7 +21,7 @@ import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/js/data/reduc
 import {AutoFixHigh, Delete, MoreVert} from "@mui/icons-material";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {color_css_var} from "@/assets/js/utils/color_css_var.js";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {selectUserBasicInfo} from "@/assets/js/data/reducer/user_basic_info_slice.js";
 import {selectLoginState} from "@/assets/js/data/reducer/login_state_slice.js";
 import {setBlogDeleteValue} from "@/assets/js/data/reducer/blog/blog_delete_slice.js";
@@ -44,7 +44,7 @@ export const BlogCard = ({
             decorator: <AutoFixHigh/>,
             text: "modify",
             color: "primary",
-            func: null
+            func: modifyBlog
         },
         {
             decorator: <Delete/>,
@@ -57,6 +57,7 @@ export const BlogCard = ({
     const params = useParams();
     const userId = useRef(params.id);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const blogOpButton = useSelector(selectBlogOpButton);
     const userBasicInfo = useSelector(selectUserBasicInfo);
     const loginState = useSelector(selectLoginState);
@@ -128,6 +129,13 @@ export const BlogCard = ({
         if (openRef.current) {
             dispatch(setOpButtonValue(id));
         }
+    }
+
+    function modifyBlog(e) {
+        e.stopPropagation();
+        setOpen(false);
+        openRef.current = false;
+        navigate(`/writeblog/${id}`, {replace: true});
     }
 
     function deleteBlog(e) {
