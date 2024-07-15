@@ -7,7 +7,8 @@ export const Writer = () => {
             <Layout
                 center={{
                     el: <Editor/>,
-                    show: true
+                    show: true,
+                    fixed: false
                 }}
             />
         </>

@@ -14,7 +14,7 @@ export const Layout = ({
                            // eslint-disable-next-line react/prop-types
                            content = {el: <></>},
                            // eslint-disable-next-line react/prop-types
-                           center = {el: <></>, show: false},
+                           center = {el: <></>, show: false, fixed: false},
                            // eslint-disable-next-line react/prop-types
                            leftMargin = true,
                            // eslint-disable-next-line react/prop-types
@@ -95,7 +95,7 @@ export const Layout = ({
             </Stack>
             {center.show &&
                 <>{!renderPending &&
-                    <div className={'fixed inset-0 flex items-center justify-center'}>
+                    <div className={`${center.fixed ? 'fixed' : ''} inset-0 flex items-center justify-center`}>
                         {center.el}
                     </div>
                 }</>

@@ -8,7 +8,6 @@ import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import Search from '@mui/icons-material/Search';
 import {useCallback, useEffect, useRef, useState} from "react";
-import '@fontsource/kalam';
 import avatar from "@/assets/img/avatar.webp";
 import {basic_info, post_token_login} from "@/assets/js/api/api.js";
 import {AvatarMenu} from "@/components/layout/navbar/AvatarMenu.jsx";

@@ -10,7 +10,8 @@ export const Login = () => {
                         <>
                             <LoginCard/>
                         </>,
-                    show: true
+                    show: true,
+                    fixed: true
                 }}
             />
         </>
