@@ -11,12 +11,12 @@ import {store} from "@/assets/js/data/store.js";
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <Provider store={store}>
-        <CssVarsProvider
-            defaultMode={"dark"}
-            modeStorageKey="theme-mode"
-        >
-            <App/>
-        </CssVarsProvider>
+            <CssVarsProvider
+                defaultMode={"dark"}
+                modeStorageKey="theme-mode"
+            >
+                <App/>
+            </CssVarsProvider>
         </Provider>
     </React.StrictMode>,
 )

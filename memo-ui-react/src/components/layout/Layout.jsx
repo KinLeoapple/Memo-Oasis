@@ -5,6 +5,7 @@ import {ToTopButton} from "@/components/button/ToTopButton.jsx";
 import {scroll_distance_to_top} from "@/assets/js/utils/distance_to_top.js";
 import {Loader} from "@/components/layout/Loader.jsx";
 import {MAX_RENDER_PENDING} from "@/assets/js/data/static.js";
+import {useLocation} from "react-router-dom";
 
 export const Layout = ({
                            // eslint-disable-next-line react/prop-types
@@ -22,6 +23,7 @@ export const Layout = ({
                            // eslint-disable-next-line react/prop-types
                            navigate = true
                        }) => {
+
     const marginLeft = leftMargin === undefined ? true : leftMargin;
     const marginRight = rightMargin === undefined ? true : rightMargin;
     const [mounted, setMounted] = useState(false);
@@ -30,10 +32,6 @@ export const Layout = ({
 
     const navBar = useMemo(() => {
         return <NavBar renderPending={handleRenderPending}/>;
-    }, []);
-
-    useEffect(() => {
-        pendingTimeout();
     }, []);
 
     useEffect(() => {
