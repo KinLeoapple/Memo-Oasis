@@ -17,7 +17,7 @@ fun Application.module() {
     configureSQLite()
     configureSerialization()
     configureHTTP()
-    configureRouting()
+    configureResources()
     configureAPI()
     configureSwagger()
 }
