@@ -12,6 +12,7 @@ import {show_search_result_slice} from "@/assets/js/data/reducer/blog/show_searc
 import {side_bar_slice} from "@/assets/js/data/reducer/dashboard/side_bar_slice.js";
 import {blog_delete_slice} from "@/assets/js/data/reducer/blog/blog_delete_slice.js";
 import {blog_op_button_slice} from "@/assets/js/data/reducer/blog/blog_op_button_slice.js";
+import {location_slice} from "@/assets/js/data/reducer/layout/location_slice.js";
 
 export const store = configureStore({
     reducer: {
@@ -27,6 +28,7 @@ export const store = configureStore({
         loginState: login_state_slice.reducer,
         userBasicInfo: user_basic_info_slice.reducer,
         showSearchResult: show_search_result_slice.reducer,
-        sideBar: side_bar_slice.reducer
+        sideBar: side_bar_slice.reducer,
+        location: location_slice.reducer
     },
 })

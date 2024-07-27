@@ -6,6 +6,8 @@ import {scroll_distance_to_top} from "@/assets/js/utils/distance_to_top.js";
 import {Loader} from "@/components/layout/Loader.jsx";
 import {MAX_RENDER_PENDING} from "@/assets/js/data/static.js";
 import {useLocation} from "react-router-dom";
+import {setLocationValue} from "@/assets/js/data/reducer/layout/location_slice.js";
+import {useDispatch} from "react-redux";
 
 export const Layout = ({
                            // eslint-disable-next-line react/prop-types
@@ -29,10 +31,21 @@ export const Layout = ({
     const [mounted, setMounted] = useState(false);
     const [display, setDisplay] = useState(false);
     const [renderPending, setRenderPending] = useState(true);
+    const location = useLocation();
+    const dispatch = useDispatch();
 
     const navBar = useMemo(() => {
         return <NavBar renderPending={handleRenderPending}/>;
     }, []);
+
+    useEffect(() => {
+        dispatch(setLocationValue(location.pathname));
+    }, [location]);
+
+    useEffect(() => {
+        if (renderPending)
+            pendingTimeout();
+    }, [renderPending]);
 
     useEffect(() => {
         if (!mounted) {

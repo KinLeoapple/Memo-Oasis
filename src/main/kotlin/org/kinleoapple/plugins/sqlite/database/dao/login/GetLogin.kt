@@ -6,13 +6,12 @@ import com.google.gson.Gson
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.sessions.*
-import org.kinleoapple.plugins.jwt.auth.Auth
 import org.kinleoapple.dataclass.LoginData
 import org.kinleoapple.dataclass.SessionData
+import org.kinleoapple.plugins.jwt.auth.Auth
 import org.kinleoapple.plugins.sqlite.database.Database
 import org.kinleoapple.plugins.sqlite.database.relation.User
 import org.ktorm.dsl.*
-import org.mindrot.jbcrypt.BCrypt
 
 /**
  * Return a map of the login result.
@@ -47,7 +46,7 @@ fun getLogin(database: Database, json: String, call: ApplicationCall): Map<Strin
 
     // if it can decrypt the password
     if (decryptPass != null) {
-        val checkpw = BCrypt.checkpw(pass, decryptPass)
+        val checkpw = pass == decryptPass
 
         return when (checkpw) {
             true -> {

@@ -1,30 +1,23 @@
 import {
-    Box,
     Button, ButtonGroup,
     Card,
     CardActions,
-    CardContent, CardOverflow, Divider,
-    Dropdown, Grid, IconButton, Input,
-    ListItemDecorator,
-    Menu,
-    MenuButton, MenuItem,
-    Typography,
-    useColorScheme
+    CardContent, CardOverflow, Grid, IconButton, Input,
+    Typography
 } from "@mui/joy";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {client_height, client_width} from "@/assets/js/utils/client_size.js";
 import {post_img} from "@/assets/js/api/api.js";
-import {ArrowDropDown, Book, Close, ModeEditOutline} from "@mui/icons-material";
-import {color_css_var} from "@/assets/js/utils/color_css_var.js";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {selectLoginState} from "@/assets/js/data/reducer/login_state_slice.js";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import "react-quill-new/dist/quill.snow.css";
 import "@/assets/css/quill.css";
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.min.css";
+import {Close} from "@mui/icons-material";
 
 export const Editor = () => {
     const modules = {
@@ -133,23 +126,7 @@ export const Editor = () => {
         }
     ]
 
-    const menuItems = [
-        {
-            decorator: <Book/>,
-            text: "blog",
-            color: "primary",
-            func: null
-        },
-        {
-            decorator: <ModeEditOutline/>,
-            text: "draft",
-            color: "primary",
-            func: null
-        },
-    ]
-
     const params = useParams();
-    const themeMode = useColorScheme();
     const [mounted, setMounted] = useState(false);
     const [title, setTitle] = useState("");
     const [text, setText] = useState("");
@@ -204,8 +181,19 @@ export const Editor = () => {
             setMounted(true);
             window.removeEventListener('resize', onResize);
             window.addEventListener('resize', onResize);
+            setEditorHeight();
         }
     }, []);
+
+    useEffect(() => {
+        setEditorHeight();
+    }, [width, height]);
+
+    useEffect(() => {
+        if (open) {
+            // setSaveOpsMenuWidth();
+        }
+    }, [open]);
 
     const onResize = useCallback(() => {
         setWidth(countWidth());
@@ -224,6 +212,15 @@ export const Editor = () => {
     function countHeight() {
         // return width / 16 * 9;
         return client_height() - 96;
+    }
+
+    function setEditorHeight() {
+        let dom = document.querySelector(".ql-editor");
+        if (dom) {
+            dom.style.minHeight = `calc(${height}px - 153px)`;
+        } else {
+            window.removeEventListener('resize', onResize);
+        }
     }
 
     function handleTitleChange(e) {
@@ -275,8 +272,10 @@ export const Editor = () => {
 
     function handleHighlight() {
         document.querySelector(".ql-editor").querySelectorAll("pre").forEach(el => {
-            hljs.highlightElement(el);
-            el.removeAttribute("data-highlighted");
+            new Promise(() => {
+                hljs.highlightElement(el);
+                el.removeAttribute("data-highlighted");
+            }).catch(() => null);
         });
     }
 
@@ -368,63 +367,22 @@ export const Editor = () => {
                                         size={'sm'}
                                         variant={'soft'}
                                         color={'primary'}>
-                                    save
+                                    post
                                 </Button> :
-                                <Dropdown>
-                                    <MenuButton startDecorator={
-                                        <ArrowDropDown/>
-                                    } disabled={disabled} className={'capitalize'} tabIndex={-1} slots={{root: Button}}
-                                                slotProps={{
-                                                    root: {
-                                                        loading: checking,
-                                                        size: 'sm',
-                                                        variant: 'soft',
-                                                        color: 'primary',
-                                                    }
-                                                }}>
-                                        save as
-                                    </MenuButton>
-                                    <Menu variant="soft"
-                                          color="primary"
-                                          placement="bottom"
-                                          className={'select-none'}
-                                          size="sm">
-                                        {menuItems.map((item, index) => (
-                                            <div key={index}>
-                                                <MenuItem
-                                                    onClick={item.func}
-                                                    tabIndex={-1}
-                                                    autoFocus={false}
-                                                    className={'flex justify-center items-center capitalize pl-2 pr-2'}
-                                                    sx={{
-                                                        borderRadius: 6,
-                                                        marginTop: "3px",
-                                                        marginLeft: "5px",
-                                                        marginRight: "5px",
-                                                        marginBottom: "4px",
-                                                    }}>
-                                                    <ListItemDecorator variant="plain" sx={{
-                                                        color: color_css_var(item.color)
-                                                    }}>
-                                                        {item.decorator}
-                                                    </ListItemDecorator>
-                                                    <span className={'text-sm font-bold capitalize'} style={{
-                                                        color: color_css_var(item.color)
-                                                    }}>
-                                                {item.text}
-                                            </span>
-                                                </MenuItem>
-                                                {
-                                                    index !== menuItems.length - 1 &&
-                                                    <Divider sx={{
-                                                        width: "80%",
-                                                        marginLeft: "10%"
-                                                    }}/>
-                                                }
-                                            </div>
-                                        ))}
-                                    </Menu>
-                                </Dropdown>
+                                <div className={'w-full flex justify-end items-center gap-5'}>
+                                    <Button loading={checking} className={'capitalize'} disabled={disabled} tabIndex={-1}
+                                            size={'sm'}
+                                            variant={'soft'}
+                                            color={'primary'}>
+                                        post
+                                    </Button>
+                                    <Button loading={checking} className={'capitalize'} disabled={disabled} tabIndex={-1}
+                                            size={'sm'}
+                                            variant={'soft'}
+                                            color={'primary'}>
+                                        save as draft
+                                    </Button>
+                                </div>
                             }
                         </CardActions>
                     </Card>
@@ -444,8 +402,11 @@ export const Editor = () => {
                                   alignItems="stretch"
                                   sx={{flexGrow: 1}}>
                                 <Grid xs>
-                                    <Card size="sm" color={"primary"} variant={"outlined"} sx={{
-                                        padding: 1,
+                                    <Card size="sm" color={"primary"} variant={"plain"} sx={{
+                                        paddingLeft: 0,
+                                        paddingRight: 0,
+                                        paddingTop: 1,
+                                        paddingBottom: 1,
                                     }}>
                                         <ButtonGroup
                                             size="sm"
@@ -466,17 +427,18 @@ export const Editor = () => {
                                     </Card>
                                 </Grid>
                                 <Grid xs>
-                                    <Card size="sm" color={"primary"} variant={"outlined"} sx={{
-                                        padding: 1,
-                                        minHeight: `calc(${height}px - 135px)`,
-                                        height: "100%",
-                                        maxHeight: `calc(${height}px - 135px)`,
-                                        cursor: "text"
-                                    }}>
+                                    <Card size="sm" color={"primary"} variant={"outlined"}
+                                          sx={{
+                                              padding: 1,
+                                              minHeight: `calc(${height}px - 135px)`,
+                                              height: "100%",
+                                              maxHeight: `calc(${height}px - 135px)`,
+                                              cursor: "text"
+                                          }}>
                                         <PerfectScrollbar>
                                             <ReactQuill
                                                 style={{
-                                                    minHeight: `calc(${height}px - 160px)`,
+                                                    minHeight: `calc(${height}px - 153px)`,
                                                 }}
                                                 ref={editorRef}
                                                 placeholder={"Type here..."}

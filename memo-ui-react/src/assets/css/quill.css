@@ -9,3 +9,7 @@
 .ql-editor::before {
     color: var(--variant-softColor, var(--joy-palette-primary-softColor, var(--joy-palette-primary-700, #12467B))) !important;
 }
+
+.ql-editor img {
+    width: 240px;
+}

@@ -10,6 +10,7 @@ import {store} from "@/assets/js/data/store.js";
 
 import 'material-symbols';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import "@/assets/css/scrollbar.css";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
