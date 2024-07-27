@@ -8,6 +8,9 @@ import {CssVarsProvider} from "@mui/joy";
 import {Provider} from "react-redux";
 import {store} from "@/assets/js/data/store.js";
 
+import 'material-symbols';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <Provider store={store}>
