@@ -20,7 +20,6 @@
     "jsencrypt": "^3.3.2",
     "marked": "^12.0.2",
     "material-symbols": "^0.21.2",
-    "md-editor-rt": "^4.17.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-perfect-scrollbar": "^1.5.8",
