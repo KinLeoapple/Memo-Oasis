@@ -2,11 +2,9 @@ package org.kinleoapple.plugins
 
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.io.File
 
-fun Application.configureRouting() {
+fun Application.configureResources() {
     routing {
         staticResources("/", "/static") {
             preCompressed(CompressedFileType.BROTLI, CompressedFileType.GZIP)
