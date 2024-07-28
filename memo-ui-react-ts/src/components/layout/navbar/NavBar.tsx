@@ -1,10 +1,9 @@
 import {
-    Avatar, Button,
+    Avatar, Button, ButtonGroup,
     Dropdown,
     Grid, IconButton,
     Input, MenuButton, Skeleton, useColorScheme
 } from "@mui/joy";
-import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import Search from '@mui/icons-material/Search';
 import {FC, useCallback, useEffect, useRef, useState} from "react";
@@ -13,7 +12,7 @@ import {basic_info, post_token_login} from "@/assets/lib/api/api.js";
 import {AvatarMenu} from "@/components/layout/navbar/AvatarMenu.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState, setLoginStateValue} from "@/assets/lib/data/reducer/login_state_slice.js";
-import {Close, HomeRounded, Person} from "@mui/icons-material";
+import {Close, HomeRounded, Notifications, Person, Settings} from "@mui/icons-material";
 import {AVATAR_RING, AVATAR_RING_DARK, BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/lib/data/static.ts";
 import {selectUserBasicInfo, setUserBasicInfoValue} from "@/assets/lib/data/reducer/user_basic_info_slice.js";
 import {
@@ -23,14 +22,15 @@ import {
 } from "@/assets/lib/data/reducer/blog/search_keyword_slice.js";
 import {SearchMenu} from "@/components/layout/navbar/SearchMenu.jsx";
 import {setShowResultValue} from "@/assets/lib/data/reducer/blog/show_search_result_slice.js";
+import {setOpenValue} from "@/assets/lib/data/reducer/layout/drawer_open_slice";
 
 type PropData = {
     renderPending: (value: boolean) => void
 };
 
 export const NavBar: FC<PropData> = ({
-                           renderPending
-                       }) => {
+                                         renderPending
+                                     }) => {
     const dispatch = useDispatch();
     const navButtons = [
         {
@@ -59,7 +59,8 @@ export const NavBar: FC<PropData> = ({
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const timer = useRef(
-        setTimeout(() => {})
+        setTimeout(() => {
+        })
     );
 
     useEffect(() => {
@@ -185,7 +186,7 @@ export const NavBar: FC<PropData> = ({
     }
 
     const search = useCallback((e: Event | React.MouseEvent<HTMLButtonElement>) => {
-        const fn = (e: Event| React.MouseEvent<HTMLButtonElement>) => {
+        const fn = (e: Event | React.MouseEvent<HTMLButtonElement>) => {
             let target = e.target;
             if (target) {
                 if ((target as HTMLInputElement).value === undefined) {
@@ -207,51 +208,37 @@ export const NavBar: FC<PropData> = ({
         }
     }, []);
 
+    function handleDrawerOpen() {
+        dispatch(setOpenValue(true));
+    }
+
     return (
         <div className={'w-full h-24 z-[1200] overflow-hidden'}>
             <Grid container columns={3} spacing={0.1} className={`w-full fixed flex flex-col 
              justify-between items-center gap-5 flex-nowrap p-5 mb-3 backdrop-blur-lg
             bg-opacity-80 ${themeMode.mode === 'dark' ? BG_DARK : BG}`} sx={{flexGrow: 1}}>
-                <Grid className={`relative z-30 flex justify-start items-center gap-3 select-none`} xs={1}>
-                    {login ?
-                        <Dropdown open={open}>
-                            <MenuButton
-                                tabIndex={-1}
-                                slots={{root: Avatar}}
-                                slotProps={{
-                                    root: {
-                                        variant: 'plain',
-                                        color: 'primary',
-                                        onMouseEnter: handleMouseEnter,
-                                        onMouseLeave: handleMouseLeave,
-                                        sx: {
-                                            transform: "scale(1.6)",
-                                            marginTop: "30px",
-                                            marginLeft: "20px",
-                                            position: "absolute",
-                                            border: "2px solid",
-                                            borderColor: open ?
-                                                (themeMode.mode === 'dark' ? AVATAR_RING_DARK : AVATAR_RING) :
-                                                "transparent",
-                                            transition: "all .2s",
-                                            "&:hover": {
-                                                borderColor: themeMode.mode === 'dark' ? AVATAR_RING_DARK : AVATAR_RING,
-                                            }
-                                        }
-                                    }
-                                }}>
-                                <Avatar alt={name} src={(loading ? '' : avatar)} color="primary"
-                                        variant="soft"
-                                        className={'cursor-pointer'}></Avatar>
-                                <Skeleton loading={loading} animation="wave" variant="circular"/>
-                            </MenuButton>
-                            <AvatarMenu onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}/>
-                        </Dropdown> :
-                        <Button onClick={signIn} startDecorator={<Person/>}>
-                            Sign in
-                        </Button>
-                    }
+                {/* nav buttons */}
+                <Grid xs={1}>
+                    <div className={'flex flex-row justify-start items-center gap-2'}>
+                        <div className={'flex flex-row gap-3'}>
+                            {navButtons.map((btn) => (
+                                <Link tabIndex={-1}
+                                      className={btn.path.split("/")[1] === "blog" ? (login ? "" : "hidden") : ""}
+                                      key={btn.name} to={btn.path} replace={true}>
+                                    <Button tabIndex={-1}
+                                            size={"sm"}
+                                            startDecorator={btn.decorator}
+                                            variant={
+                                                location.pathname === btn.path ? "solid" : "soft"
+                                            }>
+                                        {btn.name}
+                                    </Button>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
                 </Grid>
+                {/* nav search bar */}
                 {searchBar &&
                     <Grid xs={0.8} className={'relative'}>
                         <Input
@@ -307,29 +294,66 @@ export const NavBar: FC<PropData> = ({
                         }
                     </Grid>
                 }
-                <Grid xs={1}>
-                    <div className={'flex flex-row justify-end items-center gap-2'}>
-                        <div className={'flex flex-row gap-3'}>
-                            {navButtons.map((btn) => (
-                                <Link tabIndex={-1}
-                                      className={btn.path.split("/")[1] === "blog" ? (login ? "" : "hidden") : ""}
-                                      key={btn.name} to={btn.path} replace={true}>
-                                    <Button tabIndex={-1}
-                                            startDecorator={btn.decorator}
-                                            variant={
-                                                location.pathname === btn.path ? "soft" : "plain"
-                                            }>
-                                        {btn.name}
-                                    </Button>
-                                </Link>
-                            ))}
-                        </div>
-                        <div className={'flex justify-end items-center'} style={{
-                            width: '5.625em'
+                {/* nav avatar */}
+                <Grid className={`relative z-30 flex justify-end items-center gap-3 select-none`} xs={1}>
+                    <Grid container
+                          spacing={2}
+                          direction="row"
+                          justifyContent="flex-end"
+                          alignItems="center">
+                        <Grid xs>
+                            {login ?
+                                <Dropdown open={open}>
+                                    <MenuButton
+                                        tabIndex={-1}
+                                        slots={{root: Avatar}}
+                                        slotProps={{
+                                            root: {
+                                                variant: 'plain',
+                                                color: 'primary',
+                                                onMouseEnter: handleMouseEnter,
+                                                onMouseLeave: handleMouseLeave,
+                                                sx: {
+                                                    border: "2px solid",
+                                                    borderColor: open ?
+                                                        (themeMode.mode === 'dark' ? AVATAR_RING_DARK : AVATAR_RING) :
+                                                        "transparent",
+                                                    transition: "all .2s",
+                                                    "&:hover": {
+                                                        borderColor: themeMode.mode === 'dark' ? AVATAR_RING_DARK : AVATAR_RING,
+                                                    }
+                                                }
+                                            }
+                                        }}>
+                                        <Avatar alt={name} src={(loading ? '' : avatar)} color="primary"
+                                                variant="soft"
+                                                className={'cursor-pointer'}></Avatar>
+                                        <Skeleton loading={loading} animation="wave" variant="circular"/>
+                                    </MenuButton>
+                                    <AvatarMenu onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}/>
+                                </Dropdown> :
+                                <Button onClick={signIn} startDecorator={<Person/>}>
+                                    Sign in
+                                </Button>
+                            }
+                        </Grid>
+                        <Grid xs sx={{
+                            marginRight: 2
                         }}>
-                            <SwitchThemeButton/>
-                        </div>
-                    </div>
+                            <ButtonGroup
+                                color="primary"
+                                size="sm"
+                                spacing={2}
+                                variant="soft">
+                                <IconButton tabIndex={-1} size={"sm"} color={"primary"} variant={"soft"}>
+                                    <Notifications/>
+                                </IconButton>
+                                <IconButton tabIndex={-1} onClick={handleDrawerOpen} size={"sm"} color={"primary"} variant={"soft"}>
+                                    <Settings/>
+                                </IconButton>
+                            </ButtonGroup>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </div>

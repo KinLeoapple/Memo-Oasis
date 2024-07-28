@@ -1,7 +1,7 @@
 export function api_prefix() {
-    let protocol = window.location.protocol;
-    let hostname = window.location.hostname;
-    let port = window.location.port;
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    let port: string | null = window.location.port;
     if (port === null || port === undefined || port === "")
         port = null;
 

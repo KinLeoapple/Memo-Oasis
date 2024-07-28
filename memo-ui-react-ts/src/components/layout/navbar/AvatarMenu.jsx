@@ -55,7 +55,8 @@ export const AvatarMenu = ({
                 className={'select-none'}
                 sx={{
                     boxShadow: "lg",
-                    padding: 0
+                    padding: 0,
+                    zIndex: 9999
                 }}>
                 {
                     menuItems.map((item, index) => (

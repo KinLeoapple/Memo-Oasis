@@ -8,6 +8,7 @@ import {MAX_RENDER_PENDING} from "@/assets/lib/data/static.ts";
 import {useLocation} from "react-router-dom";
 import {setLocationValue} from "@/assets/lib/data/reducer/layout/location_slice.js";
 import {useDispatch} from "react-redux";
+import {NavDrawer} from "@/components/layout/navbar/NavDrawer.tsx";
 
 export const Layout = ({
                            left = {el: <></>, fixed: false,},
@@ -29,6 +30,10 @@ export const Layout = ({
 
     const navBar = useMemo(() => {
         return <NavBar renderPending={handleRenderPending}/>;
+    }, []);
+
+    const drawer = useMemo(() => {
+        return <NavDrawer/>
     }, []);
 
     useEffect(() => {
@@ -68,7 +73,10 @@ export const Layout = ({
         <>
             <Stack className={`min-h-full min-w-full`}>
                 {navigate &&
-                    navBar
+                    <>
+                        {navBar}
+                        {drawer}
+                    </>
                 }
                 {!renderPending &&
                     <Grid className={`min-h-full min-w-full flex justify-between gap-1`} container spacing={0}

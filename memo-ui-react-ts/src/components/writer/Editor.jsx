@@ -415,7 +415,7 @@ export const Editor = () => {
                                             variant="outlined"
                                         >
                                             {toolBarItems.map((item, index) => (
-                                                <IconButton id={item.id} size="sm" key={index} variant={"soft"}
+                                                <IconButton tabIndex={-1} id={item.id} size="sm" key={index} variant={"soft"}
                                                             onClick={item.func} sx={{
                                                     paddingLeft: 2.5,
                                                     paddingRight: 2.5,

@@ -1,6 +1,6 @@
 import zlFetch from 'zl-fetch';
 import {crypt_str} from "@/assets/lib/crypt/crypt.ts";
-import {api_prefix} from "@/assets/lib/api/api_prefix.js";
+import {api_prefix} from "@/assets/lib/api/api_prefix.ts";
 import {MAX_PER_PAGE} from "@/assets/lib/data/static.ts";
 
 const prefix = api_prefix();
