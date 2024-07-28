@@ -1,6 +1,6 @@
 import {CategoriesList} from "@/components/blog/CategoriesList.jsx";
 import {BlogList} from "@/components/blog/BlogList.jsx";
-import {Layout} from "@/components/layout/Layout.jsx";
+import {Layout} from "@/components/layout/Layout.js";
 import {Pagination} from "@/components/blog/Pagination.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {Condition} from "@/components/blog/Condition.jsx";

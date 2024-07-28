@@ -3,12 +3,12 @@ import {
 
 } from "react-router-dom";
 
-import {Blog} from "@/components/blog/Blog.jsx";
-import {DashBoard} from "@/components/dashboard/DashBoard.jsx";
-import {Login} from "@/components/login/Login.jsx";
-import {SignUp} from "@/components/signup/SignUp.jsx";
-import {Home} from "@/components/home/Home.jsx";
-import {Writer} from "@/components/writer/Writer.jsx";
+import {Blog} from "@/components/blog/Blog.js";
+import {DashBoard} from "@/components/dashboard/DashBoard.tsx";
+import {Login} from "@/components/login/Login.tsx";
+import {SignUp} from "@/components/signup/SignUp.tsx";
+import {Home} from "@/components/home/Home.tsx";
+import {Writer} from "@/components/writer/Writer.tsx";
 
 const routers = createBrowserRouter([
     {

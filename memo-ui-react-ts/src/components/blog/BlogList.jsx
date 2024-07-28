@@ -2,7 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import {get_blog, get_blog_all, get_blog_total} from "@/assets/lib/api/api.js";
 import {useDispatch, useSelector} from "react-redux";
 import {selectBlogPage} from "@/assets/lib/data/reducer/blog/blog_page_slice.js";
-import {MAX_PER_PAGE} from "@/assets/lib/data/static.js";
+import {MAX_PER_PAGE} from "@/assets/lib/data/static.ts";
 import {selectBlogNumber, setNumberValue} from "@/assets/lib/data/reducer/blog/blog_number_slice.js";
 import {scroll_to_top} from "@/assets/lib/utils/scroll.js";
 import {ConditionType, selectCondition} from "@/assets/lib/data/reducer/blog/condition_slice.js";

@@ -1,4 +1,4 @@
-import {Layout} from "@/components/layout/Layout.jsx";
+import {Layout} from "@/components/layout/Layout.js";
 
 export const Home = () => {
 

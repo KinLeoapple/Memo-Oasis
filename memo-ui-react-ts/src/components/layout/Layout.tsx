@@ -1,10 +1,10 @@
 import {Grid, Stack} from "@mui/joy";
 import {useCallback, useEffect, useMemo, useState} from "react";
-import {NavBar} from "@/components/layout/navbar/NavBar.jsx";
+import {NavBar} from "@/components/layout/navbar/NavBar.js";
 import {ToTopButton} from "@/components/button/ToTopButton.jsx";
 import {scroll_distance_to_top} from "@/assets/lib/utils/distance_to_top.js";
-import {Loader} from "@/components/layout/Loader.jsx";
-import {MAX_RENDER_PENDING} from "@/assets/lib/data/static.js";
+import {Loader} from "@/components/layout/Loader.tsx";
+import {MAX_RENDER_PENDING} from "@/assets/lib/data/static.ts";
 import {useLocation} from "react-router-dom";
 import {setLocationValue} from "@/assets/lib/data/reducer/layout/location_slice.js";
 import {useDispatch} from "react-redux";
@@ -52,7 +52,7 @@ export const Layout = ({
         scroll_distance_to_top() > 100 ? setDisplay(true) : setDisplay(false);
     }, []);
 
-    function handleRenderPending(value) {
+    function handleRenderPending(value: boolean) {
         setRenderPending(value);
     }
 

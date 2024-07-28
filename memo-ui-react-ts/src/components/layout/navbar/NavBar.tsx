@@ -7,14 +7,14 @@ import {
 import {SwitchThemeButton} from "@/components/button/SwitchThemeButton.jsx";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import Search from '@mui/icons-material/Search';
-import {useCallback, useEffect, useRef, useState} from "react";
+import {FC, useCallback, useEffect, useRef, useState} from "react";
 import avatar from "@/assets/img/avatar.webp";
 import {basic_info, post_token_login} from "@/assets/lib/api/api.js";
 import {AvatarMenu} from "@/components/layout/navbar/AvatarMenu.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState, setLoginStateValue} from "@/assets/lib/data/reducer/login_state_slice.js";
 import {Close, HomeRounded, Person} from "@mui/icons-material";
-import {AVATAR_RING, AVATAR_RING_DARK, BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/lib/data/static.js";
+import {AVATAR_RING, AVATAR_RING_DARK, BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/lib/data/static.ts";
 import {selectUserBasicInfo, setUserBasicInfoValue} from "@/assets/lib/data/reducer/user_basic_info_slice.js";
 import {
     newSearchBlogKeyword,
@@ -24,7 +24,11 @@ import {
 import {SearchMenu} from "@/components/layout/navbar/SearchMenu.jsx";
 import {setShowResultValue} from "@/assets/lib/data/reducer/blog/show_search_result_slice.js";
 
-export const NavBar = ({
+type PropData = {
+    renderPending: (value: boolean) => void
+};
+
+export const NavBar: FC<PropData> = ({
                            renderPending
                        }) => {
     const dispatch = useDispatch();
@@ -54,7 +58,9 @@ export const NavBar = ({
 
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const timer = useRef(null);
+    const timer = useRef(
+        setTimeout(() => {})
+    );
 
     useEffect(() => {
         switch (location.pathname.split("/")[1]) {
@@ -79,11 +85,11 @@ export const NavBar = ({
     useEffect(() => {
         renderPending(true);
         if (!login) {
-            let token = localStorage.getItem("token");
+            const token = localStorage.getItem("token");
             if (token !== null && token !== undefined && token !== "") {
                 post_token_login(token).then(r => {
                     if (r !== null) {
-                        let newToken = r.login;
+                        const newToken = r.login;
                         if (newToken !== null) {
                             setLogin(true);
                             dispatch(setLoginStateValue(true));
@@ -138,10 +144,13 @@ export const NavBar = ({
         navigate("/login", {replace: true});
     }
 
-    function handleSearchChange(e) {
-        let value = e.target.value;
-        setSearchText(value);
-        dispatch(setSearchBlogKeyword(newSearchBlogKeyword(value)));
+    function handleSearchChange(e: Event | React.FormEvent<HTMLDivElement>) {
+        const target = e.target;
+        if (target) {
+            const value = (target as HTMLInputElement).value;
+            setSearchText(value);
+            dispatch(setSearchBlogKeyword(newSearchBlogKeyword(value)));
+        }
     }
 
     function cleanSearchText() {
@@ -160,7 +169,7 @@ export const NavBar = ({
         document.body.removeEventListener("keyup", search);
     }
 
-    function handleMouseEnter(e) {
+    function handleMouseEnter(e: Event | React.MouseEvent<HTMLButtonElement>) {
         e.stopPropagation();
         if (timer.current !== null) {
             clearTimeout(timer.current);
@@ -168,28 +177,30 @@ export const NavBar = ({
         setOpen(true);
     }
 
-    function handleMouseLeave(e) {
+    function handleMouseLeave(e: Event | React.MouseEvent<HTMLButtonElement>) {
         e.stopPropagation();
         timer.current = setTimeout(() => {
             setOpen(false);
         }, 100);
     }
 
-    const search = useCallback((e) => {
-        const fn = (e) => {
+    const search = useCallback((e: Event | React.MouseEvent<HTMLButtonElement>) => {
+        const fn = (e: Event| React.MouseEvent<HTMLButtonElement>) => {
             let target = e.target;
-            if (target.value === undefined) {
-                target = document.getElementById("searchInput");
-            }
-            let value = target.value;
-            if (value !== "") {
-                dispatch(setSearchBlogKeyword(newSearchBlogKeyword(value, e.type)));
-                dispatch(setShowResultValue(true));
-                document.getElementById("searchInput").blur();
+            if (target) {
+                if ((target as HTMLInputElement).value === undefined) {
+                    target = document.getElementById("searchInput");
+                }
+                const value = (target as HTMLInputElement).value;
+                if (value !== "") {
+                    dispatch(setSearchBlogKeyword(newSearchBlogKeyword(value, e.type)));
+                    dispatch(setShowResultValue(true));
+                    document.getElementById("searchInput")!.blur();
+                }
             }
         }
 
-        if (e.type === "keyup" && e.keyCode === 13) {
+        if (e.type === "keyup" && (e as KeyboardEvent).key === "Enter") {
             fn(e);
         } else if (e.type === "click") {
             fn(e);

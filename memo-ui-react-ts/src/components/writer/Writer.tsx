@@ -1,4 +1,4 @@
-import {Layout} from "@/components/layout/Layout.jsx";
+import {Layout} from "@/components/layout/Layout.js";
 import {Editor} from "@/components/writer/Editor.jsx";
 
 export const Writer = () => {

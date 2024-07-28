@@ -11,7 +11,7 @@ import {
     selectSearchKeyword,
     setSearchBlogKeyword
 } from "@/assets/lib/data/reducer/blog/search_keyword_slice.js";
-import {SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/lib/data/static.js";
+import {SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/lib/data/static.ts";
 import {setBlogValue} from "@/assets/lib/data/reducer/blog/blog_slice.js";
 import {useEffect, useRef, useState} from "react";
 import {get_search_blog} from "@/assets/lib/api/api.js";

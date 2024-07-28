@@ -1,10 +1,10 @@
 import "@/assets/css/loader.css";
 import {useColorScheme} from "@mui/joy";
 import {useEffect, useState} from "react";
-import {BG, BG_DARK, MAX_LOADER_WAITING} from "@/assets/lib/data/static.js";
+import {BG, BG_DARK, MAX_LOADER_WAITING} from "@/assets/lib/data/static.ts";
 
 export const Loader = () => {
-    let themeMode = useColorScheme();
+    const themeMode = useColorScheme();
     const [display, setDisplay] = useState(false);
 
     useEffect(() => {
@@ -14,10 +14,11 @@ export const Loader = () => {
     }, []);
 
     useEffect(() => {
-        let loader = document.querySelector(".loader");
-        loader.querySelectorAll(".dot").forEach(el => {
-            el.style.border = `2px solid ${themeMode.mode === 'dark' ? BG_DARK : BG}`;
-        });
+        const loader = document.querySelector(".loader");
+        if (loader)
+            (loader.querySelectorAll(".dot") as NodeListOf<HTMLElement>).forEach(el => {
+                el.style.border = `2px solid ${themeMode.mode === 'dark' ? BG_DARK : BG}`;
+            });
     }, [themeMode]);
 
     return (

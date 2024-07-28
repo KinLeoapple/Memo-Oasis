@@ -1,6 +1,6 @@
 import {Card, CardContent, Chip, CircularProgress, Divider, List, ListItem, ListItemButton, Typography} from "@mui/joy";
 import {Inventory2} from "@mui/icons-material";
-import {MAX_LOAD} from "@/assets/lib/data/static.js";
+import {MAX_LOAD} from "@/assets/lib/data/static.ts";
 import {
     get_blog,
     get_blog_all,

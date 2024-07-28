@@ -17,10 +17,10 @@ export const search_keyword_slice = createSlice({
 
 export const {setSearchBlogKeyword} = search_keyword_slice.actions;
 
-export const newSearchBlogKeyword = (value, triggeredBy = null) => {
+export const newSearchBlogKeyword = (value, triggeredBy) => {
     return {
         value: value,
-        triggeredBy: triggeredBy
+        triggeredBy: triggeredBy === undefined ? null : triggeredBy,
     }
 }
 

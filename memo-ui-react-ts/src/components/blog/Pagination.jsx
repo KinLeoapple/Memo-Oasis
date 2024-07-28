@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {useSelector, useDispatch} from 'react-redux';
 import {decrement, increment, selectBlogPage, setPageValue} from "@/assets/lib/data/reducer/blog/blog_page_slice.js";
 import {selectBlogNumber} from "@/assets/lib/data/reducer/blog/blog_number_slice.js";
-import {MAX_PER_PAGE} from "@/assets/lib/data/static.js";
+import {MAX_PER_PAGE} from "@/assets/lib/data/static.ts";
 import {selectCondition} from "@/assets/lib/data/reducer/blog/condition_slice.js";
 import {selectBlogFilterNumber} from "@/assets/lib/data/reducer/blog/blog_filter_number_slice.js";
 import {setOpButtonValue} from "@/assets/lib/data/reducer/blog/blog_op_button_slice.js";
