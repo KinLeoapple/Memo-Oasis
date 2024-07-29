@@ -8,10 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.kinleoapple.plugins.sqlite.database.Database
-import org.kinleoapple.plugins.sqlite.database.dao.category.getCategory
-import org.kinleoapple.plugins.sqlite.database.dao.category.getCategoryAll
-import org.kinleoapple.plugins.sqlite.database.dao.category.getCategoryNumber
-import org.kinleoapple.plugins.sqlite.database.dao.category.postCategory
+import org.kinleoapple.plugins.sqlite.database.dao.category.*
 import org.kinleoapple.util.security.verifyToken
 import org.kinleoapple.util.validation.isNull
 
@@ -42,10 +39,10 @@ fun Application.categoryAPI(database: Database) {
         get("/cat/number/{id}") {
             val id = call.parameters["id"]
             if (isNull(id)) {
-                call.respond(getCategoryNumber(database, 0))
+                call.respond(getBlogNumOfCategory(database, 0))
             } else {
                 id?.let {
-                    call.respond(getCategoryNumber(database, it.toLong()))
+                    call.respond(getBlogNumOfCategory(database, it.toLong()))
                 }
             }
         }

@@ -335,7 +335,7 @@ export const NavBar: FC<PropData> = ({
                                                 root: {
                                                     variant: 'soft',
                                                     color: 'primary',
-                                                    onMouseEnter: (e) => handleMouseEnter,
+                                                    onMouseEnter: handleMouseEnter,
                                                     onMouseLeave: handleMouseLeave,
                                                     src: loading ? '' : avatar,
                                                     alt: name,

@@ -14,7 +14,7 @@ import org.ktorm.dsl.where
  * @param id The id of the category.
  * @return A map of the get draft result.
  */
-fun getCategoryNumber(database: Database, id: Long): Map<String, Int> {
+fun getBlogNumOfCategory(database: Database, id: Long): Map<String, Int> {
    return when (id) {
         0L -> mapOf("count" to 0)
         else -> {

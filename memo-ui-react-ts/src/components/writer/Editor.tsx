@@ -1,14 +1,28 @@
 import {
-    AspectRatio, Box,
-    Button, ButtonGroup,
+    AspectRatio,
+    Box,
+    Button,
+    ButtonGroup,
     Card,
     CardActions,
-    CardContent, CardCover, CardOverflow, Divider, Grid, IconButton, Input, ModalClose, Textarea,
+    CardContent,
+    CardCover,
+    CardOverflow,
+    Chip,
+    Divider,
+    Grid,
+    IconButton,
+    Input,
+    ModalClose,
+    Option,
+    Select,
+    SelectStaticProps,
+    Textarea,
     Typography
 } from "@mui/joy";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {client_height, client_width} from "@/assets/lib/utils/client_size.js";
-import {post_img} from "@/assets/lib/api/api.ts";
+import {get_category, get_category_all} from "@/assets/lib/api/api.ts";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {selectLoginState} from "@/assets/lib/data/reducer/login_state_slice.js";
@@ -18,7 +32,16 @@ import "@/assets/css/quill.css";
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.min.css";
-import {Close, ImageOutlined} from "@mui/icons-material";
+import {Close, CloseRounded, ImageOutlined} from "@mui/icons-material";
+
+interface category {
+    id: string | number,
+    catName: string
+}
+
+interface categoryId {
+    id: string | number,
+}
 
 export const Editor = () => {
     const modules = {
@@ -141,10 +164,17 @@ export const Editor = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const loginState = useSelector(selectLoginState);
-    const editorRef = useRef(null);
+    const editorRef = useRef<ReactQuill | null>(null);
     const [description, setDescription] = useState("");
-    const coverInputRef = useRef(null);
-    const [coverImage, setCoverImage] = useState(null);
+    const coverInputRef = useRef<HTMLInputElement | null>(null);
+    const [coverInputClicked, setCoverInputClicked] = useState(false);
+    const [coverInputMouseLeave, setCoverInputMouseLeave] = useState(false);
+    const [coverImage, setCoverImage] = useState<string | null>(null);
+    const [coverImageX, setCoverImageX] = useState(0);
+    const [coverImageY, setCoverImageY] = useState(0);
+    const [categoryList, setCategoryList] = useState<category[]>([]);
+    const [selection, setSelection] = useState<string | null>('dog');
+    const selectionAction: SelectStaticProps['action'] = useRef(null);
 
     useEffect(() => {
         if (location.pathname.split("/")[1] === "writeblog") {
@@ -155,6 +185,7 @@ export const Editor = () => {
                 } else {
                     setIsModify(true);
                 }
+                getCategory();
             } else {
                 navigate("/login", {replace: true});
             }
@@ -162,9 +193,9 @@ export const Editor = () => {
     }, []);
 
     useEffect(() => {
-        let editor = editorRef?.current?.getEditor();
+        const editor = editorRef?.current?.getEditor();
         if (editor) {
-            let length = editor.getLength() - 1;
+            const length = editor.getLength() - 1;
             setLength(length);
             if (length <= 0) {
                 setDisabled(true);
@@ -172,8 +203,8 @@ export const Editor = () => {
                 setDisabled(false);
             }
             toolBarItems.forEach(item => {
-                let id = item.id;
-                let isActive = buttonIsActive(id.split("#")[0], id.split("#")[1]);
+                const id = item.id;
+                const isActive = buttonIsActive(id.split("#")[0], id.split("#")[1]);
                 triggerHighlight(id, isActive);
             });
 
@@ -193,12 +224,6 @@ export const Editor = () => {
         setEditorHeight();
     }, [width, height]);
 
-    useEffect(() => {
-        if (open) {
-            // setSaveOpsMenuWidth();
-        }
-    }, [open]);
-
     const onResize = useCallback(() => {
         setWidth(countWidth());
         setHeight(countHeight());
@@ -206,7 +231,7 @@ export const Editor = () => {
 
     function countWidth() {
         // let num = client_width() / 3 * 2;
-        let num = client_width();
+        const num = client_width();
         if (num < 772) {
             return 772;
         }
@@ -219,17 +244,18 @@ export const Editor = () => {
     }
 
     function setEditorHeight() {
-        let dom = document.querySelector(".ql-editor");
+        const dom = document.querySelector(".ql-editor");
         if (dom) {
-            dom.style.minHeight = `calc(${height}px - 153px)`;
+            (dom as HTMLElement).style.minHeight = `calc(${height}px - 153px)`;
         } else {
             window.removeEventListener('resize', onResize);
         }
     }
 
-    function handleTitleChange(e) {
+    function handleTitleChange(e: React.FormEvent<HTMLDivElement>) {
         if (title.length < 40) {
-            setTitle(e.target.value);
+            const target = e.target;
+            setTitle((target as HTMLInputElement).value);
         }
     }
 
@@ -237,19 +263,19 @@ export const Editor = () => {
         setTitle("");
     }
 
-    function handleToolBarClick(button, value) {
+    function handleToolBarClick(button: string, value?: string | number) {
         let btn;
         if (value === undefined) {
             btn = document.querySelector(`.ql-${button}`);
         } else {
             btn = document.querySelector(`.ql-${button}[value='${value}']`);
         }
-        btn.click();
-        let isActive = buttonIsActive(button, value);
+        (btn as HTMLButtonElement)?.click();
+        const isActive = buttonIsActive(button, value);
         triggerHighlight(button, isActive);
     }
 
-    function buttonIsActive(button, value) {
+    function buttonIsActive(button: string, value?: string | number): boolean {
         let btn;
         let dom;
         if (value === undefined) {
@@ -259,14 +285,14 @@ export const Editor = () => {
             btn = document.querySelector(`.ql-${button}[value='${value}']`);
             dom = document.getElementById(button + "#" + value);
         }
-        let isActive = btn.classList.contains("ql-active");
-        dom.style.backgroundColor = isActive ?
+        const isActive = btn!.classList.contains("ql-active");
+        (dom as HTMLElement).style.backgroundColor = isActive ?
             "var(--variant-softHoverBg, var(--joy-palette-primary-softHoverBg, var(--joy-palette-primary-200, #C7DFF7)))" :
             "";
         return isActive;
     }
 
-    function triggerHighlight(button, isActive) {
+    function triggerHighlight(button: string, isActive: boolean) {
         if (button === "code-block") {
             if (!isActive) {
                 handleHighlight();
@@ -275,67 +301,115 @@ export const Editor = () => {
     }
 
     function handleHighlight() {
-        document.querySelector(".ql-editor").querySelectorAll("pre").forEach(el => {
-            new Promise(() => {
-                hljs.highlightElement(el);
-                el.removeAttribute("data-highlighted");
-            }).catch(() => null);
-        });
+        const dom = document.querySelector(".ql-editor");
+        if (dom) {
+            dom.querySelectorAll("pre").forEach(el => {
+                new Promise(() => {
+                    hljs.highlightElement(el);
+                    el.removeAttribute("data-highlighted");
+                }).catch(() => null);
+            });
+        }
     }
 
-    const uploadImg = async (files, callback) => {
-        const res = await Promise.all(
-            files.map((file) => {
-                return new Promise(resolve => {
-                    post_img(localStorage.getItem("token"), file).then(r => {
-                        if (r.saved !== null && r.saved !== undefined) {
-                            resolve(r.saved);
-                        }
-                    });
-                });
-            })
-        );
-
-        let protocol = window.location.protocol;
-        let hostname = window.location.hostname;
-        let port = window.location.port;
-        if (port === null || port === undefined || port === "")
-            port = null;
-
-        callback(res.map((id) =>
-            `${protocol}//${hostname}${port != null ? `:${8080}` : ""}/img/${id}`
-        ));
-        document.querySelectorAll(".md-editor-modal-close").forEach(el => {
-            el.click();
-        });
+    const uploadImg = async () => {
+        // return new Promise(resolve => {
+        //     post_img(localStorage.getItem("token"), file).then(r => {
+        //         if (r.saved !== null && r.saved !== undefined) {
+        //             resolve(r.saved);
+        //         }
+        //     });
+        // });
     };
 
-    function handleDescriptionChange(e) {
-        let value = e.target.value;
-        if (value.length <= 1000)
+    function handleDescriptionChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+        const target = e.target;
+        const value = (target as HTMLTextAreaElement).value;
+        if (value.length <= 500)
             setDescription(value);
     }
 
     function handleSelectCover() {
-        coverInputRef.current.click();
+        if (!coverImage)
+            coverInputRef?.current?.click();
     }
 
-    function handleCoverImageChange(e) {
-        let target = e.target;
-        let files = target.files;
-        if (files.length) {
-            let file = files[0];
-            let fileReader = new FileReader();
+    function handleMoveCover(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (coverImage) {
+            if (coverInputClicked && !coverInputMouseLeave) {
+                const moveX = e.clientX;
+                const moveY = e.clientY;
+
+                const x = coverImageX;
+                const y = coverImageY;
+
+                const mouseMoveX = moveX - x;
+                const mouseMoveY = moveY - y;
+
+                setCoverImageX(mouseMoveX);
+                setCoverImageY(mouseMoveY);
+            }
+        }
+    }
+
+    function handleMouseLeaveCover() {
+        handleMouseUpCover();
+        setCoverInputMouseLeave(true);
+    }
+
+    function handleMouseEnterCover() {
+        setCoverInputMouseLeave(false);
+    }
+
+    function handleMouseDownCover() {
+        setCoverInputClicked(true);
+    }
+
+    function handleMouseUpCover() {
+        setCoverInputClicked(false);
+    }
+
+    function handleCoverImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const target = e.target;
+        const files = target.files;
+        if (files && files.length) {
+            console.log(files.length)
+            const file = files[files.length - 1];
+            const fileReader = new FileReader();
             fileReader.onload = () => {
-                setCoverImage(fileReader.result);
+                const result = fileReader.result;
+                if (result) {
+                    setCoverImage(result as string);
+                    target.value = "";
+                }
             };
             fileReader.readAsDataURL(file);
         }
     }
 
-    function handleCleanCoverImage(e) {
+    function handleCleanCoverImage(e: React.MouseEvent<HTMLButtonElement>) {
         e.stopPropagation();
         setCoverImage(null);
+        setCoverInputClicked(false);
+        setCoverImageX(0);
+        setCoverImageY(0)
+    }
+
+    const getCategory = () => {
+        const catList: category[] = [];
+        get_category_all().then(r => {
+            if (r !== null) {
+                if (r instanceof Object) {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    Object.entries(r).forEach(([_, value]) => {
+                        get_category((value as categoryId).id).then(c => {
+                            catList.push(c as category);
+                            setCategoryList(catList);
+                        });
+                    });
+                }
+            }
+        });
     }
 
     return (
@@ -384,7 +458,7 @@ export const Editor = () => {
                                         value: title,
                                         color: "primary",
                                         variant: "outlined",
-                                        size: "md",
+                                        size: "sm",
                                         placeholder: "Type your title...",
                                         sx: {
                                             '--Input-focusedThickness': '0',
@@ -394,95 +468,178 @@ export const Editor = () => {
                             </Input>
                         </CardOverflow>
                         <Divider inset="none"/>
-                        <CardContent>
-                            <Typography level={"title-sm"}>
-                                Description
-                            </Typography>
-                            <Card color={"primary"} variant={"outlined"} className={'overflow-hidden'} sx={{
-                                padding: 1,
-                            }}>
-                                <PerfectScrollbar options={{suppressScrollX: true, useBothWheelAxes: false}}>
-                                    <Box
-                                        minHeight={80}
-                                        maxHeight={80}>
-                                        <Textarea
-                                            maxLength={1000}
-                                            value={description}
-                                            onChange={handleDescriptionChange}
-                                            onInput={handleDescriptionChange}
-                                            color="primary"
-                                            variant={"plain"}
-                                            disabled={false}
-                                            minRows={3}
-                                            placeholder="Type description..."
-                                            size="sm"
-                                            sx={{
-                                                '&::before': {
-                                                    border: 'none',
-                                                    left: '2.5px',
-                                                    right: '2.5px',
-                                                    bottom: 0,
-                                                    top: 'unset',
-                                                    transition: 'transform .15s cubic-bezier(0.1,0.9,0.2,1)',
-                                                    borderRadius: 0,
-                                                    borderBottomLeftRadius: '64px 20px',
-                                                    borderBottomRightRadius: '64px 20px',
-                                                },
-                                            }}
-                                        />
-                                    </Box>
-                                </PerfectScrollbar>
-                                <Typography
-                                    level="body-xs"
-                                    color={"primary"}
-                                    variant={"plain"}
-                                    sx={{ml: 'auto'}}>
-                                    {description.length}/1000
+                        <CardContent sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}>
+                            {/*Description*/}
+                            <Box display="flex" flexDirection={"column"} gap={1}>
+                                <Typography level={"title-sm"}>
+                                    Description
                                 </Typography>
-                            </Card>
-
-                            <Typography level={"title-sm"}>
-                                Cover
-                            </Typography>
-                            <AspectRatio onClick={handleSelectCover} className={'cursor-pointer'}>
-                                <Card
-                                    color="primary"
-                                    variant="outlined"
-                                    size="sm"
-                                >
-                                    <CardCover>
-                                        {coverImage === null ?
-                                            <Box display="flex"
-                                                 gap={2}
-                                                 justifyContent="center"
-                                                 alignItems="center">
-                                                <ImageOutlined/>
-                                                <Typography
-                                                    color={"primary"}
-                                                    variant={"plain"}
-                                                    level={"body-sm"}>
-                                                    Select your cover
-                                                </Typography>
-                                            </Box> :
-                                            <Box sx={{
-                                                overflow: "hidden"
-                                            }}>
-                                                <ModalClose
-                                                    onClick={handleCleanCoverImage}
-                                                    color={"danger"} variant={"solid"}/>
-                                                <img src={coverImage} loading={"lazy"} alt=""/>
-                                            </Box>
-
-                                        }
-                                    </CardCover>
+                                <Card color={"primary"} variant={"outlined"} className={'overflow-hidden'} sx={{
+                                    padding: 1,
+                                }}>
+                                    <PerfectScrollbar options={{suppressScrollX: true, useBothWheelAxes: false}}>
+                                        <Box
+                                            minHeight={80}
+                                            maxHeight={80}>
+                                            <Textarea
+                                                value={description}
+                                                onChange={handleDescriptionChange}
+                                                color="primary"
+                                                variant={"plain"}
+                                                disabled={false}
+                                                minRows={3}
+                                                placeholder="Type description..."
+                                                size="sm"
+                                                sx={{
+                                                    '&::before': {
+                                                        border: 'none',
+                                                        left: '2.5px',
+                                                        right: '2.5px',
+                                                        bottom: 0,
+                                                        top: 'unset',
+                                                        transition: 'transform .15s cubic-bezier(0.1,0.9,0.2,1)',
+                                                        borderRadius: 0,
+                                                        borderBottomLeftRadius: '64px 20px',
+                                                        borderBottomRightRadius: '64px 20px',
+                                                    },
+                                                }}
+                                            />
+                                        </Box>
+                                    </PerfectScrollbar>
+                                    <Typography
+                                        level="body-xs"
+                                        color={"primary"}
+                                        variant={"plain"}
+                                        sx={{ml: 'auto'}}>
+                                        {description.length}/500
+                                    </Typography>
                                 </Card>
-                                <input
-                                    onChange={handleCoverImageChange}
-                                    ref={coverInputRef}
-                                    hidden
-                                    type={"file"}
-                                    accept={"image/*"}/>
-                            </AspectRatio>
+                            </Box>
+                            {/*Cover*/}
+                            <Box display="flex" flexDirection={"column"} gap={1}>
+                                <Typography level={"title-sm"}>
+                                    Cover
+                                </Typography>
+                                <AspectRatio onClick={handleSelectCover}
+                                             onMouseMove={handleMoveCover}
+                                             onMouseLeave={handleMouseLeaveCover}
+                                             onMouseEnter={handleMouseEnterCover}
+                                             onMouseDown={handleMouseDownCover}
+                                             onMouseUp={handleMouseUpCover}
+                                             className={coverImage ?
+                                                 (coverInputClicked ? 'cursor-grabbing' : 'cursor-grab') :
+                                                 'cursor-pointer'}>
+                                    <Card
+                                        color="primary"
+                                        variant="outlined"
+                                        size="sm"
+                                    >
+                                        <CardCover>
+                                            {coverImage === null ?
+                                                <Box display="flex"
+                                                     gap={2}
+                                                     justifyContent="center"
+                                                     alignItems="center">
+                                                    <ImageOutlined/>
+                                                    <Typography
+                                                        color={"primary"}
+                                                        variant={"plain"}
+                                                        level={"body-sm"}>
+                                                        Select cover image
+                                                    </Typography>
+                                                </Box> :
+                                                <Box sx={{
+                                                    overflow: "hidden"
+                                                }}>
+                                                    <ModalClose
+                                                        onClick={handleCleanCoverImage}
+                                                        color={"danger"} variant={"solid"}/>
+                                                    <img style={{
+                                                        width: "100%",
+                                                        objectPosition: `${coverImageX}px ${coverImageY}px`
+                                                    }} draggable={false} src={coverImage} alt=""/>
+                                                </Box>
+
+                                            }
+                                        </CardCover>
+                                    </Card>
+                                    <input
+                                        onChange={handleCoverImageChange}
+                                        ref={coverInputRef}
+                                        hidden
+                                        type={"file"}
+                                        accept={"image/*"}/>
+                                </AspectRatio>
+                            </Box>
+                            {/*Category*/}
+                            <Box display="flex" flexDirection={"column"} gap={1}>
+                                <Typography level={"title-sm"}>
+                                    Category
+                                </Typography>
+                                <Select
+                                    action={selectionAction}
+                                    size="sm"
+                                    color={"primary"}
+                                    variant={"outlined"}
+                                    placeholder="Choose one category…"
+                                    value={selection}
+                                    onChange={(_e, newValue) => setSelection(newValue)}
+                                    {...(selection && {
+                                        endDecorator: (
+                                            <IconButton
+                                                variant="solid"
+                                                color="danger"
+                                                onMouseDown={(e) => {
+                                                    e.stopPropagation();
+                                                }}
+                                                onClick={() => {
+                                                    setSelection(null);
+                                                    selectionAction.current?.focusVisible();
+                                                }}
+                                                sx={{
+                                                    maxWidth: "var(--IconButton-size, 2rem)",
+                                                    maxHeight: "var(--IconButton-size, 2rem)"
+                                                }}
+                                            >
+                                                <CloseRounded/>
+                                            </IconButton>
+                                        ),
+                                        indicator: null,
+                                    })}
+                                    renderValue={(selected) => (
+                                        <Box sx={{display: 'flex', gap: '0.25rem'}}>
+                                            <Chip size="sm" variant="solid" color="primary">
+                                                {selected?.label}
+                                            </Chip>
+                                        </Box>
+                                    )}
+                                    slotProps={{
+                                        listbox: {
+                                            sx: {
+                                                padding: 0,
+                                                boxShadow: "lg"
+                                            }
+                                        },
+                                    }}>
+                                    <PerfectScrollbar options={{suppressScrollX: true, useBothWheelAxes: false}}>
+                                        <Box maxHeight={150}>
+                                            {categoryList.map((cat, index) => (
+                                                <Option key={index}
+                                                        color={"primary"}
+                                                        variant={"plain"}
+                                                        tabIndex={-1}
+                                                        value={cat.id}
+                                                        label={cat.catName}>
+                                                    {cat.catName}
+                                                </Option>
+                                            ))}
+                                        </Box>
+                                    </PerfectScrollbar>
+                                </Select>
+                            </Box>
                         </CardContent>
                         <CardActions>
                             {isModify ?
