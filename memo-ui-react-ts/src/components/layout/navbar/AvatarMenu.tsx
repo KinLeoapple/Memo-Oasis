@@ -6,9 +6,14 @@ import {setUserBasicInfoValue} from "@/assets/lib/data/reducer/user_basic_info_s
 import {useNavigate} from "react-router-dom";
 import {color_css_var} from "@/assets/lib/utils/color_css_var.js";
 import {MENU_ITEM, MENU_ITEM_DARK} from "@/assets/lib/data/static.ts";
-import {cloneElement} from "react";
+import {cloneElement, FC} from "react";
 
-export const AvatarMenu = ({
+type PropData = {
+    onMouseEnter: (e: Event | React.MouseEvent<HTMLButtonElement, MouseEvent> | React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+    onMouseLeave: (e: Event | React.MouseEvent<HTMLButtonElement, MouseEvent> | React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+};
+
+export const AvatarMenu: FC<PropData> = ({
                                onMouseEnter,
                                onMouseLeave
                            }) => {
@@ -16,13 +21,12 @@ export const AvatarMenu = ({
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const menuItems = [
         {
             decorator: <AccountCircle/>,
             text: "profile",
             color: "primary",
-            func: null
+            func: () => {}
         },
         {
             decorator: <Logout/>,
@@ -71,7 +75,7 @@ export const AvatarMenu = ({
                                     backgroundColor: themeMode.mode === 'dark' ? MENU_ITEM_DARK : MENU_ITEM,
                                 }
                             }}>
-                                <ListItemDecorator variant="plain">
+                                <ListItemDecorator>
                                     {cloneElement(item.decorator, {
                                         sx: {
                                             color: color_css_var(item.color)

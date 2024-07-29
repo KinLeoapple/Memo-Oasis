@@ -1,7 +1,7 @@
 import {Grid, Stack} from "@mui/joy";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {NavBar} from "@/components/layout/navbar/NavBar.js";
-import {ToTopButton} from "@/components/button/ToTopButton.jsx";
+import {ToTopButton} from "@/components/layout/ToTopButton.tsx";
 import {scroll_distance_to_top} from "@/assets/lib/utils/distance_to_top.js";
 import {Loader} from "@/components/layout/Loader.tsx";
 import {MAX_RENDER_PENDING} from "@/assets/lib/data/static.ts";

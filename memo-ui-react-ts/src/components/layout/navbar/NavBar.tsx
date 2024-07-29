@@ -9,7 +9,7 @@ import Search from '@mui/icons-material/Search';
 import {FC, useCallback, useEffect, useRef, useState} from "react";
 import avatar from "@/assets/img/avatar.webp";
 import {basic_info, post_token_login} from "@/assets/lib/api/api.js";
-import {AvatarMenu} from "@/components/layout/navbar/AvatarMenu.jsx";
+import {AvatarMenu} from "@/components/layout/navbar/AvatarMenu.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState, setLoginStateValue} from "@/assets/lib/data/reducer/login_state_slice.js";
 import {Close, HomeRounded, Notifications, Person, Settings} from "@mui/icons-material";
@@ -20,7 +20,7 @@ import {
     selectSearchKeyword,
     setSearchBlogKeyword
 } from "@/assets/lib/data/reducer/blog/search_keyword_slice.js";
-import {SearchMenu} from "@/components/layout/navbar/SearchMenu.jsx";
+import {SearchMenu} from "@/components/layout/navbar/SearchMenu.js";
 import {setShowResultValue} from "@/assets/lib/data/reducer/blog/show_search_result_slice.js";
 import {setOpenValue} from "@/assets/lib/data/reducer/layout/drawer_open_slice";
 
@@ -59,10 +59,7 @@ export const NavBar: FC<PropData> = ({
 
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const timer = useRef(
-        setTimeout(() => {
-        })
-    );
+    const timer = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         switch (location.pathname.split("/")[1]) {
@@ -188,7 +185,9 @@ export const NavBar: FC<PropData> = ({
         document.body.removeEventListener("keyup", search);
     }
 
-    function handleMouseEnter(e: Event | React.MouseEvent<HTMLButtonElement>) {
+    function handleMouseEnter(e: Event
+        | React.MouseEvent<HTMLButtonElement>
+        | React.MouseEvent<HTMLDivElement>) {
         e.stopPropagation();
         if (timer.current !== null) {
             clearTimeout(timer.current);
@@ -196,7 +195,9 @@ export const NavBar: FC<PropData> = ({
         setOpen(true);
     }
 
-    function handleMouseLeave(e: Event | React.MouseEvent<HTMLButtonElement>) {
+    function handleMouseLeave(e: Event
+        | React.MouseEvent<HTMLButtonElement>
+        | React.MouseEvent<HTMLDivElement>) {
         e.stopPropagation();
         timer.current = setTimeout(() => {
             setOpen(false);
@@ -334,7 +335,7 @@ export const NavBar: FC<PropData> = ({
                                                 root: {
                                                     variant: 'soft',
                                                     color: 'primary',
-                                                    onMouseEnter: handleMouseEnter,
+                                                    onMouseEnter: (e) => handleMouseEnter,
                                                     onMouseLeave: handleMouseLeave,
                                                     src: loading ? '' : avatar,
                                                     alt: name,

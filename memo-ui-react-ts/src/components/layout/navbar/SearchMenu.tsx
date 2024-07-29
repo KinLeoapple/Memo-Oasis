@@ -17,18 +17,33 @@ import {useEffect, useRef, useState} from "react";
 import {get_search_blog} from "@/assets/lib/api/api.ts";
 import {Inventory2} from "@mui/icons-material";
 
+interface searchItem {
+    id: string;
+    title: string;
+    desc: string;
+}
+
+interface searchItemList {
+    item: searchItem;
+}
+
 export const SearchMenu = () => {
     const themeMode = useColorScheme();
     const keyword = useSelector(selectSearchKeyword);
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
-    const [searchList, setSearchList] = useState([]);
-    const delaySearchTimer = useRef({timer: null, time: new Date().getTime()});
+    const [searchList, setSearchList] = useState<searchItem[]>([]);
+    const delaySearchTimer = useRef(
+        {
+            timer: setTimeout(() => {}),
+            time: new Date().getTime()
+        }
+    );
 
     useEffect(() => {
         setSearchList([]);
-        let time = new Date().getTime();
+        const time = new Date().getTime();
         if (time - delaySearchTimer.current.time <= 1200) {
             clearTimeout(delaySearchTimer.current.timer);
         }
@@ -36,10 +51,14 @@ export const SearchMenu = () => {
         delaySearchTimer.current.timer = setTimeout(() => {
             if (keyword.value !== "") {
                 get_search_blog(keyword.value).then(r => {
-                    let list = [];
+                    const list:searchItem[] = [];
                     if (r !== null) {
-                        for (let i in r) {
-                            list.push(r[i]);
+                        if (r instanceof Object) {
+                            const response = r as searchItemList;
+                            let key: keyof searchItemList;
+                            for (key in response) {
+                                list.push(response[key] as searchItem);
+                            }
                         }
                     }
                     setSearchList(list);
@@ -51,7 +70,7 @@ export const SearchMenu = () => {
         delaySearchTimer.current.time = time;
     }, [keyword]);
 
-    function goToRender(id) {
+    function goToRender(id: string | number) {
         dispatch(setSearchBlogKeyword(newSearchBlogKeyword("")));
         dispatch(setBlogValue(id));
     }
@@ -70,7 +89,6 @@ export const SearchMenu = () => {
                     }}>
                     <List
                         variant="soft"
-                        placement="bottom-start"
                         className={`${searchList.length === 0 ? 'flex justify-center items-center' : ''}`}
                         sx={{
                             padding: 0,

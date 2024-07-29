@@ -55,16 +55,26 @@ export const LoginCard = () => {
         setVisibility(!visibility);
     }
 
-    function changeName(e) {
-        setName(e.target.value);
+    function changeName(e: Event | React.ChangeEvent<HTMLInputElement>) {
+        const target = e.target;
+        if (target) {
+            const value = (target as HTMLInputElement).value;
+            if (value.length <= 20)
+                setName(value);
+        }
     }
 
     function cleanName() {
         setName("");
     }
 
-    function changePass(e) {
-        setPass(e.target.value);
+    function changePass(e: Event | React.ChangeEvent<HTMLInputElement>) {
+        const target = e.target;
+        if (target) {
+            const value = (target as HTMLInputElement).value;
+            if (value.length <= 20)
+                setPass(value);
+        }
     }
 
     function cleanPass() {
@@ -81,7 +91,11 @@ export const LoginCard = () => {
         post_login(name, pass).then(r => {
             if (r !== null) {
                 if (r instanceof Object) {
-                    const response= r;
+                    const response = r as {
+                        id: string | number,
+                        login: string,
+                        msg: string
+                    };
                     const id = response.id;
                     const token = response.login;
                     if (token !== null && token !== undefined) {
@@ -91,7 +105,7 @@ export const LoginCard = () => {
                         }));
                         navigate("/", {replace: true});
                     } else {
-                        setErrorMsg(r.msg);
+                        setErrorMsg(response.msg);
                         setSnackbarOpen(true);
                     }
                 }
@@ -100,14 +114,14 @@ export const LoginCard = () => {
         });
     }
 
-    async function handleKeyBoardSubmit(e) {
-        if (e.keyCode === 13) {
+    async function handleKeyBoardSubmit(e: React.KeyboardEvent<HTMLDivElement>) {
+        if (e.key === "Enter") {
             await login();
         }
     }
 
     return (
-        <div className={'flex flex-col gap-2'} onKeyDown={(e) => handleKeyBoardSubmit(e)}>
+        <div className={'flex flex-col gap-2'} onKeyDown={handleKeyBoardSubmit}>
             <Card invertedColors variant="soft" color="primary"
                   sx={{
                       boxShadow: "lg"
@@ -134,23 +148,22 @@ export const LoginCard = () => {
                                 >username</Chip>
                             }
                                    endDecorator={
-                                       name !== "" &&
-                                       <IconButton
-                                           tabIndex={-1}
-                                           onClick={cleanName}
-                                           sx={{
-                                               background: "transparent",
-                                               "&:hover": {
+                                       name !== "" ?
+                                           <IconButton
+                                               tabIndex={-1}
+                                               onClick={cleanName}
+                                               sx={{
                                                    background: "transparent",
-                                               }
-                                           }}
-                                       >
-                                           <Close/>
-                                       </IconButton>
+                                                   "&:hover": {
+                                                       background: "transparent",
+                                                   }
+                                               }}
+                                           >
+                                               <Close/>
+                                           </IconButton> : <></>
                                    }
                                    color="primary" variant="soft"
                                    className={'w-11/12'}
-                                   maxLength={20}
                                    size="md" sx={{
                                 '--Input-focusedThickness': '0',
                             }}/>
@@ -191,7 +204,6 @@ export const LoginCard = () => {
                                    color="primary" variant="soft"
                                    className={'w-11/12'}
                                    type={visibility ? "text" : "password"}
-                                   maxLength={20}
                                    size="md" sx={{
                                 '--Input-focusedThickness': '0',
                             }}/>

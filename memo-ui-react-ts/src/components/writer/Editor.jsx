@@ -1,8 +1,9 @@
 import {
+    AspectRatio, Box,
     Button, ButtonGroup,
     Card,
     CardActions,
-    CardContent, CardOverflow, Grid, IconButton, Input,
+    CardContent, CardCover, CardOverflow, Divider, Grid, IconButton, Input, ModalClose, Textarea,
     Typography
 } from "@mui/joy";
 import {useCallback, useEffect, useRef, useState} from "react";
@@ -17,7 +18,7 @@ import "@/assets/css/quill.css";
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.min.css";
-import {Close} from "@mui/icons-material";
+import {Close, ImageOutlined} from "@mui/icons-material";
 
 export const Editor = () => {
     const modules = {
@@ -141,6 +142,9 @@ export const Editor = () => {
     const navigate = useNavigate();
     const loginState = useSelector(selectLoginState);
     const editorRef = useRef(null);
+    const [description, setDescription] = useState("");
+    const coverInputRef = useRef(null);
+    const [coverImage, setCoverImage] = useState(null);
 
     useEffect(() => {
         if (location.pathname.split("/")[1] === "writeblog") {
@@ -306,6 +310,34 @@ export const Editor = () => {
         });
     };
 
+    function handleDescriptionChange(e) {
+        let value = e.target.value;
+        if (value.length <= 1000)
+            setDescription(value);
+    }
+
+    function handleSelectCover() {
+        coverInputRef.current.click();
+    }
+
+    function handleCoverImageChange(e) {
+        let target = e.target;
+        let files = target.files;
+        if (files.length) {
+            let file = files[0];
+            let fileReader = new FileReader();
+            fileReader.onload = () => {
+                setCoverImage(fileReader.result);
+            };
+            fileReader.readAsDataURL(file);
+        }
+    }
+
+    function handleCleanCoverImage(e) {
+        e.stopPropagation();
+        setCoverImage(null);
+    }
+
     return (
         <div className={'ml-5 mr-5'} style={{
             width: `${width}px`
@@ -361,6 +393,97 @@ export const Editor = () => {
                                 }}>
                             </Input>
                         </CardOverflow>
+                        <Divider inset="none"/>
+                        <CardContent>
+                            <Typography level={"title-sm"}>
+                                Description
+                            </Typography>
+                            <Card color={"primary"} variant={"outlined"} className={'overflow-hidden'} sx={{
+                                padding: 1,
+                            }}>
+                                <PerfectScrollbar options={{suppressScrollX: true, useBothWheelAxes: false}}>
+                                    <Box
+                                        minHeight={80}
+                                        maxHeight={80}>
+                                        <Textarea
+                                            maxLength={1000}
+                                            value={description}
+                                            onChange={handleDescriptionChange}
+                                            onInput={handleDescriptionChange}
+                                            color="primary"
+                                            variant={"plain"}
+                                            disabled={false}
+                                            minRows={3}
+                                            placeholder="Type description..."
+                                            size="sm"
+                                            sx={{
+                                                '&::before': {
+                                                    border: 'none',
+                                                    left: '2.5px',
+                                                    right: '2.5px',
+                                                    bottom: 0,
+                                                    top: 'unset',
+                                                    transition: 'transform .15s cubic-bezier(0.1,0.9,0.2,1)',
+                                                    borderRadius: 0,
+                                                    borderBottomLeftRadius: '64px 20px',
+                                                    borderBottomRightRadius: '64px 20px',
+                                                },
+                                            }}
+                                        />
+                                    </Box>
+                                </PerfectScrollbar>
+                                <Typography
+                                    level="body-xs"
+                                    color={"primary"}
+                                    variant={"plain"}
+                                    sx={{ml: 'auto'}}>
+                                    {description.length}/1000
+                                </Typography>
+                            </Card>
+
+                            <Typography level={"title-sm"}>
+                                Cover
+                            </Typography>
+                            <AspectRatio onClick={handleSelectCover} className={'cursor-pointer'}>
+                                <Card
+                                    color="primary"
+                                    variant="outlined"
+                                    size="sm"
+                                >
+                                    <CardCover>
+                                        {coverImage === null ?
+                                            <Box display="flex"
+                                                 gap={2}
+                                                 justifyContent="center"
+                                                 alignItems="center">
+                                                <ImageOutlined/>
+                                                <Typography
+                                                    color={"primary"}
+                                                    variant={"plain"}
+                                                    level={"body-sm"}>
+                                                    Select your cover
+                                                </Typography>
+                                            </Box> :
+                                            <Box sx={{
+                                                overflow: "hidden"
+                                            }}>
+                                                <ModalClose
+                                                    onClick={handleCleanCoverImage}
+                                                    color={"danger"} variant={"solid"}/>
+                                                <img src={coverImage} loading={"lazy"} alt=""/>
+                                            </Box>
+
+                                        }
+                                    </CardCover>
+                                </Card>
+                                <input
+                                    onChange={handleCoverImageChange}
+                                    ref={coverInputRef}
+                                    hidden
+                                    type={"file"}
+                                    accept={"image/*"}/>
+                            </AspectRatio>
+                        </CardContent>
                         <CardActions>
                             {isModify ?
                                 <Button loading={checking} className={'capitalize'} disabled={disabled} tabIndex={-1}
@@ -370,13 +493,15 @@ export const Editor = () => {
                                     post
                                 </Button> :
                                 <div className={'w-full flex justify-end items-center gap-5'}>
-                                    <Button loading={checking} className={'capitalize'} disabled={disabled} tabIndex={-1}
+                                    <Button loading={checking} className={'capitalize'} disabled={disabled}
+                                            tabIndex={-1}
                                             size={'sm'}
                                             variant={'soft'}
                                             color={'primary'}>
                                         post
                                     </Button>
-                                    <Button loading={checking} className={'capitalize'} disabled={disabled} tabIndex={-1}
+                                    <Button loading={checking} className={'capitalize'} disabled={disabled}
+                                            tabIndex={-1}
                                             size={'sm'}
                                             variant={'soft'}
                                             color={'primary'}>
@@ -415,7 +540,8 @@ export const Editor = () => {
                                             variant="outlined"
                                         >
                                             {toolBarItems.map((item, index) => (
-                                                <IconButton tabIndex={-1} id={item.id} size="sm" key={index} variant={"soft"}
+                                                <IconButton tabIndex={-1} id={item.id} size="sm" key={index}
+                                                            variant={"soft"}
                                                             onClick={item.func} sx={{
                                                     paddingLeft: 2.5,
                                                     paddingRight: 2.5,
