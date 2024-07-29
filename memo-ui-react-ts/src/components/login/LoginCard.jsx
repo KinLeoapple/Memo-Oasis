@@ -22,7 +22,7 @@ import {
 } from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {post_login} from "@/assets/lib/api/api.js";
+import {post_login} from "@/assets/lib/api/api.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState} from "@/assets/lib/data/reducer/login_state_slice.js";
 import {setUserBasicInfoValue} from "@/assets/lib/data/reducer/user_basic_info_slice.js";
@@ -80,15 +80,20 @@ export const LoginCard = () => {
         setChecking(true);
         post_login(name, pass).then(r => {
             if (r !== null) {
-                if (r.login !== null && r.login !== undefined) {
-                    localStorage.setItem("token", r.login);
-                    dispatch(setUserBasicInfoValue({
-                        id: r.id
-                    }));
-                    navigate("/", {replace: true});
-                } else {
-                    setErrorMsg(r.msg);
-                    setSnackbarOpen(true);
+                if (r instanceof Object) {
+                    const response= r;
+                    const id = response.id;
+                    const token = response.login;
+                    if (token !== null && token !== undefined) {
+                        localStorage.setItem("token", token);
+                        dispatch(setUserBasicInfoValue({
+                            id: id
+                        }));
+                        navigate("/", {replace: true});
+                    } else {
+                        setErrorMsg(r.msg);
+                        setSnackbarOpen(true);
+                    }
                 }
             }
             setChecking(false);

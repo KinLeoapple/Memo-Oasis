@@ -3,7 +3,7 @@ import img from "@/assets/img/img.webp";
 import {useDispatch, useSelector} from "react-redux";
 import {selectBlog} from "@/assets/lib/data/reducer/blog/blog_slice.js";
 import {useEffect, useState} from "react";
-import {get_blog_content} from "@/assets/lib/api/api.js";
+import {get_blog_content} from "@/assets/lib/api/api.ts";
 import {setContentValue} from "@/assets/lib/data/reducer/blog/blog_content_slice.js";
 import {newSearchBlogKeyword, setSearchBlogKeyword} from "@/assets/lib/data/reducer/blog/search_keyword_slice.js";
 import {setShowResultValue} from "@/assets/lib/data/reducer/blog/show_search_result_slice.js";

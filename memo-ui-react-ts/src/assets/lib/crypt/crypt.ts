@@ -9,10 +9,15 @@ export const crypt_str = async (str: string) => {
         const encrypt = new JSEncrypt();
         get_key().then(r => {
             if (r !== null) {
-                const publicKeyBase64 = r.key;
-                if (publicKeyBase64 !== null) {
-                    encrypt.setPublicKey(publicKeyBase64)
-                    resolve(encrypt.encrypt(md5Password));
+                if (r instanceof Object) {
+                    const response = r as {
+                        key: string,
+                    };
+                    const publicKeyBase64 = response.key;
+                    if (publicKeyBase64 !== null) {
+                        encrypt.setPublicKey(publicKeyBase64)
+                        resolve(encrypt.encrypt(md5Password));
+                    }
                 }
             }
         });

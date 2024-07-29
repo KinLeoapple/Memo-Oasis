@@ -1,6 +1,6 @@
 import {Box, Button, Modal, ModalDialog, Typography} from "@mui/joy";
 import {useEffect, useState} from "react";
-import {delete_blog} from "@/assets/lib/api/api.js";
+import {delete_blog} from "@/assets/lib/api/api.ts";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {selectBlogDelete, setBlogDeleteValue} from "@/assets/lib/data/reducer/blog/blog_delete_slice.js";

@@ -14,7 +14,7 @@ import {
 import {SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/lib/data/static.ts";
 import {setBlogValue} from "@/assets/lib/data/reducer/blog/blog_slice.js";
 import {useEffect, useRef, useState} from "react";
-import {get_search_blog} from "@/assets/lib/api/api.js";
+import {get_search_blog} from "@/assets/lib/api/api.ts";
 import {Inventory2} from "@mui/icons-material";
 
 export const SearchMenu = () => {

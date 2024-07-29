@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.15.20",
     "@mui/joy": "^5.0.0-beta.44",
     "@reduxjs/toolkit": "^2.2.5",
+    "axios": "^1.7.2",
     "highlight.js": "^11.10.0",
     "js-md5": "^0.8.3",
     "jsencrypt": "^3.3.2",
@@ -32,8 +33,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "unplugin-imagemin": "^0.5.18",
-    "vite-plugin-compression": "^0.5.1",
-    "zl-fetch": "^6.0.2"
+    "vite-plugin-compression": "^0.5.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

@@ -7,7 +7,7 @@ import {
 } from "@mui/joy";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {client_height, client_width} from "@/assets/lib/utils/client_size.js";
-import {post_img} from "@/assets/lib/api/api.js";
+import {post_img} from "@/assets/lib/api/api.ts";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {selectLoginState} from "@/assets/lib/data/reducer/login_state_slice.js";

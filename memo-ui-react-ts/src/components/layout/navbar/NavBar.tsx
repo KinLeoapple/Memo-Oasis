@@ -1,5 +1,5 @@
 import {
-    Avatar, Button, ButtonGroup,
+    Avatar, Box, Button, ButtonGroup,
     Dropdown,
     Grid, IconButton,
     Input, MenuButton, Skeleton, useColorScheme
@@ -13,7 +13,7 @@ import {AvatarMenu} from "@/components/layout/navbar/AvatarMenu.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState, setLoginStateValue} from "@/assets/lib/data/reducer/login_state_slice.js";
 import {Close, HomeRounded, Notifications, Person, Settings} from "@mui/icons-material";
-import {AVATAR_RING, AVATAR_RING_DARK, BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/lib/data/static.ts";
+import {BG, BG_DARK, SEARCH_INPUT, SEARCH_INPUT_DARK} from "@/assets/lib/data/static.ts";
 import {selectUserBasicInfo, setUserBasicInfoValue} from "@/assets/lib/data/reducer/user_basic_info_slice.js";
 import {
     newSearchBlogKeyword,
@@ -23,6 +23,7 @@ import {
 import {SearchMenu} from "@/components/layout/navbar/SearchMenu.jsx";
 import {setShowResultValue} from "@/assets/lib/data/reducer/blog/show_search_result_slice.js";
 import {setOpenValue} from "@/assets/lib/data/reducer/layout/drawer_open_slice";
+
 
 type PropData = {
     renderPending: (value: boolean) => void
@@ -90,17 +91,24 @@ export const NavBar: FC<PropData> = ({
             if (token !== null && token !== undefined && token !== "") {
                 post_token_login(token).then(r => {
                     if (r !== null) {
-                        const newToken = r.login;
-                        if (newToken !== null) {
-                            setLogin(true);
-                            dispatch(setLoginStateValue(true));
-                            localStorage.setItem("token", newToken);
-                            dispatch(setUserBasicInfoValue({
-                                id: r.id
-                            }));
-                        } else {
-                            dispatch(setLoginStateValue(false));
-                            setLogin(false);
+                        if (r instanceof Object) {
+                            const response = r as {
+                                id: string | number,
+                                login: string
+                            };
+                            const id = response.id;
+                            const newToken = response.login;
+                            if (newToken !== null && newToken !== undefined) {
+                                setLogin(true);
+                                dispatch(setLoginStateValue(true));
+                                localStorage.setItem("token", newToken);
+                                dispatch(setUserBasicInfoValue({
+                                    id: id
+                                }));
+                            } else {
+                                dispatch(setLoginStateValue(false));
+                                setLogin(false);
+                            }
                         }
                     } else {
                         dispatch(setLoginStateValue(false));
@@ -123,15 +131,25 @@ export const NavBar: FC<PropData> = ({
         if (login) {
             setLoading(true);
             basic_info(userBasicInfo.id).then(r => {
-                setName(r.name);
-                setQuote(r.quote);
-                setQuoteName(r.quote_name);
-                dispatch(setUserBasicInfoValue({
-                    id: userBasicInfo.id,
-                    name: r.name,
-                    quote: r.quote,
-                    quoteName: r.quote_name
-                }));
+                if (r instanceof Object) {
+                    const response = r as {
+                        name: string,
+                        quote: string,
+                        quote_name: string
+                    };
+                    const name = response.name;
+                    const quote = response.quote;
+                    const quoteName = response.quote_name;
+                    setName(name);
+                    setQuote(quote);
+                    setQuoteName(quoteName);
+                    dispatch(setUserBasicInfoValue({
+                        id: userBasicInfo.id,
+                        name: name,
+                        quote: quote,
+                        quoteName: quoteName
+                    }));
+                }
                 setLoading(false);
             });
         }
@@ -218,7 +236,7 @@ export const NavBar: FC<PropData> = ({
              justify-between items-center gap-5 flex-nowrap p-5 mb-3 backdrop-blur-lg
             bg-opacity-80 ${themeMode.mode === 'dark' ? BG_DARK : BG}`} sx={{flexGrow: 1}}>
                 {/* nav buttons */}
-                <Grid xs={1}>
+                <Grid xs={1} flexGrow={1}>
                     <div className={'flex flex-row justify-start items-center gap-2'}>
                         <div className={'flex flex-row gap-3'}>
                             {navButtons.map((btn) => (
@@ -240,7 +258,7 @@ export const NavBar: FC<PropData> = ({
                 </Grid>
                 {/* nav search bar */}
                 {searchBar &&
-                    <Grid xs={0.8} className={'relative'}>
+                    <Grid xs={0.8} className={'relative'} flexGrow={1}>
                         <Input
                             slots={{root: Input}}
                             slotProps={{
@@ -294,8 +312,8 @@ export const NavBar: FC<PropData> = ({
                         }
                     </Grid>
                 }
-                {/* nav avatar */}
-                <Grid className={`relative z-30 flex justify-end items-center gap-3 select-none`} xs={1}>
+                {/* nav right */}
+                <Grid className={`relative z-30 flex justify-end items-center gap-3 select-none`} xs={1} flexGrow={1}>
                     <Grid container
                           spacing={2}
                           direction="row"
@@ -304,41 +322,39 @@ export const NavBar: FC<PropData> = ({
                         <Grid xs>
                             {login ?
                                 <Dropdown open={open}>
-                                    <MenuButton
-                                        tabIndex={-1}
-                                        slots={{root: Avatar}}
-                                        slotProps={{
-                                            root: {
-                                                variant: 'plain',
-                                                color: 'primary',
-                                                onMouseEnter: handleMouseEnter,
-                                                onMouseLeave: handleMouseLeave,
-                                                sx: {
-                                                    border: "2px solid",
-                                                    borderColor: open ?
-                                                        (themeMode.mode === 'dark' ? AVATAR_RING_DARK : AVATAR_RING) :
-                                                        "transparent",
-                                                    transition: "all .2s",
-                                                    "&:hover": {
-                                                        borderColor: themeMode.mode === 'dark' ? AVATAR_RING_DARK : AVATAR_RING,
-                                                    }
+                                    <Box
+                                        display={"flex"}
+                                        justifyContent={"flex-end"}
+                                        minWidth={90}
+                                        maxWidth={90}>
+                                        <MenuButton
+                                            tabIndex={-1}
+                                            slots={{root: Avatar}}
+                                            slotProps={{
+                                                root: {
+                                                    variant: 'soft',
+                                                    color: 'primary',
+                                                    onMouseEnter: handleMouseEnter,
+                                                    onMouseLeave: handleMouseLeave,
+                                                    src: loading ? '' : avatar,
+                                                    alt: name,
                                                 }
-                                            }
-                                        }}>
-                                        <Avatar alt={name} src={(loading ? '' : avatar)} color="primary"
-                                                variant="soft"
-                                                className={'cursor-pointer'}></Avatar>
-                                        <Skeleton loading={loading} animation="wave" variant="circular"/>
-                                    </MenuButton>
+                                            }}>
+                                            <Skeleton loading={loading} animation="wave" variant="circular"/>
+                                        </MenuButton>
+                                    </Box>
                                     <AvatarMenu onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}/>
                                 </Dropdown> :
-                                <Button onClick={signIn} startDecorator={<Person/>}>
+                                <Button size={"sm"} onClick={signIn} startDecorator={<Person/>} sx={{
+                                    minWidth: 90,
+                                    maxWidth: 90
+                                }}>
                                     Sign in
                                 </Button>
                             }
                         </Grid>
                         <Grid xs sx={{
-                            marginRight: 2
+                            marginRight: 0
                         }}>
                             <ButtonGroup
                                 color="primary"
@@ -348,7 +364,8 @@ export const NavBar: FC<PropData> = ({
                                 <IconButton tabIndex={-1} size={"sm"} color={"primary"} variant={"soft"}>
                                     <Notifications/>
                                 </IconButton>
-                                <IconButton tabIndex={-1} onClick={handleDrawerOpen} size={"sm"} color={"primary"} variant={"soft"}>
+                                <IconButton tabIndex={-1} onClick={handleDrawerOpen} size={"sm"} color={"primary"}
+                                            variant={"soft"}>
                                     <Settings/>
                                 </IconButton>
                             </ButtonGroup>

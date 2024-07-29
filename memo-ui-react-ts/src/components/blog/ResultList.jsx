@@ -8,7 +8,7 @@ import {
     get_draft,
     get_draft_all,
     get_draft_content, get_search_blog
-} from "@/assets/lib/api/api.js";
+} from "@/assets/lib/api/api.ts";
 import {append_list} from "@/assets/lib/utils/append_list.js";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUserBasicInfo} from "@/assets/lib/data/reducer/user_basic_info_slice.js";
