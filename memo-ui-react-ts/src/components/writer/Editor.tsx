@@ -325,7 +325,7 @@ export const Editor = () => {
         setToolTipClickAway(toolTipClickAwayRef.current);
     };
 
-    const handleToolTipInputClick = () => {
+    const handleToolTipClick = () => {
         toolTipClickAwayRef.current = false;
         setToolTipClickAway(toolTipClickAwayRef.current);
     }
@@ -756,14 +756,13 @@ export const Editor = () => {
                     </Card>
                 </Grid>
             </Grid>
-            <ClickAwayListener onClickAway={handleToolTipClickAway}>
-                <Box
-                    onClick={handleToolTipInputClick}
-                    ref={toolTipRef}
-                    sx={{
-                        position: "absolute",
-                    }}
-                >
+            <ClickAwayListener onClickAway={handleToolTipClickAway} style={{
+                position: "absolute",
+                zIndex: 9999
+            }}>
+                <Box ref={toolTipRef} onClick={handleToolTipClick} sx={{
+                    position: "absolute",
+                }}>
                     <Input color="primary"
                            variant="outlined"
                            size="sm"
