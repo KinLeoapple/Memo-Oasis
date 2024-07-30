@@ -1,7 +1,7 @@
 # TODOS
 
  - Finish the blog modify function.
- - Fix the cover image movement.
+ - Fix the tooltip.
  - Finish the Sign up function.
  - Think about the home page (important !!!)
 

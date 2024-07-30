@@ -1,3 +1,10 @@
+.quill {
+    font-family: 'Nunito Variable', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif !important;
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
 .ql-toolbar {
     display: none;
 }
@@ -7,6 +14,10 @@
 }
 
 .ql-editor::before {
+    font-family: 'Nunito Variable', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif !important;
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
     color: var(--variant-softColor, var(--joy-palette-primary-softColor, var(--joy-palette-primary-700, #12467B))) !important;
 }
 

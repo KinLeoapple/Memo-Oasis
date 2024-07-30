@@ -1,4 +1,5 @@
 import {
+    Alert,
     AspectRatio,
     Box,
     Button,
@@ -24,7 +25,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {client_height, client_width} from "@/assets/lib/utils/client_size.js";
 import {get_category, get_category_all} from "@/assets/lib/api/api.ts";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {selectLoginState} from "@/assets/lib/data/reducer/login_state_slice.js";
 import ReactQuill from 'react-quill-new';
 import "react-quill-new/dist/quill.snow.css";
@@ -33,6 +34,12 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.min.css";
 import {Close, CloseRounded, ImageOutlined} from "@mui/icons-material";
+import {CutImageModal} from "@/components/writer/CutImageModal.tsx";
+import {setSelectedCoverImageValue} from "@/assets/lib/data/reducer/writer/selected_cover_image_slice";
+import {selectCoverImage, setCoverImageValue} from "@/assets/lib/data/reducer/writer/cover_image_slice";
+import {setCoverModalOpenValue} from "@/assets/lib/data/reducer/writer/cover_modal_open_slice";
+import {elementPosition} from "@/assets/lib/utils/element_position.ts";
+import {ClickAwayListener} from "@mui/base";
 
 interface category {
     id: string | number,
@@ -150,6 +157,7 @@ export const Editor = () => {
         }
     ]
 
+    const dispatch = useDispatch();
     const params = useParams();
     const [mounted, setMounted] = useState(false);
     const [title, setTitle] = useState("");
@@ -160,6 +168,9 @@ export const Editor = () => {
     const [checking, setChecking] = useState(false);
     const [disabled, setDisabled] = useState(false);
     const [isModify, setIsModify] = useState(false);
+    const toolTipRef = useRef<HTMLDivElement>(null);
+    const [toolTipClickAway, setToolTipClickAway] = useState(true);
+    const toolTipClickAwayRef = useRef(toolTipClickAway);
     const blogId = useRef(params.id);
     const location = useLocation();
     const navigate = useNavigate();
@@ -167,11 +178,7 @@ export const Editor = () => {
     const editorRef = useRef<ReactQuill | null>(null);
     const [description, setDescription] = useState("");
     const coverInputRef = useRef<HTMLInputElement | null>(null);
-    const [coverInputClicked, setCoverInputClicked] = useState(false);
-    const [coverInputMouseLeave, setCoverInputMouseLeave] = useState(false);
-    const [coverImage, setCoverImage] = useState<string | null>(null);
-    const [coverImageX, setCoverImageX] = useState(0);
-    const [coverImageY, setCoverImageY] = useState(0);
+    const coverImage = useSelector(selectCoverImage);
     const [categoryList, setCategoryList] = useState<category[]>([]);
     const [selection, setSelection] = useState<string | null>('dog');
     const selectionAction: SelectStaticProps['action'] = useRef(null);
@@ -186,6 +193,7 @@ export const Editor = () => {
                     setIsModify(true);
                 }
                 getCategory();
+                overrideToolTip();
             } else {
                 navigate("/login", {replace: true});
             }
@@ -312,6 +320,56 @@ export const Editor = () => {
         }
     }
 
+    const handleToolTipClickAway = () => {
+        toolTipClickAwayRef.current = true;
+        setToolTipClickAway(toolTipClickAwayRef.current);
+    };
+
+    const handleToolTipInputClick = () => {
+        toolTipClickAwayRef.current = false;
+        setToolTipClickAway(toolTipClickAwayRef.current);
+    }
+
+    function overrideToolTip() {
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.attributeName === "class") {
+                    const target = mutation.target as HTMLElement;
+                    const classList = target.classList;
+                    if (classList.contains("ql-tooltip") && classList.contains("ql-editing")) {
+                        const mode = target.getAttribute("data-mode");
+                        if (mode === "link") {
+                            const toolTip = toolTipRef.current;
+                            if (toolTip) {
+                                if (classList.contains("ql-hidden")) {
+                                    console.log(toolTipClickAwayRef.current)
+                                    if (toolTipClickAwayRef.current) {
+                                        toolTip.style.zIndex = "-9999";
+                                        toolTip.style.display = "none";
+                                    }
+                                } else {
+                                    toolTipClickAwayRef.current = false;
+                                    setToolTipClickAway(toolTipClickAwayRef.current);
+                                    const position = elementPosition(target);
+                                    toolTip.style.zIndex = "9999";
+                                    toolTip.style.left = position.x + "px";
+                                    toolTip.style.top = position.y + "px";
+                                    toolTip.style.display = "block";
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        const dom = document.querySelector(".ql-tooltip");
+        if (dom) {
+            (dom as HTMLElement).style.visibility = "hidden";
+            observer.observe(dom, {attributes: true});
+        }
+    }
+
     const uploadImg = async () => {
         // return new Promise(resolve => {
         //     post_img(localStorage.getItem("token"), file).then(r => {
@@ -330,56 +388,22 @@ export const Editor = () => {
     }
 
     function handleSelectCover() {
-        if (!coverImage)
+        if (coverImage || coverImage !== "") {
+            dispatch(setCoverModalOpenValue(true));
+        } else
             coverInputRef?.current?.click();
-    }
-
-    function handleMoveCover(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        if (coverImage) {
-            if (coverInputClicked && !coverInputMouseLeave) {
-                const moveX = e.clientX;
-                const moveY = e.clientY;
-
-                const x = coverImageX;
-                const y = coverImageY;
-
-                const mouseMoveX = moveX - x;
-                const mouseMoveY = moveY - y;
-
-                setCoverImageX(mouseMoveX);
-                setCoverImageY(mouseMoveY);
-            }
-        }
-    }
-
-    function handleMouseLeaveCover() {
-        handleMouseUpCover();
-        setCoverInputMouseLeave(true);
-    }
-
-    function handleMouseEnterCover() {
-        setCoverInputMouseLeave(false);
-    }
-
-    function handleMouseDownCover() {
-        setCoverInputClicked(true);
-    }
-
-    function handleMouseUpCover() {
-        setCoverInputClicked(false);
     }
 
     function handleCoverImageChange(e: React.ChangeEvent<HTMLInputElement>) {
         const target = e.target;
         const files = target.files;
         if (files && files.length) {
-            console.log(files.length)
             const file = files[files.length - 1];
             const fileReader = new FileReader();
             fileReader.onload = () => {
                 const result = fileReader.result;
                 if (result) {
-                    setCoverImage(result as string);
+                    dispatch(setSelectedCoverImageValue(result as string));
                     target.value = "";
                 }
             };
@@ -389,10 +413,7 @@ export const Editor = () => {
 
     function handleCleanCoverImage(e: React.MouseEvent<HTMLButtonElement>) {
         e.stopPropagation();
-        setCoverImage(null);
-        setCoverInputClicked(false);
-        setCoverImageX(0);
-        setCoverImageY(0)
+        dispatch(setCoverImageValue(""));
     }
 
     const getCategory = () => {
@@ -470,7 +491,8 @@ export const Editor = () => {
                         <Divider inset="none"/>
                         <CardContent sx={{
                             display: "flex",
-                            justifyContent: "space-between",
+                            justifyContent: "flex-start",
+                            gap: 2
                         }}>
                             {/*Description*/}
                             <Box display="flex" flexDirection={"column"} gap={1}>
@@ -524,21 +546,14 @@ export const Editor = () => {
                                     Cover
                                 </Typography>
                                 <AspectRatio onClick={handleSelectCover}
-                                             onMouseMove={handleMoveCover}
-                                             onMouseLeave={handleMouseLeaveCover}
-                                             onMouseEnter={handleMouseEnterCover}
-                                             onMouseDown={handleMouseDownCover}
-                                             onMouseUp={handleMouseUpCover}
-                                             className={coverImage ?
-                                                 (coverInputClicked ? 'cursor-grabbing' : 'cursor-grab') :
-                                                 'cursor-pointer'}>
+                                             className={'cursor-pointer'}>
                                     <Card
                                         color="primary"
                                         variant="outlined"
                                         size="sm"
                                     >
                                         <CardCover>
-                                            {coverImage === null ?
+                                            {!coverImage || coverImage === "" ?
                                                 <Box display="flex"
                                                      gap={2}
                                                      justifyContent="center"
@@ -557,10 +572,7 @@ export const Editor = () => {
                                                     <ModalClose
                                                         onClick={handleCleanCoverImage}
                                                         color={"danger"} variant={"solid"}/>
-                                                    <img style={{
-                                                        width: "100%",
-                                                        objectPosition: `${coverImageX}px ${coverImageY}px`
-                                                    }} draggable={false} src={coverImage} alt=""/>
+                                                    <img draggable={false} src={coverImage} alt=""/>
                                                 </Box>
 
                                             }
@@ -573,6 +585,7 @@ export const Editor = () => {
                                         type={"file"}
                                         accept={"image/*"}/>
                                 </AspectRatio>
+                                <CutImageModal/>
                             </Box>
                             {/*Category*/}
                             <Box display="flex" flexDirection={"column"} gap={1}>
@@ -645,7 +658,7 @@ export const Editor = () => {
                             {isModify ?
                                 <Button loading={checking} className={'capitalize'} disabled={disabled} tabIndex={-1}
                                         size={'sm'}
-                                        variant={'soft'}
+                                        variant={'solid'}
                                         color={'primary'}>
                                     post
                                 </Button> :
@@ -653,14 +666,14 @@ export const Editor = () => {
                                     <Button loading={checking} className={'capitalize'} disabled={disabled}
                                             tabIndex={-1}
                                             size={'sm'}
-                                            variant={'soft'}
+                                            variant={'solid'}
                                             color={'primary'}>
                                         post
                                     </Button>
                                     <Button loading={checking} className={'capitalize'} disabled={disabled}
                                             tabIndex={-1}
                                             size={'sm'}
-                                            variant={'soft'}
+                                            variant={'solid'}
                                             color={'primary'}>
                                         save as draft
                                     </Button>
@@ -718,7 +731,7 @@ export const Editor = () => {
                                               maxHeight: `calc(${height}px - 135px)`,
                                               cursor: "text"
                                           }}>
-                                        <PerfectScrollbar>
+                                        <PerfectScrollbar options={{suppressScrollX: true, useBothWheelAxes: false}}>
                                             <ReactQuill
                                                 style={{
                                                     minHeight: `calc(${height}px - 153px)`,
@@ -743,6 +756,22 @@ export const Editor = () => {
                     </Card>
                 </Grid>
             </Grid>
+            <ClickAwayListener onClickAway={handleToolTipClickAway}>
+                <Box
+                    onClick={handleToolTipInputClick}
+                    ref={toolTipRef}
+                    sx={{
+                        position: "absolute",
+                    }}
+                >
+                    <Input color="primary"
+                           variant="outlined"
+                           size="sm"
+                           sx={{
+                               '--Input-focusedThickness': '0',
+                           }}/>
+                </Box>
+            </ClickAwayListener>
         </div>
     )
 }
