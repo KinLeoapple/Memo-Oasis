@@ -13,6 +13,7 @@ import {selectShowSearchResult} from "@/assets/lib/data/reducer/blog/show_search
 import {SearchResult} from "@/components/blog/SearchResult.jsx";
 import {DeleteConfirm} from "@/components/blog/DeleteConfirm.jsx";
 import {setOpButtonValue} from "@/assets/lib/data/reducer/blog/blog_op_button_slice.js";
+import {CreateBlogButton} from "@/components/blog/CreateBlogButton.tsx";
 
 export const Blog = () => {
     const dispatch = useDispatch();
@@ -31,7 +32,10 @@ export const Blog = () => {
                 left={{
                     el: <>
                         {blog === 0 ?
-                            <CategoriesList/> :
+                            <>
+                                <CreateBlogButton/>
+                                <CategoriesList/>
+                            </> :
                             <BlogIndex/>
                         }
                     </>,

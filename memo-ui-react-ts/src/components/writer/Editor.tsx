@@ -1,5 +1,4 @@
 import {
-    Alert,
     AspectRatio,
     Box,
     Button,
@@ -39,7 +38,7 @@ import {setSelectedCoverImageValue} from "@/assets/lib/data/reducer/writer/selec
 import {selectCoverImage, setCoverImageValue} from "@/assets/lib/data/reducer/writer/cover_image_slice";
 import {setCoverModalOpenValue} from "@/assets/lib/data/reducer/writer/cover_modal_open_slice";
 import {elementPosition} from "@/assets/lib/utils/element_position.ts";
-import {ClickAwayListener} from "@mui/base";
+import {selectEditorSelection, setEditorSelection} from "@/assets/lib/data/reducer/writer/editor_selection_slice";
 
 interface category {
     id: string | number,
@@ -52,108 +51,93 @@ interface categoryId {
 
 export const Editor = () => {
     const modules = {
-        toolbar: [
-            "bold",
-            "italic",
-            "underline",
-            "strike",
-            {'script': 'super'},
-            {'script': 'sub'},
-            {header: 1},
-            {header: 2},
-            "blockquote",
-            "code-block",
-            "link",
-            {list: "ordered"},
-            {list: "bullet"},
-            "image"
-        ],
+        toolbar: '#toolbar',
     };
 
     const toolBarItems = [
         {
             id: "bold",
+            className: "ql-bold",
             icon: "format_bold",
             color: "primary",
-            func: () => handleToolBarClick("bold")
         },
         {
             id: "italic",
+            className: "ql-italic",
             icon: "format_italic",
             color: "primary",
-            func: () => handleToolBarClick("italic")
         },
         {
             id: "underline",
+            className: "ql-underline",
             icon: "format_underlined",
             color: "primary",
-            func: () => handleToolBarClick("underline")
         },
         {
             id: "strike",
+            className: "ql-strike",
             icon: "strikethrough_s",
             color: "primary",
-            func: () => handleToolBarClick("strike")
         },
         {
             id: "script#super",
+            className: "ql-script",
             icon: "superscript",
             color: "primary",
-            func: () => handleToolBarClick("script", "super")
         },
         {
             id: "script#sub",
+            className: "ql-script",
             icon: "subscript",
             color: "primary",
-            func: () => handleToolBarClick("script", "sub")
         },
         {
             id: "header#1",
+            className: "ql-header",
             icon: "format_h1",
             color: "primary",
-            func: () => handleToolBarClick("header", 1)
         },
         {
             id: "header#2",
+            className: "ql-header",
             icon: "format_h2",
             color: "primary",
-            func: () => handleToolBarClick("header", 2)
         },
         {
             id: "blockquote",
+            className: "ql-blockquote",
             icon: "format_quote",
             color: "primary",
-            func: () => handleToolBarClick("blockquote")
         },
         {
             id: "code-block",
+            className: "ql-code-block",
             icon: "code",
             color: "primary",
-            func: () => handleToolBarClick("code-block")
         },
         {
             id: "link",
+            className: "ql-link",
             icon: "link",
             color: "primary",
-            func: () => handleToolBarClick("link")
         },
         {
             id: "list#ordered",
+            className: "ql-list",
             icon: "format_list_numbered",
             color: "primary",
-            func: () => handleToolBarClick("list", "ordered")
         },
         {
             id: "list#bullet",
+            className: "ql-list",
             icon: "format_list_bulleted",
             color: "primary",
-            func: () => handleToolBarClick("list", "bullet")
         },
         {
             id: "image",
+            className: "ql-image",
             icon: "imagesmode",
             color: "primary",
-            func: () => handleToolBarClick("image")
         }
     ]
 
@@ -169,18 +153,19 @@ export const Editor = () => {
     const [disabled, setDisabled] = useState(false);
     const [isModify, setIsModify] = useState(false);
     const toolTipRef = useRef<HTMLDivElement>(null);
-    const [toolTipClickAway, setToolTipClickAway] = useState(true);
-    const toolTipClickAwayRef = useRef(toolTipClickAway);
+    const toolTipClickAwayRef = useRef(true);
     const blogId = useRef(params.id);
     const location = useLocation();
     const navigate = useNavigate();
     const loginState = useSelector(selectLoginState);
     const editorRef = useRef<ReactQuill | null>(null);
+    const editorSelection = useSelector(selectEditorSelection);
+    const editorTextRef = useRef<string | null>(null);
     const [description, setDescription] = useState("");
     const coverInputRef = useRef<HTMLInputElement | null>(null);
     const coverImage = useSelector(selectCoverImage);
     const [categoryList, setCategoryList] = useState<category[]>([]);
-    const [selection, setSelection] = useState<string | null>('dog');
+    const [selection, setSelection] = useState<string | null>(null);
     const selectionAction: SelectStaticProps['action'] = useRef(null);
 
     useEffect(() => {
@@ -194,6 +179,8 @@ export const Editor = () => {
                 }
                 getCategory();
                 overrideToolTip();
+                overrideToolBarIcons();
+                handleLinkClick();
             } else {
                 navigate("/login", {replace: true});
             }
@@ -210,12 +197,6 @@ export const Editor = () => {
             } else {
                 setDisabled(false);
             }
-            toolBarItems.forEach(item => {
-                const id = item.id;
-                const isActive = buttonIsActive(id.split("#")[0], id.split("#")[1]);
-                triggerHighlight(id, isActive);
-            });
-
         }
     }, [text]);
 
@@ -271,41 +252,10 @@ export const Editor = () => {
         setTitle("");
     }
 
-    function handleToolBarClick(button: string, value?: string | number) {
-        let btn;
-        if (value === undefined) {
-            btn = document.querySelector(`.ql-${button}`);
-        } else {
-            btn = document.querySelector(`.ql-${button}[value='${value}']`);
-        }
-        (btn as HTMLButtonElement)?.click();
-        const isActive = buttonIsActive(button, value);
-        triggerHighlight(button, isActive);
-    }
-
-    function buttonIsActive(button: string, value?: string | number): boolean {
-        let btn;
-        let dom;
-        if (value === undefined) {
-            btn = document.querySelector(`.ql-${button}`);
-            dom = document.getElementById(button);
-        } else {
-            btn = document.querySelector(`.ql-${button}[value='${value}']`);
-            dom = document.getElementById(button + "#" + value);
-        }
-        const isActive = btn!.classList.contains("ql-active");
-        (dom as HTMLElement).style.backgroundColor = isActive ?
-            "var(--variant-softHoverBg, var(--joy-palette-primary-softHoverBg, var(--joy-palette-primary-200, #C7DFF7)))" :
-            "";
-        return isActive;
-    }
-
-    function triggerHighlight(button: string, isActive: boolean) {
-        if (button === "code-block") {
-            if (!isActive) {
-                handleHighlight();
-            }
-        }
+    function overrideToolBarIcons() {
+        document.getElementById("toolbar")?.querySelectorAll("button").forEach((button, index) => {
+            button.innerHTML = `<span class="material-symbols-outlined">${toolBarItems[index].icon}</span>`
+        });
     }
 
     function handleHighlight() {
@@ -320,14 +270,22 @@ export const Editor = () => {
         }
     }
 
-    const handleToolTipClickAway = () => {
-        toolTipClickAwayRef.current = true;
-        setToolTipClickAway(toolTipClickAwayRef.current);
-    };
-
-    const handleToolTipClick = () => {
-        toolTipClickAwayRef.current = false;
-        setToolTipClickAway(toolTipClickAwayRef.current);
+    function handleLinkClick() {
+        document.querySelector(".ql-link")?.addEventListener("click", () => {
+            const selection = editorRef.current?.getEditor().getSelection();
+            if (selection) {
+                dispatch(setEditorSelection(selection));
+                editorTextRef.current = editorRef.current!.getEditor().getText(selection);
+                const toolTip = toolTipRef.current;
+                if (toolTip) {
+                    const toolTipInput = toolTip.querySelector("input");
+                    if (toolTipInput) {
+                        toolTipInput.value = editorTextRef.current;
+                        toolTipInput.focus();
+                    }
+                }
+            }
+        });
     }
 
     function overrideToolTip() {
@@ -341,20 +299,13 @@ export const Editor = () => {
                         if (mode === "link") {
                             const toolTip = toolTipRef.current;
                             if (toolTip) {
-                                if (classList.contains("ql-hidden")) {
-                                    console.log(toolTipClickAwayRef.current)
-                                    if (toolTipClickAwayRef.current) {
-                                        toolTip.style.zIndex = "-9999";
-                                        toolTip.style.display = "none";
-                                    }
-                                } else {
+                                if (!classList.contains("ql-hidden")) {
                                     toolTipClickAwayRef.current = false;
-                                    setToolTipClickAway(toolTipClickAwayRef.current);
                                     const position = elementPosition(target);
                                     toolTip.style.zIndex = "9999";
                                     toolTip.style.left = position.x + "px";
                                     toolTip.style.top = position.y + "px";
-                                    toolTip.style.display = "block";
+                                    toolTip.style.display = "flex";
                                 }
                             }
                         }
@@ -363,11 +314,74 @@ export const Editor = () => {
             });
         });
 
+        const quill = document.querySelector(".ql-editor");
         const dom = document.querySelector(".ql-tooltip");
         if (dom) {
             (dom as HTMLElement).style.visibility = "hidden";
             observer.observe(dom, {attributes: true});
+
+            const clickAway = (e: MouseEvent) => {
+                const path = e.composedPath && e.composedPath();
+                const toolTip = toolTipRef.current;
+                if (toolTip) {
+                    toolTipClickAwayRef.current = !path.includes(toolTip as EventTarget);
+                    if (toolTipClickAwayRef.current) {
+                        toolTip.style.zIndex = "-9999";
+                        toolTip.style.display = "none";
+                    }
+                } else {
+                    if (quill)
+                        (quill as HTMLElement).removeEventListener("click", clickAway);
+                }
+            }
+
+            if (quill)
+                (quill as HTMLElement).addEventListener("click", clickAway);
         }
+    }
+
+    function handleToolTipInput(e: React.ChangeEvent<HTMLInputElement>) {
+        const target = e.target;
+        const value = (target as HTMLInputElement).value;
+        const dom = document.querySelector(".ql-tooltip");
+        if (dom) {
+            const input = dom.querySelector("input");
+            if (input)
+                input.value = value;
+        }
+    }
+
+    function toolTipSave() {
+        if (editorSelection) {
+            const input = toolTipRef.current?.querySelector("input");
+            if (input) {
+                editorRef.current?.getEditor().deleteText(editorSelection);
+                editorRef.current?.getEditor().insertText(editorSelection.index, input.value, {
+                    link: input.value
+                });
+                toolTipClickAwayRef.current = true;
+                const toolTip = toolTipRef.current;
+                if (toolTip) {
+                    if (toolTipClickAwayRef.current) {
+                        toolTip.style.zIndex = "-9999";
+                        toolTip.style.display = "none";
+                    }
+                }
+                dispatch(setEditorSelection(null));
+            }
+        }
+    }
+
+    function toolTipCancel() {
+        toolTipClickAwayRef.current = true;
+        const toolTip = toolTipRef.current;
+        if (toolTip) {
+            if (toolTipClickAwayRef.current) {
+                toolTip.style.zIndex = "-9999";
+                toolTip.style.display = "none";
+            }
+        }
+        dispatch(setEditorSelection(null));
     }
 
     const uploadImg = async () => {
@@ -656,7 +670,8 @@ export const Editor = () => {
                         </CardContent>
                         <CardActions>
                             {isModify ?
-                                <Button loading={checking} className={'capitalize'} disabled={disabled} tabIndex={-1}
+                                <Button loading={checking} className={'capitalize'} disabled={disabled}
+                                        tabIndex={-1}
                                         size={'sm'}
                                         variant={'solid'}
                                         color={'primary'}>
@@ -704,6 +719,7 @@ export const Editor = () => {
                                         paddingBottom: 1,
                                     }}>
                                         <ButtonGroup
+                                            id={'toolbar'}
                                             size="sm"
                                             color="primary"
                                             orientation="horizontal"
@@ -712,12 +728,13 @@ export const Editor = () => {
                                             {toolBarItems.map((item, index) => (
                                                 <IconButton tabIndex={-1} id={item.id} size="sm" key={index}
                                                             variant={"soft"}
-                                                            onClick={item.func} sx={{
-                                                    paddingLeft: 2.5,
-                                                    paddingRight: 2.5,
-                                                }}>
-                                                    <span className="material-symbols-outlined">{item.icon}</span>
-                                                </IconButton>
+                                                            className={`toolBarButton ${item.className}`}
+                                                            slotProps={{
+                                                                root: {
+                                                                    value: item.id.split("#")[1] ?
+                                                                        item.id.split("#")[1] : undefined
+                                                                }
+                                                            }}/>
                                             ))}
                                         </ButtonGroup>
                                     </Card>
@@ -731,7 +748,8 @@ export const Editor = () => {
                                               maxHeight: `calc(${height}px - 135px)`,
                                               cursor: "text"
                                           }}>
-                                        <PerfectScrollbar options={{suppressScrollX: true, useBothWheelAxes: false}}>
+                                        <PerfectScrollbar
+                                            options={{suppressScrollX: true, useBothWheelAxes: false}}>
                                             <ReactQuill
                                                 style={{
                                                     minHeight: `calc(${height}px - 153px)`,
@@ -756,21 +774,40 @@ export const Editor = () => {
                     </Card>
                 </Grid>
             </Grid>
-            <ClickAwayListener onClickAway={handleToolTipClickAway} style={{
-                position: "absolute",
-                zIndex: 9999
-            }}>
-                <Box ref={toolTipRef} onClick={handleToolTipClick} sx={{
-                    position: "absolute",
-                }}>
+            <Box ref={toolTipRef}
+                 width={300}
+                 display="flex"
+                 flexDirection="row"
+                 gap={1}
+                 sx={{
+                     position: "absolute",
+                     zIndex: -9999,
+                     display: "none"
+                 }}>
+                <Card color="primary"
+                      variant="outlined"
+                      sx={{
+                          display: "inherit",
+                          flexDirection: "inherit",
+                          gap: "inherit",
+                          padding: 1
+                      }}>
                     <Input color="primary"
                            variant="outlined"
                            size="sm"
+                           onChange={handleToolTipInput}
                            sx={{
+                               width: 200,
                                '--Input-focusedThickness': '0',
                            }}/>
-                </Box>
-            </ClickAwayListener>
+                    <Button onClick={toolTipSave} size={"sm"}>
+                        Save
+                    </Button>
+                    <Button onClick={toolTipCancel} size={"sm"}>
+                        Cancel
+                    </Button>
+                </Card>
+            </Box>
         </div>
     )
 }

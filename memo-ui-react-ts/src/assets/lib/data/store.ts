@@ -17,6 +17,7 @@ import {drawer_open_slice} from "@/assets/lib/data/reducer/layout/drawer_open_sl
 import {selected_cover_image_slice} from "@/assets/lib/data/reducer/writer/selected_cover_image_slice";
 import {cover_image_slice} from "@/assets/lib/data/reducer/writer/cover_image_slice";
 import {cover_modal_open_slice} from "@/assets/lib/data/reducer/writer/cover_modal_open_slice.js";
+import {editor_selection_slice} from "@/assets/lib/data/reducer/writer/editor_selection_slice";
 
 export const store = configureStore({
     reducer: {
@@ -37,6 +38,11 @@ export const store = configureStore({
         drawerOpen: drawer_open_slice.reducer,
         selectedCoverImage: selected_cover_image_slice.reducer,
         coverImage: cover_image_slice.reducer,
-        coverModalOpen: cover_modal_open_slice.reducer
+        coverModalOpen: cover_modal_open_slice.reducer,
+        editorSelection: editor_selection_slice.reducer
     },
+    middleware: getDefaultMiddleware => getDefaultMiddleware({
+        serializableCheck: false
+    })
+
 })

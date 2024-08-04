@@ -98,7 +98,7 @@ export const BlogCard = ({
             if (loginState) {
                 userId.current = params.id ? params.id : userBasicInfo.id;
                 if (userId.current !== undefined && userId.current !== null) {
-                    setIsSelf(true);
+                    setIsSelf(userId.current === userBasicInfo.id);
                 }
             }
         }
